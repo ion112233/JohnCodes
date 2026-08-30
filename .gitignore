@@ -1,0 +1,28 @@
+# --- rendered output ---
+output/
+
+# --- user-supplied assets (keep the folders, ignore the contents) ---
+assets/fonts/*
+assets/music/*
+assets/sfx/*
+!assets/*/.gitkeep
+# JetBrains Mono is OFL-licensed and safe to vendor — keep it in the repo
+!assets/fonts/JetBrainsMono-*.ttf
+!assets/fonts/OFL.txt
+
+# --- python ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.eggs/
+build/
+dist/
+
+# --- misc ---
+.DS_Store
+.idea/
+.vscode/
+*.wav
+*.mp4

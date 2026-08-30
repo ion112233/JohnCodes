@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JohnCodes interview question",
+  "type": "object",
+  "required": ["id", "title", "difficulty", "topic", "prompt", "code", "narration", "complexity"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$",
+      "description": "kebab-case slug, unique; also the output folder / filename"
+    },
+    "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+    "difficulty": { "enum": ["Easy", "Medium", "Hard"] },
+    "topic": { "type": "string", "minLength": 1, "maxLength": 28 },
+    "filename": { "type": "string", "default": "solution.py" },
+    "prompt": {
+      "type": "string",
+      "description": "one-sentence problem statement shown on the title card",
+      "maxLength": 160
+    },
+    "code": {
+      "type": "string",
+      "description": "the full Python solution as it should be typed. Keep lines <= 42 chars. Use 4-space indent. No trailing newline needed.",
+      "minLength": 1
+    },
+    "narration": {
+      "type": "object",
+      "required": ["hook", "walkthrough", "takeaway"],
+      "additionalProperties": false,
+      "properties": {
+        "hook": {
+          "type": "string",
+          "description": "1-2 sentences, spoken over the title card (~4-7s)"
+        },
+        "walkthrough": {
+          "type": "string",
+          "description": "3-6 sentences explaining the approach, spoken while the code types (~15-30s)"
+        },
+        "takeaway": {
+          "type": "string",
+          "description": "1-2 sentences, the punchline, spoken over the takeaway card (~4-8s)"
+        }
+      }
+    },
+    "complexity": {
+      "type": "object",
+      "required": ["time", "space"],
+      "additionalProperties": false,
+      "properties": {
+        "time": { "type": "string", "examples": ["O(n)", "O(n log n)"] },
+        "space": { "type": "string", "examples": ["O(1)", "O(n)"] }
+      }
+    }
+  }
+}

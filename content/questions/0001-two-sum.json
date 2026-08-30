@@ -1,0 +1,15 @@
+{
+  "id": "two-sum",
+  "title": "Two Sum",
+  "difficulty": "Easy",
+  "topic": "Arrays & Hashing",
+  "filename": "solution.py",
+  "prompt": "Return the indices of the two numbers in nums that add up to target.",
+  "code": "def two_sum(nums: list[int], target: int):\n    seen = {}\n    for i, n in enumerate(nums):\n        need = target - n\n        if need in seen:\n            return [seen[need], i]\n        seen[n] = i\n    return []",
+  "narration": {
+    "hook": "Two Sum. The classic warm-up question in almost every Python interview.",
+    "walkthrough": "The brute force is two nested loops, but we can do it in one pass. We walk the list once, and keep a dictionary that maps each value we've seen to its index. For every number, we compute what we still need to reach the target. If that complement is already in the dictionary, we've found our pair and return both indices. Otherwise we store the current number and keep going.",
+    "takeaway": "One pass, linear time. Trading a little memory for speed is the whole trick."
+  },
+  "complexity": { "time": "O(n)", "space": "O(n)" }
+}

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "johncodes"
+version = "0.1.0"
+description = "Generate Python-interview YouTube Shorts (IDE typing animation + Kokoro voiceover)"
+requires-python = ">=3.9"
+dependencies = [
+    "kokoro>=0.7.16",
+    "misaki>=0.9.4",
+    "torch>=2.2",
+    "numpy>=1.26,<2",
+    "Pillow>=10.0",
+    "Pygments>=2.17",
+    "scipy>=1.11",
+]
+
+[project.scripts]
+johncodes = "johncodes.cli:main"
+
+[tool.setuptools]
+packages = ["johncodes"]

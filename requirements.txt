@@ -1,0 +1,9 @@
+# Python 3.9+  (tested on 3.9.6, macOS)
+# System deps (not pip): ffmpeg, espeak-ng   ->  brew install ffmpeg espeak-ng
+kokoro>=0.7.16
+misaki>=0.9.4
+torch>=2.2
+numpy>=1.26,<2
+Pillow>=10.0
+Pygments>=2.17
+scipy>=1.11

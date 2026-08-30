@@ -1,0 +1,22 @@
+{
+  "fps": 30,
+  "crf": 18,
+  "x264_preset": "medium",
+
+  "captions": true,
+
+  "tts_voice": "am_michael,am_fenrir",
+  "tts_lang": "a",
+  "tts_speed": 1.0,
+
+  "keystroke_gain_db": -15.0,
+  "music_gain_db": -22.0,
+  "music_duck_db": -6.0,
+  "music_path": null,
+
+  "project_name": "JohnCodes",
+  "python_label": "Python 3.11",
+
+  "mono_font": null,
+  "ui_font": null
+}
