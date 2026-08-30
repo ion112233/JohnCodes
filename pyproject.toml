@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "johncodes"
 version = "0.1.0"
-description = "Generate Python-interview YouTube Shorts (IDE typing animation + Kokoro voiceover)"
+description = "Generate Python-interview videos (PyCharm IDE typing + terminal + Kokoro voiceover)"
 requires-python = ">=3.9,<3.13"  # kokoro / misaki are capped at <3.13
 dependencies = [
     "kokoro>=0.7.16",

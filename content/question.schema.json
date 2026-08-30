@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "JohnCodes interview question",
   "type": "object",
-  "required": ["id", "title", "difficulty", "topic", "prompt", "code", "narration", "complexity"],
+  "required": ["id", "title", "difficulty", "topic", "prompt", "complexity", "segments"],
   "additionalProperties": false,
   "properties": {
     "id": {
@@ -19,30 +19,6 @@
       "description": "one-sentence problem statement shown on the title card",
       "maxLength": 160
     },
-    "code": {
-      "type": "string",
-      "description": "the full Python solution as it should be typed. Keep lines <= 42 chars. Use 4-space indent. No trailing newline needed.",
-      "minLength": 1
-    },
-    "narration": {
-      "type": "object",
-      "required": ["hook", "walkthrough", "takeaway"],
-      "additionalProperties": false,
-      "properties": {
-        "hook": {
-          "type": "string",
-          "description": "1-2 sentences, spoken over the title card (~4-7s)"
-        },
-        "walkthrough": {
-          "type": "string",
-          "description": "3-6 sentences explaining the approach, spoken while the code types (~15-30s)"
-        },
-        "takeaway": {
-          "type": "string",
-          "description": "1-2 sentences, the punchline, spoken over the takeaway card (~4-8s)"
-        }
-      }
-    },
     "complexity": {
       "type": "object",
       "required": ["time", "space"],
@@ -51,6 +27,91 @@
         "time": { "type": "string", "examples": ["O(n)", "O(n log n)"] },
         "space": { "type": "string", "examples": ["O(1)", "O(n)"] }
       }
+    },
+    "segments": {
+      "type": "array",
+      "minItems": 1,
+      "description": "ordered list of blocks rendered in sequence, following the beat pattern: hook -> code/narration -> terminal -> (optional gotcha card + question) -> takeaway",
+      "items": { "$ref": "#/definitions/segment" }
+    }
+  },
+  "definitions": {
+    "segment": {
+      "type": "object",
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "enum": ["narration", "code", "terminal", "card_topic", "card_question"]
+        }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "type": { "const": "narration" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "text"],
+            "properties": {
+              "type": true,
+              "text": { "type": "string", "description": "spoken narration, sent to TTS" },
+              "beat": {
+                "enum": ["hook", "walkthrough", "takeaway"],
+                "description": "optional pacing role — hook: 1-2 sentences over title card (~4-7s); walkthrough: 3-6 sentences while code types (~15-30s); takeaway: 1-2 sentence punchline (~4-8s)"
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "code" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "code"],
+            "properties": {
+              "type": true,
+              "code": {
+                "type": "string",
+                "description": "the full Python solution as it should be typed. Keep lines <= 42 chars. Use 4-space indent. No trailing newline needed.",
+                "minLength": 1
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "terminal" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "command", "output"],
+            "properties": {
+              "type": true,
+              "command": { "type": "string" },
+              "output": { "type": "string" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "card_topic" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "cardTitle"],
+            "properties": {
+              "type": true,
+              "cardTitle": { "type": "string", "maxLength": 40 },
+              "cardSubtitle": { "type": "string", "maxLength": 80 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "card_question" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "question"],
+            "properties": {
+              "type": true,
+              "question": { "type": "string", "maxLength": 120 },
+              "answer": { "type": "string", "maxLength": 120 }
+            }
+          }
+        }
+      ]
     }
   }
 }

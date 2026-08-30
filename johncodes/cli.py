@@ -41,22 +41,47 @@ def cmd_build(args) -> int:
 
 
 def cmd_preview(args) -> int:
-    """Render a single still frame of the typing scene — fast visual iteration."""
+    """Render a single still frame of a scene — fast visual iteration, no audio.
+
+    --scene: typing (default) | terminal | title | takeaway | topic | question
+    """
     from .fonts import FontBook
-    from .scenes import TypingScene
-    from .typing_plan import build_plan
+    from .scenes import (ExplainCard, QuestionCard, TerminalScene, TitleCard,
+                         TopicCard, TypingScene)
 
     cfg = Config.load(args.config)
     q = load_question(args.question)
     fonts = FontBook(cfg.fonts_path, cfg.mono_font, cfg.ui_font)
-    plan = build_plan(q.code, duration=10.0, seed=q.id)
-    scene = TypingScene(cfg, fonts, q, plan, duration=12.0, lead=0.0)
     frac = max(0.0, min(1.0, args.at))
-    img = scene.render(t=plan.duration * frac + 0.001)
+    kind = args.scene
+
+    if kind == "title":
+        scene = TitleCard(cfg, fonts, q, 6.0)
+    elif kind == "takeaway":
+        scene = ExplainCard(cfg, fonts, q, 6.0)
+    elif kind == "topic":
+        seg = next((s for s in q.segments if s.type == "card_topic"), None)
+        scene = TopicCard(cfg, fonts, seg.card_title if seg else q.topic,
+                          seg.card_subtitle if seg else None, 5.0)
+    elif kind == "question":
+        seg = next((s for s in q.segments if s.type == "card_question"), None)
+        scene = QuestionCard(cfg, fonts, seg.question if seg else "Why does this work?",
+                             seg.answer if seg else "Because.", 6.0)
+    elif kind == "terminal":
+        seg = next((s for s in q.segments if s.type == "terminal"), None)
+        scene = TerminalScene(cfg, fonts, q, code=q.final_code,
+                              command=seg.command if seg else "python solution.py",
+                              output=seg.output if seg else "[]", duration=8.0,
+                              lead=0.0, seed=q.id)
+    else:
+        scene = TypingScene(cfg, fonts, q, start_code="", end_code=q.final_code,
+                            duration=12.0, lead=0.0, seed=q.id)
+
+    img = scene.render(t=scene.duration * frac + 0.001)
     out = Path(args.out or (cfg.output_path / f"{q.id}-preview.png"))
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out)
-    print(f"wrote {out}  (font: {fonts.mono_family}, size {scene.ide.layout.fs})")
+    print(f"wrote {out}  (font: {fonts.mono_family})")
     return 0
 
 
@@ -101,8 +126,10 @@ def main(argv=None) -> int:
     _add_config_arg(b)
     b.set_defaults(func=cmd_build)
 
-    p = sub.add_parser("preview", help="render one still PNG of the IDE typing scene")
+    p = sub.add_parser("preview", help="render one still PNG of a scene (no audio)")
     p.add_argument("question")
+    p.add_argument("--scene", default="typing",
+                   choices=["typing", "terminal", "title", "takeaway", "topic", "question"])
     p.add_argument("--at", type=float, default=0.6, help="progress fraction 0..1 (default 0.6)")
     p.add_argument("--out")
     _add_config_arg(p)

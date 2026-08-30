@@ -5,11 +5,40 @@
   "topic": "Arrays & Hashing",
   "filename": "solution.py",
   "prompt": "Return the indices of the two numbers in nums that add up to target.",
-  "code": "def two_sum(nums: list[int], target: int):\n    seen = {}\n    for i, n in enumerate(nums):\n        need = target - n\n        if need in seen:\n            return [seen[need], i]\n        seen[n] = i\n    return []",
-  "narration": {
-    "hook": "Two Sum. The classic warm-up question in almost every Python interview.",
-    "walkthrough": "The brute force is two nested loops, but we can do it in one pass. We walk the list once, and keep a dictionary that maps each value we've seen to its index. For every number, we compute what we still need to reach the target. If that complement is already in the dictionary, we've found our pair and return both indices. Otherwise we store the current number and keep going.",
-    "takeaway": "One pass, linear time. Trading a little memory for speed is the whole trick."
-  },
-  "complexity": { "time": "O(n)", "space": "O(n)" }
+  "complexity": { "time": "O(n)", "space": "O(n)" },
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Two Sum. The classic warm-up in almost every Python interview."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The brute force is two nested loops, but we can do it in one pass. We walk the list once and keep a dictionary that maps each value to its index. For every number we work out what we still need to reach the target. If that complement is already in the dictionary, we've found our pair, so we return both indices."
+    },
+    {
+      "type": "code",
+      "code": "def two_sum(nums: list[int], target: int):\n    seen = {}\n    for i, n in enumerate(nums):\n        need = target - n\n        if need in seen:\n            return [seen[need], i]\n        seen[n] = i\n    return []"
+    },
+    {
+      "type": "narration",
+      "text": "Run it on a quick example and we get the two indices back."
+    },
+    {
+      "type": "terminal",
+      "command": "python -c 'from solution import two_sum; print(two_sum([2, 7, 11, 15], 9))'",
+      "output": "[0, 1]"
+    },
+    {
+      "type": "card_question",
+      "question": "Why store each number only after checking for its complement?",
+      "answer": "So an element can never pair with itself."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "One pass, linear time. Trading a little memory for speed is the whole trick."
+    }
+  ]
 }

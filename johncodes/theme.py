@@ -48,6 +48,11 @@ FOLDER_ICON = hx("C2A05A")   # PyCharm's default manila folder
 RUN_GREEN = hx("59A869")
 DEBUG_GREEN = hx("6E9F5B")
 STOP_RED = hx("C75450")
+
+# ---- run / console panel ----
+CONSOLE_CMD = hx("A9B7C6")
+CONSOLE_OUT = hx("C7C7C7")
+CONSOLE_OK = hx("5B9E5B")
 TRAFFIC_RED = hx("FF5F57")
 TRAFFIC_YELLOW = hx("FEBC2E")
 TRAFFIC_GREEN = hx("28C840")

@@ -1,19 +1,21 @@
 # JohnCodes
 
-Generate vertical **YouTube Shorts for Python interview questions** from a single
-JSON file per question. Each Short is:
+Generate **16:9 videos for Python interview questions** from a single JSON file
+per question:
 
 ```
-title card  →  the solution typed out in a PyCharm-style IDE (voiceover)  →  takeaway card
+title card  →  [ segments: code typing / terminal runs / cards, with voiceover ]  →  takeaway card
 ```
 
-- **Visuals** — pure Pillow + ffmpeg, frame by frame. Darcula theme, gutter,
-  minimap, project pane, blinking caret, auto-scroll. No browser, no Node.
-- **Voiceover** — [Kokoro](https://github.com/hexgrad/kokoro) TTS, fully local.
+- **Visuals** — pure Pillow + ffmpeg, frame by frame. Full-bleed PyCharm
+  (Darcula) editor: toolbar, tabs, breadcrumb, tool windows, gutter, run panel,
+  scrollbar. No browser, no Node.
+- **Voiceover** — [Kokoro](https://github.com/hexgrad/kokoro) TTS, fully local
+  (`am_michael,am_fenrir` blend).
 - **Audio bed** — synthesised keystroke clicks + optional background music,
   ducked under the narration.
-- **Content** — one JSON per question, designed to be produced by Claude
-  (see [`prompts/generate_question.md`](prompts/generate_question.md)).
+- **Content** — one JSON per question (an ordered `segments` list), designed to
+  be produced by Claude (see [`prompts/generate_question.md`](prompts/generate_question.md)).
 
 ## Setup
 
@@ -56,8 +58,24 @@ python3 -m johncodes build --all
    (validate against [`content/question.schema.json`](content/question.schema.json)).
 3. `python3 -m johncodes build content/questions/NNNN-<slug>.json`.
 
+A question is metadata + an ordered **`segments`** list. Auto title/takeaway
+cards wrap it; segments render in order:
+
+| segment | becomes |
+|---|---|
+| `narration` (beat `hook` / `takeaway`) | voiceover on the auto cards |
+| `narration` (beat `walkthrough`) | voiceover played *while the next `code` types* |
+| `narration` (no beat) | voiceover of the segment that follows it |
+| `code` | IDE typing scene (full file; keeps common prefix, types the rest) |
+| `terminal` | PyCharm Run panel — command types, output prints |
+| `card_topic` | full-screen section divider |
+| `card_question` | full-screen quick-check, answer fades in |
+
 Key authoring constraint: **code lines ≤ 42 characters**, 6–16 lines. Narration
 is spoken, so write it how you talk ("target minus n", not "target - n").
+
+`python3 -m johncodes preview <q.json> --scene terminal|title|takeaway|topic|question`
+renders one still frame of any scene for fast iteration.
 
 ## Config
 

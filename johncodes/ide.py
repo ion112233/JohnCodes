@@ -506,3 +506,60 @@ class IDE:
         self._icon_branch(d, bx, sy + STATUS_H // 2, theme.STATUS_FG)
         d.text((bx + 16, sy + 6), "main", font=ui, fill=theme.STATUS_FG)
         d.text((self.W - w - 20, sy + 6), text, font=ui, fill=theme.STATUS_FG)
+
+    # ============================================================ run panel
+    def code_block_bottom(self, n_lines: int) -> int:
+        """Y just past ``n_lines`` of top-anchored code."""
+        return self.layout.editor_y0 + CODE_PAD_T + n_lines * self.layout.line_h
+
+    def run_panel_top(self, slide: float = 1.0, docked: int | None = None) -> int:
+        """Y of the panel's top edge; slide 0 = fully hidden, 1 = docked."""
+        if docked is None:
+            docked = int(self.H * 0.52)
+        docked = max(int(self.H * 0.40), min(docked, int(self.H * 0.62)))
+        return int(docked + (1.0 - max(0.0, min(1.0, slide))) * (self.H - docked))
+
+    def draw_run_panel(self, img: Image.Image, *, command: str, output_lines: list[str],
+                       finished: bool, slide: float = 1.0, cmd_chars: int | None = None,
+                       run_name: str = "solution", docked_top: int | None = None) -> None:
+        d = ImageDraw.Draw(img)
+        W, H = self.W, self.H
+        py = self.run_panel_top(slide, docked_top)
+        if py >= H - 4:
+            return
+        head_h = 42
+        ui = self.fonts.ui
+
+        d.rectangle([0, py, W, py + head_h], fill=theme.PANEL_BG)
+        d.line([0, py, W, py], fill=theme.BORDER_LT)
+        cy = py + head_h // 2
+        self._icon_run(d, 24, cy, theme.RUN_GREEN)
+        d.text((46, cy - 11), run_name, font=ui(17), fill=theme.FG_DEFAULT)
+        d.rectangle([46, py + head_h - 3, 46 + d.textlength(run_name, font=ui(17)),
+                     py + head_h], fill=theme.TAB_UNDERLINE)
+        self._icon_run(d, W - 148, cy, theme.RUN_GREEN)
+        self._icon_stop(d, W - 108, cy, theme.STOP_RED if finished is False else theme.ICON_DIM)
+        self._icon_gear(d, W - 64, cy, theme.ICON_DIM)
+
+        con_y = min(py + head_h, H - 1)
+        d.rectangle([0, con_y, W, H], fill=theme.EDITOR_BG)
+        mono = self.fonts.mono(max(22, min(30, self.layout.fs - 6)))
+        x, lh = 30, mono.line_h
+
+        n_out = len(output_lines) if (cmd_chars is None or cmd_chars >= len(command)) else 0
+        block_lines = 1 + n_out + (2 if finished else 0)
+        y = con_y + max(18, ((H - con_y) - block_lines * lh) // 2)
+
+        cmd = command if cmd_chars is None else command[:cmd_chars]
+        d.text((x, y), cmd, font=mono.regular, fill=theme.CONSOLE_CMD)
+        y += lh
+        if cmd_chars is None or cmd_chars >= len(command):
+            for ln in output_lines:
+                if y + lh > H - 10:
+                    break
+                d.text((x, y), ln, font=mono.regular, fill=theme.CONSOLE_OUT)
+                y += lh
+            if finished and y + lh < H - 6:
+                y += lh // 2
+                d.text((x, y), "Process finished with exit code 0",
+                       font=mono.regular, fill=theme.CONSOLE_OK)
