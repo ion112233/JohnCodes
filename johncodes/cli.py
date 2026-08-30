@@ -18,6 +18,9 @@ def cmd_build(args) -> int:
     from .audio import Narrator
 
     cfg = Config.load(args.config)
+    if args.draft:
+        cfg.fps, cfg.crf, cfg.x264_preset = 15, 30, "ultrafast"
+        print("draft mode: 15fps / crf 30 / ultrafast")
     if args.all:
         paths = discover(args.content)
         if not paths:
@@ -41,38 +44,50 @@ def cmd_build(args) -> int:
 
 
 def cmd_preview(args) -> int:
-    """Render a single still frame of a scene — fast visual iteration, no audio.
-
-    --scene: typing (default) | terminal | title | takeaway | topic | question
-    """
+    """Render a single still frame of a scene — fast visual iteration, no audio."""
     from .fonts import FontBook
-    from .scenes import (ExplainCard, QuestionCard, TerminalScene, TitleCard,
-                         TopicCard, TypingScene)
+    from .scenes import (CompareScene, EpisodeCard, ExplainCard, GotchaScene, QuestionCard,
+                         RecapCard, ReplScene, TerminalScene, TitleCard, TopicCard, TypingScene)
 
     cfg = Config.load(args.config)
     q = load_question(args.question)
     fonts = FontBook(cfg.fonts_path, cfg.mono_font, cfg.ui_font)
     frac = max(0.0, min(1.0, args.at))
     kind = args.scene
+    first = lambda ty: next((s for s in q.segments if s.type == ty), None)
 
-    if kind == "title":
-        scene = TitleCard(cfg, fonts, q, 6.0)
-    elif kind == "takeaway":
-        scene = ExplainCard(cfg, fonts, q, 6.0)
+    if kind in ("title", "opener"):
+        scene = EpisodeCard(cfg, fonts, q, 6.0) if q.is_episode else TitleCard(cfg, fonts, q, 6.0)
+    elif kind in ("takeaway", "recap"):
+        seg = first("card_recap")
+        scene = (RecapCard(cfg, fonts, seg.points, seg.next_up, 20.0,
+                           [1.0 + 3.0 * i for i in range(len(seg.points))]) if seg
+                 else ExplainCard(cfg, fonts, q, 6.0))
     elif kind == "topic":
-        seg = next((s for s in q.segments if s.type == "card_topic"), None)
+        seg = first("card_topic")
         scene = TopicCard(cfg, fonts, seg.card_title if seg else q.topic,
                           seg.card_subtitle if seg else None, 5.0)
     elif kind == "question":
-        seg = next((s for s in q.segments if s.type == "card_question"), None)
-        scene = QuestionCard(cfg, fonts, seg.question if seg else "Why does this work?",
-                             seg.answer if seg else "Because.", 6.0)
+        seg = first("card_question")
+        scene = QuestionCard(cfg, fonts, seg.question if seg else "Why?",
+                             seg.answer if seg else "Because.", 20.0, 10.0)
     elif kind == "terminal":
-        seg = next((s for s in q.segments if s.type == "terminal"), None)
+        seg = first("terminal")
         scene = TerminalScene(cfg, fonts, q, code=q.final_code,
                               command=seg.command if seg else "python solution.py",
-                              output=seg.output if seg else "[]", duration=8.0,
-                              lead=0.0, seed=q.id)
+                              output=seg.output if seg else "[]", duration=8.0, lead=0.0, seed=q.id)
+    elif kind == "repl":
+        seg = first("repl")
+        scene = ReplScene(cfg, fonts, seg.lines, 10.0, lead=0.0)
+    elif kind == "gotcha":
+        seg = first("gotcha")
+        scene = GotchaScene(cfg, fonts, q, code=seg.code, bad_line=seg.bad_line,
+                            error=seg.error, duration=8.0, lead=0.0)
+    elif kind == "compare":
+        seg = first("compare")
+        scene = CompareScene(cfg, fonts, left_label=seg.left_label, left_code=seg.left_code,
+                             right_label=seg.right_label, right_code=seg.right_code,
+                             verdict=seg.verdict, duration=6.0)
     else:
         scene = TypingScene(cfg, fonts, q, start_code="", end_code=q.final_code,
                             duration=12.0, lead=0.0, seed=q.id)
@@ -108,9 +123,11 @@ def cmd_list(args) -> int:
     for p in paths:
         try:
             q = load_question(p)
-            print(f"  {q.id:<24} {q.difficulty:<7} {q.title}")
+            tag = f"EP{q.episode.number:>2}" if q.is_episode else q.difficulty
+            extra = f"  (~{q.target_minutes:g}m)" if q.target_minutes else ""
+            print(f"  {q.id:<28} {tag:<7} {q.title}{extra}")
         except SystemExit as e:
-            print(f"  {p.name:<24} !! {e}")
+            print(f"  {p.name:<28} !! {e}")
     return 0
 
 
@@ -121,15 +138,17 @@ def main(argv=None) -> int:
     b = sub.add_parser("build", help="render a Short (or all of them)")
     b.add_argument("question", nargs="?", help="path to a question .json")
     b.add_argument("--all", action="store_true", help="build every question")
-    b.add_argument("--content", default="content/questions")
+    b.add_argument("--content", default="content")
     b.add_argument("--keep", action="store_true", help="keep intermediate files")
+    b.add_argument("--draft", action="store_true", help="fast low-quality render (15fps)")
     _add_config_arg(b)
     b.set_defaults(func=cmd_build)
 
     p = sub.add_parser("preview", help="render one still PNG of a scene (no audio)")
     p.add_argument("question")
     p.add_argument("--scene", default="typing",
-                   choices=["typing", "terminal", "title", "takeaway", "topic", "question"])
+                   choices=["typing", "terminal", "repl", "gotcha", "compare",
+                            "opener", "title", "recap", "takeaway", "topic", "question"])
     p.add_argument("--at", type=float, default=0.6, help="progress fraction 0..1 (default 0.6)")
     p.add_argument("--out")
     _add_config_arg(p)
@@ -143,7 +162,7 @@ def main(argv=None) -> int:
     t.set_defaults(func=cmd_tts)
 
     ls = sub.add_parser("list", help="list discovered questions")
-    ls.add_argument("--content", default="content/questions")
+    ls.add_argument("--content", default="content")
     ls.set_defaults(func=cmd_list)
 
     args = parser.parse_args(argv)

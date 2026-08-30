@@ -1,9 +1,13 @@
 """Keystroke schedule for the typing animation.
 
-Produces a monotonically increasing list of timestamps (seconds, relative to the
-start of typing) — one per character of the source. The renderer maps a frame
-time to "characters revealed" with a binary search; the audio mixer drops a
-keystroke click at (most of) these timestamps.
+The code types at a **fixed, natural speed** (``cps`` chars/second, plus a short
+pause at each line break). It is NOT stretched to match the narration — typing
+usually finishes before the voice does and the finished code just sits there.
+Stretching it to fill the narration is what made early cuts look robotic.
+
+``times`` is a monotonically increasing list, one entry per source character;
+the renderer maps a frame time to "characters revealed" with a binary search,
+and the audio mixer drops a keystroke click at (most of) these timestamps.
 """
 from __future__ import annotations
 
@@ -15,7 +19,7 @@ from dataclasses import dataclass
 @dataclass
 class TypingPlan:
     times: list[float]          # len == len(code)
-    duration: float
+    duration: float             # when the last character lands
     click_times: list[float]    # subset: audible keystrokes
 
     def revealed_at(self, t: float) -> int:
@@ -23,7 +27,6 @@ class TypingPlan:
 
 
 def _rng_stream(seed: str):
-    """Deterministic pseudo-random floats in [0, 1) from a seed string."""
     h = hashlib.sha256(seed.encode()).digest()
     i = 0
     while True:
@@ -34,39 +37,41 @@ def _rng_stream(seed: str):
         i += 1
 
 
-def build_plan(code: str, duration: float, *, seed: str = "johncodes") -> TypingPlan:
-    """Weight each character with a 'cost', then scale costs to fill ``duration``."""
+def build_plan(code: str, *, cps: float = 22.0, newline_pause: float = 0.22,
+               seed: str = "johncodes", max_duration: float | None = None) -> TypingPlan:
+    """Schedule at ~``cps`` characters per second with human jitter.
+
+    ``max_duration`` is only a safety clamp for pathologically long snippets; in
+    normal use the natural pace wins and the typing ends early.
+    """
     rng = _rng_stream(seed + code[:64])
-    weights: list[float] = []
+    base = 1.0 / max(cps, 1.0)
+    times: list[float] = []
+    acc = 0.0
     at_line_start = True
     for ch in code:
         if ch == "\n":
-            w = 5.5                      # pause at end of line
+            step = newline_pause + base
             at_line_start = True
         elif ch == " " and at_line_start:
-            w = 0.15                     # indentation flies in
+            step = base * 0.25                 # indentation flies in
         elif ch in " ":
-            w = 0.9
+            step = base * 0.9
             at_line_start = False
-        elif ch in ".,:()[]{}":
-            w = 1.4
+        elif ch in ".,:()[]{}\"'":
+            step = base * 1.15
             at_line_start = False
         else:
-            w = 1.0
+            step = base
             at_line_start = False
-        w *= 0.75 + 0.6 * next(rng)      # human jitter
-        weights.append(w)
-
-    total_w = sum(weights) or 1.0
-    scale = duration / total_w
-    times: list[float] = []
-    acc = 0.0
-    for w in weights:
-        acc += w * scale
+        step *= 0.7 + 0.6 * next(rng)          # jitter
+        acc += step
         times.append(acc)
 
-    click_times = [
-        t for ch, t in zip(code, times)
-        if not (ch == " " or ch == "\n")
-    ]
-    return TypingPlan(times=times, duration=duration, click_times=click_times)
+    if max_duration and acc > max_duration and acc > 0:
+        scale = max_duration / acc
+        times = [t * scale for t in times]
+        acc = max_duration
+
+    click_times = [t for ch, t in zip(code, times) if ch not in " \n"]
+    return TypingPlan(times=times, duration=acc, click_times=click_times)

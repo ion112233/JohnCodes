@@ -42,13 +42,23 @@ GUTTER_NUM_PAD_L = 8
 GUTTER_NUM_PAD_R = 16
 CODE_PAD_L = 22
 CODE_PAD_T = 14
-FS_MAX = 38
-FS_MIN = 24
+FS_MAX = 34          # editor font: kept deliberately modest so code reads calm
+FS_MIN = 22
 INDENT_SPACES = 4
 
 
 def hx3(v: int) -> tuple[int, int, int]:
     return (v, v, v)
+
+
+def _squiggle(d: ImageDraw.ImageDraw, x0: float, x1: float, y: float, color) -> None:
+    pts, x, up = [], x0, True
+    while x < x1:
+        pts.append((x, y - 3 if up else y))
+        x += 5
+        up = not up
+    if len(pts) > 1:
+        d.line(pts, fill=color, width=2)
 
 
 @dataclass
@@ -385,7 +395,8 @@ class IDE:
 
     # ================================================================ frame
     def render(self, spans_lines: list[Line], caret_rc: tuple[int, int] | None,
-               t: float, *, total_lines: int, show_caret: bool = True) -> Image.Image:
+               t: float, *, total_lines: int, show_caret: bool = True,
+               error_line: int | None = None) -> Image.Image:
         if self._chrome is None:
             self._chrome = self._draw_chrome()
         img = self._chrome.copy()
@@ -467,6 +478,11 @@ class IDE:
             for span in spans_lines[ln]:
                 d.text((x, y), span.text, font=mono.pick(italic=span.italic), fill=span.color)
                 x += mono.char_w * len(span.text)
+            if error_line is not None and ln == error_line - 1:
+                txt = "".join(s.text for s in spans_lines[ln])
+                x0 = L.code_x + mono.char_w * (len(txt) - len(txt.lstrip()))
+                x1 = L.code_x + mono.char_w * len(txt)
+                _squiggle(d, x0, max(x1, x0 + 60), y + L.line_h - 6, (224, 86, 86))
 
         # caret
         if show_caret and caret_rc and visible(caret_row):
@@ -516,12 +532,13 @@ class IDE:
         """Y of the panel's top edge; slide 0 = fully hidden, 1 = docked."""
         if docked is None:
             docked = int(self.H * 0.52)
-        docked = max(int(self.H * 0.40), min(docked, int(self.H * 0.62)))
+        docked = max(int(self.H * 0.40), min(docked, int(self.H * 0.70)))
         return int(docked + (1.0 - max(0.0, min(1.0, slide))) * (self.H - docked))
 
     def draw_run_panel(self, img: Image.Image, *, command: str, output_lines: list[str],
                        finished: bool, slide: float = 1.0, cmd_chars: int | None = None,
-                       run_name: str = "solution", docked_top: int | None = None) -> None:
+                       run_name: str = "solution", docked_top: int | None = None,
+                       error: bool = False) -> None:
         d = ImageDraw.Draw(img)
         W, H = self.W, self.H
         py = self.run_panel_top(slide, docked_top)
@@ -538,28 +555,33 @@ class IDE:
         d.rectangle([46, py + head_h - 3, 46 + d.textlength(run_name, font=ui(17)),
                      py + head_h], fill=theme.TAB_UNDERLINE)
         self._icon_run(d, W - 148, cy, theme.RUN_GREEN)
-        self._icon_stop(d, W - 108, cy, theme.STOP_RED if finished is False else theme.ICON_DIM)
+        self._icon_stop(d, W - 108, cy, theme.ICON_DIM)
         self._icon_gear(d, W - 64, cy, theme.ICON_DIM)
 
         con_y = min(py + head_h, H - 1)
         d.rectangle([0, con_y, W, H], fill=theme.EDITOR_BG)
-        mono = self.fonts.mono(max(22, min(30, self.layout.fs - 6)))
+        mono = self.fonts.mono(max(20, min(28, self.layout.fs - 6)))
         x, lh = 30, mono.line_h
 
-        n_out = len(output_lines) if (cmd_chars is None or cmd_chars >= len(command)) else 0
-        block_lines = 1 + n_out + (2 if finished else 0)
-        y = con_y + max(18, ((H - con_y) - block_lines * lh) // 2)
+        showing = cmd_chars is None or cmd_chars >= len(command)
+        # top-anchored, like the editor — not vertically centred
+        y = con_y + 22
 
         cmd = command if cmd_chars is None else command[:cmd_chars]
         d.text((x, y), cmd, font=mono.regular, fill=theme.CONSOLE_CMD)
         y += lh
-        if cmd_chars is None or cmd_chars >= len(command):
+        if showing:
             for ln in output_lines:
                 if y + lh > H - 10:
                     break
-                d.text((x, y), ln, font=mono.regular, fill=theme.CONSOLE_OUT)
+                d.text((x, y), ln, font=mono.regular,
+                       fill=theme.CONSOLE_ERR if error else theme.CONSOLE_OUT)
                 y += lh
-            if finished and y + lh < H - 6:
+            if (finished or (error and showing)) and y + lh < H - 6:
                 y += lh // 2
-                d.text((x, y), "Process finished with exit code 0",
-                       font=mono.regular, fill=theme.CONSOLE_OK)
+                if error:
+                    d.text((x, y), "Process finished with exit code 1",
+                           font=mono.regular, fill=theme.CONSOLE_ERR)
+                else:
+                    d.text((x, y), "Process finished with exit code 0",
+                           font=mono.regular, fill=theme.CONSOLE_OK)

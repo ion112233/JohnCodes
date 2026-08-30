@@ -32,6 +32,26 @@ class Config:
     explain_pad: float = 1.1
     fade: float = 0.35           # global fade in/out
 
+    # Code types at a natural, fixed speed and is ALLOWED to finish before the
+    # narration does (it then just sits there complete). Do NOT stretch typing to
+    # fill the narration — that looks robotic. ~22 chars/sec ≈ a brisk human.
+    typing_cps: float = 22.0
+    typing_newline_pause: float = 0.22   # extra seconds at each line break
+
+    # card_question: the question sits on screen this long before the answer
+    # appears. Both the question and the answer are read aloud.
+    question_reveal_gap: float = 10.0
+
+    # ---- course-episode scenes ----
+    episode_min: float = 4.0
+    topic_min: float = 2.6
+    recap_min: float = 5.0
+    gotcha_min: float = 5.0
+    compare_min: float = 5.0
+    repl_min: float = 4.0
+    question_min: float = 4.0
+    runtime_tolerance: float = 0.08   # warn if |actual-target|/target exceeds this
+
     # ---- captions ----
     captions: bool = False
 
@@ -39,9 +59,12 @@ class Config:
     sample_rate: int = 24000
     tts_voice: str = "am_michael,am_fenrir"  # Kokoro voice id, or comma-list to blend
     tts_lang: str = "a"          # 'a' = American English, 'b' = British
+    # Keep this at (or very near) 1.0. The voice was chosen at 1.0; slowing it
+    # down makes it sound artificial. To hit an episode's target runtime, write
+    # MORE narration — never slow the voice.
     tts_speed: float = 1.0
     narration_gain_db: float = 0.0
-    keystroke_gain_db: float = -15.0
+    keystroke_gain_db: float = -23.0   # keystroke clicks sit well under the voice
     music_gain_db: float = -22.0
     music_duck_db: float = -6.0   # extra attenuation while narration plays
     music_path: Optional[str] = None  # None -> first file in assets/music/
@@ -57,7 +80,7 @@ class Config:
 
     # ---- IDE cosmetics ----
     project_name: str = "JohnCodes"
-    python_label: str = "Python 3.11"
+    python_label: str = "Python 3.12"
 
     def _abs(self, value: str) -> Path:
         p = Path(value)

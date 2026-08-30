@@ -1,0 +1,195 @@
+{
+  "id": "ep01-print-and-input",
+  "title": "Print, syntax basics & getting input",
+  "topic": "Basic Python · Episode 1",
+  "prompt": "Write your first program, leave notes with comments, and read input from the user.",
+  "episode": { "number": 1, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 12,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome to Basic Python. This is a crash course, fifteen short episodes, that takes you from your very first line of code all the way to writing your own classes. You do not need to have programmed before, and you do not need to install anything to follow along, you can just watch and let it sink in, then try it yourself afterwards. In this first episode we cover the three things that every single Python program is built on. Number one, showing output, with the print function. Number two, leaving notes for yourself and for other people, with comments. And number three, reading input, so that your program can actually respond to the person using it, instead of just doing the same thing every time. We will also hit a couple of the classic beginner mistakes on purpose, so that when you see them yourself, you already know what they mean. Let's start typing."
+    },
+
+    { "type": "card_topic", "cardTitle": "print", "cardSubtitle": "showing things on the screen" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "We'll start with the program that every programmer writes first. We type the word print, then an opening round bracket, then whatever we want to show on the screen, then a closing round bracket. In this case, the thing we want to show is the piece of text, Hello comma world. Notice it is wrapped in double quotation marks. In Python, a piece of text like this is called a string, and every string has to sit inside quotes. You can use double quotes, or single quotes, Python genuinely does not mind which, as long as the quote you open with matches the quote you close with. If you forget the quotes entirely, Python will think Hello and world are the names of things in your program, go looking for them, not find them, and give you an error. So the quotes are what tell Python, this is literal text, just show it exactly as I have written it. When we save this file and run it, Python starts at the very top, reads this one line, and prints those words out for us. That is your first program. It really is that small."
+    },
+    { "type": "code", "code": "print(\"Hello, world!\")" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The print function can show more than one thing at a time. If we put several items inside the brackets, separated by commas, Python prints all of them on a single line, and it automatically drops one space between each item for us, so we don't have to add those spaces ourselves. You can also freely mix text and numbers here. Notice the three in the middle has no quotes around it, because it is a real number, not text, and print is perfectly happy to show both side by side. Now, print also has a hidden setting called end. By default, every time you call print, the cursor moves down to a new line afterwards. That is because end is secretly set to a special newline character. But you can change that. If you set end to three dots, like we do on the third line here, then after printing, instead of moving down a line, Python stays exactly where it is, and the very next print carries straight on from the same spot. It is a small thing, but it is the kind of detail that trips people up when their output does not look the way they expected."
+    },
+    {
+      "type": "code",
+      "code": "print(\"Hello, world!\")\nprint(\"You have\", 3, \"lives\")\nprint(\"loading\", end=\"...\")\nprint(\"done\")"
+    },
+    {
+      "type": "narration",
+      "text": "Let's run it and see. There we go. The three items on the second line are spaced out with single spaces, exactly as promised. And the words loading and done ended up together on one line, because we told that first print to end with dots instead of a new line."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Hello, world!\nYou have 3 lives\nloading...done"
+    },
+    {
+      "type": "narration",
+      "text": "Now here is something that catches almost every beginner out at some point. The print function shows text on the screen, but it does not hand any value back to your program. Let me show you what I mean, using Python's interactive shell, where we can type one line at a time and see the result straight away."
+    },
+    {
+      "type": "narration",
+      "text": "If I print the word hi, I see hi. Fine. But watch this. If I try to grab the result of that print and store it in a box called x, the word hi still appears on screen, but when I ask Python what is actually inside x, it shows me nothing at all. And if I print x directly, Python tells me its value is None. None is a special value in Python that means, literally, nothing here. We will spend proper time with None in the next episode."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "print(\"hi\")", "output": "hi" },
+        { "input": "x = print(\"hi\")", "output": "hi" },
+        { "input": "x", "output": "" },
+        { "input": "print(x)", "output": "None" },
+        { "input": "print(1, 2, 3)", "output": "1 2 3" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Comments", "cardSubtitle": "notes that Python ignores" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "As your programs get longer, you are going to want to leave little notes inside the code. Notes for yourself, for when you come back to this file in a month and cannot remember what you were thinking. And notes for anyone else who has to read it later. In Python, a note like this is called a comment, and it starts with the hash symbol, the one on the number three key. The moment Python sees a hash on a line, it ignores everything after it, all the way to the end of that line. It does not try to run it, it does not even look at it, the comment is purely for humans. Here I have added a comment on the very first line, just describing what this little program does. When we run the file, that line does absolutely nothing, it is just there for a person reading along. And one habit worth building right from the start. Use comments to explain why you did something, not what you did. The code itself already shows what. It is the why, the reasoning, that tends to get lost."
+    },
+    {
+      "type": "code",
+      "code": "# my first Python program\nprint(\"Hello, world!\")\nprint(\"You have\", 3, \"lives\")\nprint(\"loading\", end=\"...\")\nprint(\"done\")"
+    },
+    {
+      "type": "narration",
+      "text": "You can also drop a hash partway along a line, to switch off just the end of it. That is handy for leaving a quick note next to one specific line. In the shell here you can see that a line which is nothing but a comment does absolutely nothing, and a comment tacked onto the end of a real line is simply ignored while the rest of the line still runs."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "# this line does nothing at all", "output": "" },
+        { "input": "2 + 2  # add two numbers", "output": "4" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Indentation", "cardSubtitle": "whitespace is part of the grammar" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "This next rule is the one that makes Python different from most other languages, so it is worth slowing right down for. In a lot of languages, the spaces at the start of a line are only there to make the code look tidy, and the computer ignores them completely. Those languages use curly brackets to mark where a block of code starts and ends. Python does not. In Python, those spaces at the start of the line are part of the grammar. Python uses indentation, which just means the empty space at the start of a line, to work out which lines of code belong together as a group. The standard, the one basically the whole Python world agrees on, is four spaces for each level of indentation. Not two, not a tab, four spaces. And you should never mix tabs and spaces in the same file, because they can look completely identical on screen while Python treats them as totally different characters, and that leads to errors that are genuinely hard to spot with your eyes. The good news is that almost every code editor will turn a single press of the Tab key into four spaces for you automatically, so in practice you just press Tab and it does the right thing."
+    },
+    {
+      "type": "narration",
+      "text": "Let's see what goes wrong when the indentation does not make sense. Here we have three simple print lines. But look at the middle one. It has four spaces in front of it for no reason. It is not inside a loop, it is not inside an if statement, it is not inside anything. So Python has no idea what that indentation is supposed to mean, and it refuses to run the file at all. It stops straight away, before running a single line, and it points right at line two."
+    },
+    {
+      "type": "gotcha",
+      "code": "print(\"start\")\n    print(\"oops\")\nprint(\"end\")",
+      "badLine": 2,
+      "error": "  File \"solution.py\", line 2\n    print(\"oops\")\nIndentationError: unexpected indent"
+    },
+    {
+      "type": "narration",
+      "text": "So indentation that comes out of nowhere is an error. But here is the other side of the same coin. When indentation is required, it really is required, it is not a polite suggestion, and leaving it out is also an error. Any line that ends with a colon opens up a block. That includes if statements, for loops, while loops, and function definitions, all of which we will meet in the next few episodes. The lines that belong inside that block then have to be indented, by our four spaces. Look at the two versions on screen. On the left, the print after the if is sitting all the way at the start of the line, not indented at all, so Python has no idea it is supposed to be inside the if, and it errors out. On the right, the print is tucked in by four spaces, and now Python understands that it belongs to the if, and that it should only run when the condition is actually true. Same two lines of code, completely different meaning, and the only difference is the whitespace."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "IndentationError",
+      "left": "if True:\nprint(\"hi\")",
+      "rightLabel": "Works",
+      "right": "if True:\n    print(\"hi\")",
+      "verdict": "A colon opens a block. The next lines are indented four spaces to say they belong to it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Syntax rules", "cardSubtitle": "the punctuation Python needs" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A few more rules that Python is strict about, and that you will trip over in your first week. Number one, quotes have to match. If you open a string with a double quote, you have to close it with a double quote, not a single one. Number two, brackets have to be balanced. Every opening round bracket needs a matching closing bracket, and forgetting the very last closing bracket on a line is probably the single most common beginner mistake there is. Python keeps reading onto the next line looking for that missing bracket, and gives you a confusing error a line or two later. Number three, any line that opens a block, an if, a for, a while, a function, has to end with a colon. Leave the colon off, and Python stops and tells you it expected one, right there."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "SyntaxError",
+      "left": "if x > 3\n    print(\"big\")",
+      "rightLabel": "Works",
+      "right": "if x > 3:\n    print(\"big\")",
+      "verdict": "The colon at the end of the if line is not optional."
+    },
+    {
+      "type": "card_question",
+      "question": "What does print() give back to your program when you call it?",
+      "answer": "None. It shows text on screen, it does not return it."
+    },
+
+    { "type": "card_topic", "cardTitle": "input()", "cardSubtitle": "reading from the person running the program" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Everything we have done so far, the program does all the talking. The input function is how your program listens. We call input, and the piece of text we pass inside the brackets becomes the prompt, the question that gets shown to the person running the program. Then Python does something it has not done before in this episode. It stops, and it waits. The program just freezes on that line, doing nothing, until the person types something and presses the Enter key. That pause is completely normal, the program has not crashed, it is just waiting for a human. Whatever they type then comes back as the result of the input call, and here we are catching that result and storing it in a box called name. From that point on, the word name in our code means whatever the person typed. So we can use it, for example by printing a friendly greeting with their name in the middle of it."
+    },
+    {
+      "type": "code",
+      "code": "# my first Python program\nprint(\"Hello, world!\")\nprint(\"You have\", 3, \"lives\")\nprint(\"loading\", end=\"...\")\nprint(\"done\")\n\nname = input(\"Your name? \")\nprint(\"Hi,\", name)"
+    },
+    {
+      "type": "narration",
+      "text": "When I run it now, the program prints the first few lines like before, and then it stops at the question, Your name. It is waiting for me. I type Ada, I press Enter, and it carries on and greets me. Hi, Ada."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Hello, world!\nYou have 3 lives\nloading...done\nYour name? Ada\nHi, Ada"
+    },
+    {
+      "type": "narration",
+      "text": "Now here is the catch with input, and it is an important one, so hold onto it. The input function always, always gives you back a string. A piece of text. Even when the person very clearly typed a number. So if I ask someone for their age, and they type twenty, what I actually get back is not the number twenty, it is the text, the characters two and zero. And that causes a problem the moment I try to do maths with it. If I try to add the number one to that piece of text, Python throws an error, because adding a number to text simply makes no sense to it."
+    },
+    {
+      "type": "gotcha",
+      "code": "age = input(\"Your age? \")\nprint(age + 1)",
+      "badLine": 2,
+      "error": "Your age? 20\nTraceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(age + 1)\nTypeError: can only concatenate str (not \"int\") to str"
+    },
+    {
+      "type": "narration",
+      "text": "The fix is simple once you have seen it once. You convert the string into a number yourself, before you try to do any maths with it. To turn it into a whole number, you wrap it in int, i n t. To turn it into a number that can have a decimal point, you wrap it in float instead. So on this last line, int of age takes that piece of text, the characters the person typed, and hands you back a real number. Adding one to it now works perfectly, and we can tell the person exactly how old they will be on their next birthday. This pattern, take the input, convert it, then use it, is something you will do in almost every program that asks the user for a number, so it is worth getting comfortable with now."
+    },
+    {
+      "type": "code",
+      "code": "# my first Python program\nprint(\"Hello, world!\")\nprint(\"You have\", 3, \"lives\")\nprint(\"loading\", end=\"...\")\nprint(\"done\")\n\nname = input(\"Your name? \")\nprint(\"Hi,\", name)\n\nage = input(\"Your age? \")\nprint(\"Next year:\", int(age) + 1)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Your name? Ada\nHi, Ada\nYour age? 20\nNext year: 21"
+    },
+    {
+      "type": "card_question",
+      "question": "You ask for a number with input(). What type do you actually get?",
+      "answer": "A string. Convert it with int() or float() before doing maths."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "And that is the whole foundation. Every episode from here builds on these four things, so before you go, let's lock them in."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "print() shows things — commas separate items, end= changes the line ending, and it returns None",
+        "Comments start with # and Python ignores the rest of the line",
+        "Indentation is syntax: four spaces to group code under a colon, never mixed with tabs",
+        "input() pauses for the user and always returns a string — convert with int() or float()"
+      ],
+      "next": "EP 2 — Variables, data types & None"
+    }
+  ]
+}

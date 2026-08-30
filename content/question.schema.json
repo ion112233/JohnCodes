@@ -1,47 +1,64 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "JohnCodes interview question",
+  "title": "JohnCodes script (interview question or course episode)",
   "type": "object",
-  "required": ["id", "title", "difficulty", "topic", "prompt", "complexity", "segments"],
+  "required": ["id", "title", "topic", "prompt", "segments"],
   "additionalProperties": false,
   "properties": {
-    "id": {
-      "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$",
-      "description": "kebab-case slug, unique; also the output folder / filename"
-    },
-    "title": { "type": "string", "minLength": 1, "maxLength": 40 },
-    "difficulty": { "enum": ["Easy", "Medium", "Hard"] },
-    "topic": { "type": "string", "minLength": 1, "maxLength": 28 },
-    "filename": { "type": "string", "default": "solution.py" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 48 },
+    "topic": { "type": "string", "minLength": 1, "maxLength": 40 },
     "prompt": {
       "type": "string",
-      "description": "one-sentence problem statement shown on the title card",
-      "maxLength": 160
+      "maxLength": 160,
+      "description": "one line: the problem (question) or 'by the end you can…' (episode)"
     },
+    "difficulty": { "enum": ["Easy", "Medium", "Hard"], "default": "Easy" },
+    "filename": { "type": "string", "default": "solution.py" },
+
     "complexity": {
       "type": "object",
+      "description": "interview questions only — drives the takeaway card",
       "required": ["time", "space"],
       "additionalProperties": false,
       "properties": {
-        "time": { "type": "string", "examples": ["O(n)", "O(n log n)"] },
-        "space": { "type": "string", "examples": ["O(1)", "O(n)"] }
+        "time": { "type": "string" },
+        "space": { "type": "string" }
       }
     },
+
+    "episode": {
+      "type": "object",
+      "description": "course episodes only — drives the episode card + progress dots",
+      "required": ["number", "of", "series"],
+      "additionalProperties": false,
+      "properties": {
+        "number": { "type": "integer", "minimum": 1 },
+        "of": { "type": "integer", "minimum": 1 },
+        "series": { "type": "string" }
+      }
+    },
+    "targetMinutes": {
+      "type": "number",
+      "description": "episodes: expected runtime; build warns if actual is off by >8%"
+    },
+
     "segments": {
       "type": "array",
       "minItems": 1,
-      "description": "ordered list of blocks rendered in sequence, following the beat pattern: hook -> code/narration -> terminal -> (optional gotcha card + question) -> takeaway",
+      "description": "ordered blocks. Episode beat pattern: card_episode(auto) -> per topic { card_topic, narration+code, terminal/repl, gotcha/compare, card_question } -> card_recap",
       "items": { "$ref": "#/definitions/segment" }
     }
   },
+
   "definitions": {
     "segment": {
       "type": "object",
       "required": ["type"],
       "properties": {
         "type": {
-          "enum": ["narration", "code", "terminal", "card_topic", "card_question"]
+          "enum": ["narration", "code", "terminal", "repl", "gotcha", "compare",
+                   "card_topic", "card_question", "card_recap"]
         }
       },
       "allOf": [
@@ -55,7 +72,7 @@
               "text": { "type": "string", "description": "spoken narration, sent to TTS" },
               "beat": {
                 "enum": ["hook", "walkthrough", "takeaway"],
-                "description": "optional pacing role — hook: 1-2 sentences over title card (~4-7s); walkthrough: 3-6 sentences while code types (~15-30s); takeaway: 1-2 sentence punchline (~4-8s)"
+                "description": "hook: over the opener card; walkthrough: while the next code types; takeaway: over the closer. No beat = voices the segment that follows."
               }
             }
           }
@@ -69,8 +86,7 @@
               "type": true,
               "code": {
                 "type": "string",
-                "description": "the full Python solution as it should be typed. Keep lines <= 42 chars. Use 4-space indent. No trailing newline needed.",
-                "minLength": 1
+                "description": "full file at this point; the editor keeps the common prefix with the previous code segment and types the rest. Lines <= 42 chars, 4-space indent."
               }
             }
           }
@@ -84,6 +100,58 @@
               "type": true,
               "command": { "type": "string" },
               "output": { "type": "string" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "repl" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "lines"],
+            "properties": {
+              "type": true,
+              "lines": {
+                "type": "array",
+                "minItems": 1,
+                "description": "interactive >>> session: each input types out, then its output appears",
+                "items": {
+                  "type": "object",
+                  "required": ["input"],
+                  "additionalProperties": false,
+                  "properties": {
+                    "input": { "type": "string" },
+                    "output": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "gotcha" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "code", "error"],
+            "properties": {
+              "type": true,
+              "code": { "type": "string", "description": "the broken code shown in the editor" },
+              "badLine": { "type": "integer", "description": "1-based line to mark with a red squiggle" },
+              "error": { "type": "string", "description": "the traceback / error text shown in the Run panel" }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "compare" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "left", "right"],
+            "properties": {
+              "type": true,
+              "left": { "type": "string" },
+              "leftLabel": { "type": "string", "maxLength": 28 },
+              "right": { "type": "string" },
+              "rightLabel": { "type": "string", "maxLength": 28 },
+              "verdict": { "type": "string", "maxLength": 120 }
             }
           }
         },
@@ -108,6 +176,23 @@
               "type": true,
               "question": { "type": "string", "maxLength": 120 },
               "answer": { "type": "string", "maxLength": 120 }
+            }
+          }
+        },
+        {
+          "if": { "properties": { "type": { "const": "card_recap" } } },
+          "then": {
+            "additionalProperties": false,
+            "required": ["type", "points"],
+            "properties": {
+              "type": true,
+              "points": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 5,
+                "items": { "type": "string", "maxLength": 90 }
+              },
+              "next": { "type": "string", "maxLength": 60, "description": "teaser for the next episode" }
             }
           }
         }

@@ -58,23 +58,33 @@ python3 -m johncodes build --all
    (validate against [`content/question.schema.json`](content/question.schema.json)).
 3. `python3 -m johncodes build content/questions/NNNN-<slug>.json`.
 
-A question is metadata + an ordered **`segments`** list. Auto title/takeaway
-cards wrap it; segments render in order:
+A script is metadata + an ordered **`segments`** list, compiled to scenes.
+Two flavours share the format:
+
+- **interview question** (`content/questions/`) — has `complexity`; auto title +
+  takeaway cards. Prompt: [`prompts/generate_question.md`](prompts/generate_question.md).
+- **course episode** (`content/episodes/`) — has `episode` + `targetMinutes`;
+  auto episode card, `card_recap` segment closes it. Prompt:
+  [`prompts/generate_episode.md`](prompts/generate_episode.md).
 
 | segment | becomes |
 |---|---|
-| `narration` (beat `hook` / `takeaway`) | voiceover on the auto cards |
+| `narration` (beat `hook` / `takeaway`) | voiceover on the opener / closer card |
 | `narration` (beat `walkthrough`) | voiceover played *while the next `code` types* |
 | `narration` (no beat) | voiceover of the segment that follows it |
 | `code` | IDE typing scene (full file; keeps common prefix, types the rest) |
 | `terminal` | PyCharm Run panel — command types, output prints |
-| `card_topic` | full-screen section divider |
-| `card_question` | full-screen quick-check, answer fades in |
+| `repl` | interactive `>>>` console session |
+| `gotcha` | broken code + red squiggle + traceback in the Run panel |
+| `compare` | two code panels side by side + a verdict |
+| `card_topic` | section divider (also a YouTube chapter marker) |
+| `card_question` | quick-check, answer fades in |
+| `card_recap` | closing bullets + "next episode" teaser |
 
-Key authoring constraint: **code lines ≤ 42 characters**, 6–16 lines. Narration
-is spoken, so write it how you talk ("target minus n", not "target - n").
+`build` writes `output/<id>/chapters.txt` (YouTube timestamps) and, for episodes,
+reports actual runtime vs `targetMinutes`. `--draft` renders fast at 15fps.
 
-`python3 -m johncodes preview <q.json> --scene terminal|title|takeaway|topic|question`
+`python3 -m johncodes preview <script.json> --scene typing|terminal|repl|gotcha|compare|opener|topic|question|recap`
 renders one still frame of any scene for fast iteration.
 
 ## Config
