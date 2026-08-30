@@ -17,6 +17,8 @@ title card  →  the solution typed out in a PyCharm-style IDE (voiceover)  → 
 
 ## Setup
 
+Requires **Python 3.9–3.12** (Kokoro TTS is capped at `<3.13` — 3.13/3.14 won't install).
+
 ```bash
 brew install ffmpeg espeak-ng
 python3 -m pip install -r requirements.txt
