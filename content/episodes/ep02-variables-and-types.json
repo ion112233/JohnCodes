@@ -1,0 +1,195 @@
+{
+  "id": "ep02-variables-and-types",
+  "title": "Variables, data types & None",
+  "topic": "Basic Python · Episode 2",
+  "prompt": "Store values in named variables, learn the core types, convert between them, and meet None.",
+  "episode": { "number": 2, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 15,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode two. In the last episode our programs could show things and read things, but they had nowhere to keep anything. Every value we made was used once and then thrown away. This time we fix that. We are going to cover variables, which are how you store a value and give it a name. The naming rules, so that Python actually accepts your names. The naming conventions, so that other people, and future you, can read them. The core data types, the basic kinds of value Python works with. How to convert a value from one type to another. And finally that None value we kept bumping into, together with a Python idea called truthiness. It sounds abstract, but you will use it in almost every program you write. Let's get into it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Variables", "cardSubtitle": "a name that points at a value" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A variable is one of those words that sounds far more complicated than it is. A variable is just a name that points at a value. On the first line here I write name, then an equals sign, then the text Ada in quotes. That whole line means, from this point on, the name 'name' refers to the string Ada. On the second line I do the same thing with score, and point it at the number zero. Now, the equals sign here is important to read correctly. It is not doing maths, and it is not claiming that name is equal to Ada the way it would in an algebra class. Read it from right to left, like an arrow. It takes whatever is on the right hand side, and it attaches the name on the left hand side to that value. So Python does not read this as a statement of fact that has to stay true forever. It reads it as an instruction. Evaluate the right side, then stick this label on the result. Nothing is printed, nothing is shown on screen. We have just created two labelled boxes and put something in each one. And you can make as many as you like. A real program might have dozens of variables, each one holding a small piece of what the program is working with."
+    },
+    { "type": "code", "code": "name = \"Ada\"\nscore = 0" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Once a variable exists, you use it simply by writing its name. Anywhere Python expects a value, you can put a variable, and Python swaps in whatever that variable points at. So on the third line, print name, scored, score, gives us Ada scored zero. And here is the part that makes the word variable make sense. A variable can be pointed at something new. On the fourth line I write score equals two hundred and fifty. The name score now refers to that new number, and the old zero is simply forgotten, Python does not keep a history. So the last line, the exact same print as before, now shows a different number. The code did not change. The value the name points at did."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Ada\"\nscore = 0\nprint(name, \"scored\", score)\nscore = 250\nprint(name, \"scored\", score)"
+    },
+    {
+      "type": "narration",
+      "text": "Run it, and you can see the same line of code produce two different results, because in between, we moved the score variable to point at a new value."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Ada scored 0\nAda scored 250"
+    },
+    {
+      "type": "narration",
+      "text": "In the shell it is even clearer. Every time I type score, Python does not remember what I did with it before, it just looks up what score points at right now, and hands me that. Assign it again, and the answer changes."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "score = 0", "output": "" },
+        { "input": "score", "output": "0" },
+        { "input": "score = 250", "output": "" },
+        { "input": "score", "output": "250" },
+        { "input": "score + score", "output": "500" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Naming", "cardSubtitle": "what Python allows, and what humans need" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Python is picky about what a name is allowed to be, and the rules are short. A name can contain letters, digits, and the underscore character, and that is it. No spaces. No punctuation, so no dashes and no dots inside a name. It cannot start with a digit, although it is allowed to start with an underscore. And it cannot be one of Python's reserved words. There are about thirty five of these, words like if, else, for, while, def, class, return, True, False, and None. Python has claimed them for its own grammar, so you cannot use them as variable names. You do not need to memorise the list, your editor will colour them differently and you will learn them naturally as we go. One more thing that catches people out constantly. Names are case sensitive. The name score, all lowercase, and the name Score, with a capital S, are two completely different variables as far as Python is concerned. If you assign one and then read the other, Python will tell you the second one does not exist. Break any of the hard rules and Python stops with a syntax error before it runs a single line, which is actually helpful, because it fails immediately and points right at the problem, instead of doing something strange further down."
+    },
+    {
+      "type": "narration",
+      "text": "Here is the classic first mistake. I try to name a variable two fast, starting with the digit two. Python will not have it. It points at the line and tells me the name is not valid."
+    },
+    {
+      "type": "gotcha",
+      "code": "2fast = 10\nprint(2fast)",
+      "badLine": 1,
+      "error": "  File \"solution.py\", line 1\n    2fast = 10\n     ^\nSyntaxError: invalid decimal literal"
+    },
+    {
+      "type": "narration",
+      "text": "So those are the rules Python enforces. The conventions are what separate code that other people can read from code they cannot, and Python does not check these at all. They are on you. Convention one. Use lowercase, and join words together with underscores. This style is called snake case, because a name like total_score, with the underscores sitting low between the words, looks a little like a snake lying flat on the ground. So total_score, not totalScore with a capital S in the middle, and definitely not TotalScore starting with a capital. Those other styles are used in other languages, but in Python, snake case is the standard for variables, and sticking to it makes your code look like Python. There is one exception worth knowing. If a value is a fixed setting that never changes while the program runs, people write its name in all capitals, like MAX_SPEED, to signal 'this is a constant, do not reassign it'. Python does not enforce that either, it is just a shared signal. Convention two, and this is the important one. The name should say what the value means. A name like x, or data, or temp, tells the reader nothing at all. A name like monthly_income tells them everything. Look at these two versions on screen. They compute exactly the same result. But the one on the right, you can read out loud and just understand. The one on the left, you have to run in your head, tracking what x and y and z stand for. You will spend far more of your life reading code than writing it, and most of that reading is your own code, months later, when you have completely forgotten what you were thinking."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "hard to follow",
+      "left": "x = 1500\ny = x * 12\nz = y * 0.8",
+      "rightLabel": "reads itself",
+      "right": "monthly = 1500\nyearly = monthly * 12\ntake_home = yearly * 0.8",
+      "verdict": "names are documentation. spend the two seconds now."
+    },
+
+    { "type": "card_topic", "cardTitle": "Data types", "cardSubtitle": "the basic kinds of value" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Every value in Python has a type, a category that it belongs to. There are five types you need to know right now. The first is the string, spelled s t r. A string is text. Any text at all, a single letter, a word, a whole paragraph, and it always sits inside quotes. The second is the integer, spelled i n t. An integer is a whole number. Positive, negative, or zero, with no decimal point. Here is a genuinely nice detail about Python. Integers have no size limit. In a lot of languages a number that gets too big will silently break or wrap around, but in Python you can multiply two numbers that each have a hundred digits and it just quietly gives you the right two hundred digit answer. The third type is the float. A float is a number with a decimal point, like three point five, or one point zero, or minus zero point two five. The name is short for floating point, and for now you can just read it as 'a number that is allowed to have a fractional part'. Why does Python have both int and float, instead of one number type? Speed and precision, mostly, and floats have some rounding quirks that integers do not, which we will actually look at next episode. The fourth type is the boolean, spelled b o o l. A boolean has exactly two possible values, True and False, each written with a capital first letter, and nothing else. Booleans are what if statements and while loops run on, so we will lean on them very heavily starting next episode. And the fifth is None, which is Python's way of saying 'there is deliberately no value here'. None is its own type, it is called NoneType, and there is only ever one None in the entire language, every None you ever see is the same one."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Let's add one of each to our little program. Best is a float, four point five. Active is a boolean, True. And badge is None, because our player has not earned a badge yet. Notice we did not have to tell Python any of these types. It works out the type from how you write the value. Quotes make a string. Digits with no dot make an integer. Digits with a dot make a float. The words True and False make a boolean. And the word None makes a None."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Ada\"\nscore = 0\nprint(name, \"scored\", score)\nscore = 250\nprint(name, \"scored\", score)\n\nbest = 4.5\nactive = True\nbadge = None"
+    },
+    {
+      "type": "narration",
+      "text": "If you ever want to check, the type function tells you the type of any value. It is worth a minute in the shell just to see them all. Notice that three, and three point zero, come back as different types. To Python they are not the same kind of number."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "type(\"Ada\")", "output": "<class 'str'>" },
+        { "input": "type(250)", "output": "<class 'int'>" },
+        { "input": "type(3.0)", "output": "<class 'float'>" },
+        { "input": "type(True)", "output": "<class 'bool'>" },
+        { "input": "type(None)", "output": "<class 'NoneType'>" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "Are 3 and 3.0 the same type in Python?",
+      "answer": "No. 3 is an int, 3.0 is a float."
+    },
+
+    { "type": "card_topic", "cardTitle": "Type conversion", "cardSubtitle": "turning one type into another" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Sometimes you have a value of one type and you need it as another. The tools for this are named after the types themselves. Int of something tries to turn it into a whole number. Float of something turns it into a decimal number. Str of something turns it into text, which is handy when you want to glue a number into a message you are building. And bool of something turns it into True or False, which we will come back to in a moment. By far the most common case is the one from last episode. Input always hands you a string, so if you want to do maths with what the user typed, you have to convert it first. Here we read a new score as text into a variable called raw, convert it with int, and add it onto the running score. Now, a few things to watch out for. First, converting a float to an integer with the int function does not round to the nearest whole number. It just chops off everything after the decimal point. So int of three point nine is three, not four, and int of minus two point seven is minus two. If you actually want rounding, there is a separate round function, and we will meet it next episode. Second, and this is the important one, converting text that is not actually a number, like the word hello, does not quietly give you zero, and it does not give you None. It raises an error and stops your program cold. Third, some conversions are always safe. Str of anything works, because anything can be turned into some text. It is int and float that are fussy about what they will accept."
+    },
+    {
+      "type": "code",
+      "code": "name = \"Ada\"\nscore = 0\nprint(name, \"scored\", score)\nscore = 250\nprint(name, \"scored\", score)\n\nbest = 4.5\nactive = True\nbadge = None\n\nraw = input(\"new score? \")\nscore = score + int(raw)\nprint(\"total:\", score)"
+    },
+    {
+      "type": "narration",
+      "text": "Here is that error, so you recognise it later. I call int on the word hello. Python has no way to read that as a number, so it raises a ValueError, and tells me exactly what it could not convert."
+    },
+    {
+      "type": "gotcha",
+      "code": "raw = \"hello\"\nscore = int(raw)",
+      "badLine": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    score = int(raw)\nValueError: invalid literal for int() with base 10: 'hello'"
+    },
+    {
+      "type": "narration",
+      "text": "But when the input really is a number, the conversion is clean. Run the program, type a real number, and it adds correctly onto the score. Handling the case where the user types junk is a real skill, and it gets its own episode later on, episode eleven."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Ada scored 0\nAda scored 250\nnew score? 75\ntotal: 325"
+    },
+
+    { "type": "card_topic", "cardTitle": "None & truthiness", "cardSubtitle": "the 'no value' value, and what counts as true" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "We have met None a few times, so let's pin it down properly. None is a real, actual value. It is what you reach for when you want to say 'this variable exists, but it does not have a meaningful value yet'. Our badge variable is the perfect example. The player has not earned a badge. Badge is not an empty string, it is not zero, it is None. It genuinely means nothing is here. One more source of None, functions that do not explicitly hand a value back give you None, which is exactly why capturing the result of print in a variable, back in episode one, left that variable holding None."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One quick note on checking for None. Because there is only ever one None, the clean way to test for it is to write, if badge is None, using the word is, rather than the double equals sign. We will properly meet the is keyword later, but get into that habit early, if something is None, use is None. Now, truthiness. This is a Python idea that shows up absolutely everywhere. In any place where Python expects a yes or a no, like an if statement, or the condition of a while loop, you are allowed to put almost any value, not just True or False, and Python will decide for itself whether that value counts as true or false. Most values are truthy, they count as true. But there is a specific, short list of values that are falsy, they count as false. That list is, False itself, None, the number zero, the float zero point zero, an empty string, and any empty collection, such as an empty list. Six things, and everything else in the entire language is truthy. Every non-empty string, even the string containing just a space, every number that is not zero, every non-empty list. All truthy. You can check any value yourself with the bool function, which is really just 'show me the truthiness of this value'. This matters because you will constantly write things like, if the user's name is not empty, then greet them, or, while there are still items left to process, keep going. And it is Python's truthiness rules that let you write those in that short, natural way, instead of spelling out a full comparison every time."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "bool(0)", "output": "False" },
+        { "input": "bool(\"\")", "output": "False" },
+        { "input": "bool(None)", "output": "False" },
+        { "input": "bool([])", "output": "False" },
+        { "input": "bool(\"hi\")", "output": "True" },
+        { "input": "bool(-5)", "output": "True" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "Which of these is falsy: 0, \"0\", or \"False\"?",
+      "answer": "Only 0. Any non-empty string, including \"0\", is truthy."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "That is a big episode. You now have somewhere to keep your values, you know the five core types, you can move between them, and you understand what Python treats as true and false. Next time we go deep on the type you will use more than any other. Strings. Slicing them, searching them, and formatting them cleanly."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a variable is a name pointing at a value — assign with =, and re-point it whenever you like",
+        "names use snake_case, can't start with a digit, are case-sensitive, and should say what they mean",
+        "the five core types: str, int, float, bool, and none — the last one meaning 'no value'",
+        "int, float, str and bool convert between types; feeding junk to int or float raises an error",
+        "none, false, zero, empty text, and empty collections are falsy — everything else is truthy"
+      ],
+      "next": "EP 3 — Strings, string methods & f-strings"
+    }
+  ]
+}

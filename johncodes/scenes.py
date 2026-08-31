@@ -535,7 +535,7 @@ class ReplScene(Scene):
         head_h = 48
 
         # size the console box to the full session, centred vertically
-        total_rows = sum(1 + max(1, len((l.output or "").split("\n")) if l.output else 0)
+        total_rows = sum(1 + (len(l.output.split("\n")) if l.output else 0)
                          for l in self.lines)
         box_h = min(H - 140, head_h + 40 + total_rows * lh)
         box_w = W - 140
@@ -554,7 +554,7 @@ class ReplScene(Scene):
             d.text((x, y), ">>> ", font=mono.regular, fill=theme.CONSOLE_PROMPT)
             d.text((x + mono.char_w * 4, y), inp, font=mono.regular, fill=theme.FG_DEFAULT)
             y += lh
-            if outp is not None:
+            if outp:   # an assignment / statement with no result prints nothing
                 for oln in outp.split("\n"):
                     d.text((x, y), oln, font=mono.regular, fill=theme.CONSOLE_OUT)
                     y += lh
