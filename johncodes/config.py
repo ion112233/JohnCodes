@@ -23,14 +23,15 @@ class Config:
     x264_preset: str = "medium"
 
     # ---- scene pacing (seconds) ----
-    title_min: float = 3.0
+    title_min: float = 5.0       # a title / opener card is on screen >= this long
     title_pad: float = 0.7
     typing_min: float = 9.0
     typing_pad: float = 1.0
     typing_lead: float = 0.6     # silent beat before typing starts
     explain_min: float = 3.5
     explain_pad: float = 1.1
-    fade: float = 0.35           # global fade in/out
+    fade: float = 0.35           # global fade from / to black at the very ends
+    xfade: float = 0.45          # crossfade dissolve between every scene
 
     # Code types at a natural, fixed speed and is ALLOWED to finish before the
     # narration does (it then just sits there complete). Do NOT stretch typing to
@@ -43,8 +44,8 @@ class Config:
     question_reveal_gap: float = 10.0
 
     # ---- course-episode scenes ----
-    episode_min: float = 4.0
-    topic_min: float = 2.6
+    episode_min: float = 5.0
+    topic_min: float = 5.0       # sub-chapter title cards hold >= 5s
     recap_min: float = 5.0
     gotcha_min: float = 5.0
     compare_min: float = 5.0
@@ -59,10 +60,11 @@ class Config:
     sample_rate: int = 24000
     tts_voice: str = "am_michael,am_fenrir"  # Kokoro voice id, or comma-list to blend
     tts_lang: str = "a"          # 'a' = American English, 'b' = British
-    # Keep this at (or very near) 1.0. The voice was chosen at 1.0; slowing it
-    # down makes it sound artificial. To hit an episode's target runtime, write
-    # MORE narration — never slow the voice.
-    tts_speed: float = 1.0
+    # Kokoro playback rate. 0.9 = a touch below the reference speed — calm,
+    # still natural. Don't go much lower (≤0.8 starts to sound artificial).
+    # Hit an episode's target runtime with narration word count, not by slowing
+    # the voice further.
+    tts_speed: float = 0.9
     narration_gain_db: float = 0.0
     keystroke_gain_db: float = -23.0   # keystroke clicks sit well under the voice
     music_gain_db: float = -22.0

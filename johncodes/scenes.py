@@ -37,6 +37,12 @@ def _tri(d, x, cy, h, color):
     d.polygon([(x, cy - h / 2), (x, cy + h / 2), (x + h * 0.88, cy)], fill=color)
 
 
+def _lc(s: str | None) -> str:
+    """All card text is rendered lowercase — the channel's house style.
+    (Code inside code/terminal/repl/gotcha/compare panels is never touched.)"""
+    return s.lower() if s else ""
+
+
 def _gradient_bg(W: int, H: int) -> Image.Image:
     img = Image.new("RGB", (W, H), theme.CARD_BG)
     d = ImageDraw.Draw(img)
@@ -76,16 +82,16 @@ class TitleCard(Scene):
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 34)
 
         title_font = self.fonts.ui(118, bold=True)
-        title_lines = wrap_text(self.q.title, title_font, W * 0.8)
+        title_lines = wrap_text(_lc(self.q.title), title_font, W * 0.8)
         pf = self.fonts.ui(38)
-        prompt_lines = wrap_text(self.q.prompt, pf, W * 0.66)[:3]
+        prompt_lines = wrap_text(_lc(self.q.prompt), pf, W * 0.66)[:3]
 
         kh, th, gap1, ph, gap2, pmh = 40, 132, 44, 60, 52, 50
         block_h = kh + gap1 + len(title_lines) * th + gap1 + ph + gap2 + len(prompt_lines) * pmh
         y = (H - block_h) / 2 - 20 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        ktext = "PYTHON   ·   INTERVIEW"
+        ktext = "python   ·   interview"
         d.text(((W - d.textlength(ktext, font=kicker)) / 2, y), ktext, font=kicker, fill=theme.ACCENT)
         y += kh + gap1
         for ln in title_lines:
@@ -95,15 +101,16 @@ class TitleCard(Scene):
         y += gap1
 
         pill_font = self.fonts.ui(30, bold=True)
-        label = self.q.difficulty.upper()
+        label = _lc(self.q.difficulty)
         pw = d.textlength(label, font=pill_font)
         topic_font = self.fonts.ui(30)
-        tw = d.textlength(self.q.topic, font=topic_font)
+        topic = _lc(self.q.topic)
+        tw = d.textlength(topic, font=topic_font)
         gap = 26
         x = (W - (pw + 52 + gap + tw)) / 2
         d.rounded_rectangle([x, y, x + pw + 52, y + 54], radius=27, fill=_pill(self.q.difficulty))
         d.text((x + 26, y + 10), label, font=pill_font, fill=(18, 22, 18))
-        d.text((x + pw + 52 + gap, y + 11), self.q.topic, font=topic_font, fill=theme.CARD_MUTED)
+        d.text((x + pw + 52 + gap, y + 11), topic, font=topic_font, fill=theme.CARD_MUTED)
         y += ph + gap2
 
         for ln in prompt_lines:
@@ -225,9 +232,9 @@ class TopicCard(Scene):
         d = ImageDraw.Draw(img)
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 30)
         tf = self.fonts.ui(96, bold=True)
-        lines = wrap_text(self.title, tf, W * 0.78)
+        lines = wrap_text(_lc(self.title), tf, W * 0.78)
         sf = self.fonts.ui(40)
-        subs = wrap_text(self.subtitle, sf, W * 0.62) if self.subtitle else []
+        subs = wrap_text(_lc(self.subtitle), sf, W * 0.62) if self.subtitle else []
         block = len(lines) * 108 + (40 + len(subs) * 52 if subs else 0)
         y = (H - block) / 2 - 10 + dy
         # accent rule
@@ -263,14 +270,14 @@ class QuestionCard(Scene):
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 28)
 
         qf = self.fonts.ui(62, bold=True)
-        qlines = wrap_text(self.question, qf, W * 0.74)
+        qlines = wrap_text(_lc(self.question), qf, W * 0.74)
         af = self.fonts.ui(48, bold=True)
-        alines = wrap_text(self.answer, af, W * 0.72) if self.answer else []
+        alines = wrap_text(_lc(self.answer), af, W * 0.72) if self.answer else []
         block = 56 + len(qlines) * 80 + (72 + len(alines) * 60 if alines else 0)
         y = (H - block) / 2 - 10 + dy
 
         kicker = self.fonts.ui(34, bold=True)
-        kt = "QUICK CHECK"
+        kt = "quick check"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT_ORANGE)
         y += 56
         for ln in qlines:
@@ -300,7 +307,7 @@ class ExplainCard(Scene):
         d = ImageDraw.Draw(img)
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 30)
 
-        take = self.q.narration_beat("takeaway") or ""
+        take = _lc(self.q.narration_beat("takeaway"))
         tf = self.fonts.ui(48, bold=True)
         take_lines = wrap_text(take, tf, W * 0.66) if take else []
         kh, gap1, chip_h, gap2, lh = 40, 52, 160, 70, 66
@@ -308,13 +315,13 @@ class ExplainCard(Scene):
         y = (H - block_h) / 2 - 40 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        kt = "THE TAKEAWAY"
+        kt = "the takeaway"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT_GREEN)
         y += kh + gap1
 
         val_font = self.fonts.ui(56, bold=True)
         label_font = self.fonts.ui(25, bold=True)
-        chips = [("TIME", self.q.complexity.time), ("SPACE", self.q.complexity.space)]
+        chips = [("time", self.q.complexity.time), ("space", self.q.complexity.space)]
         chip_w, gap = 420, 44
         x0 = (W - (chip_w * 2 + gap)) / 2
         for i, (lab, val) in enumerate(chips):
@@ -332,7 +339,7 @@ class ExplainCard(Scene):
             y += lh
 
         cta = self.fonts.ui(34, bold=True)
-        ct = "follow for daily Python interview prep"
+        ct = "follow for daily python interview prep"
         cw = d.textlength(ct, font=cta)
         fy = H * 0.84
         _tri(d, (W - cw) / 2 - 46, fy + 22, 32, theme.ACCENT)
@@ -398,14 +405,14 @@ class EpisodeCard(Scene):
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 34)
 
         tf = self.fonts.ui(120, bold=True)
-        tlines = wrap_text(self.q.title, tf, W * 0.82)
+        tlines = wrap_text(_lc(self.q.title), tf, W * 0.82)
         lf = self.fonts.ui(37)
-        llines = wrap_text(self.q.prompt, lf, W * 0.62)[:2]
+        llines = wrap_text(_lc(self.q.prompt), lf, W * 0.62)[:2]
         block = 44 + 46 + len(tlines) * 132 + 60 + 40 + len(llines) * 50 + 70
         y = (H - block) / 2 - 10 + dy
 
         kicker = self.fonts.ui(37, bold=True)
-        kt = f"{ep.series.upper()}   ·   EPISODE {ep.number} / {ep.of}"
+        kt = f"{_lc(ep.series)}   ·   episode {ep.number} / {ep.of}"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT)
         y += 44 + 46
         for ln in tlines:
@@ -450,13 +457,13 @@ class RecapCard(Scene):
         dy = int((1 - ease_out_cubic(min(1.0, t / 0.5))) * 30)
 
         bf = self.fonts.ui(44, bold=True)
-        wrapped = [wrap_text(p, bf, W * 0.7) for p in self.points]
+        wrapped = [wrap_text(_lc(p), bf, W * 0.7) for p in self.points]
         rows = sum(len(w) for w in wrapped)
         block = 44 + 60 + rows * 56 + len(self.points) * 26 + (130 if self.next_up else 0)
         y = (H - block) / 2 - 30 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        d.text(((W - d.textlength("RECAP", font=kicker)) / 2, y), "RECAP",
+        d.text(((W - d.textlength("recap", font=kicker)) / 2, y), "recap",
                font=kicker, fill=theme.ACCENT_GREEN)
         y += 60 + 20
 
@@ -479,7 +486,7 @@ class RecapCard(Scene):
                 y += len(wl) * 56 + 26
             y += 46
             nf = self.fonts.ui(32, bold=True)
-            nt = f"NEXT  ·  {self.next_up}"
+            nt = f"next  ·  {_lc(self.next_up)}"
             _tri(d, (W - d.textlength(nt, font=nf)) / 2 - 44, y + 20, 30, theme.ACCENT)
             d.text(((W - d.textlength(nt, font=nf)) / 2, y), nt, font=nf, fill=theme.ACCENT)
         return img
@@ -610,14 +617,15 @@ class CompareScene(Scene):
         ph = max(_panel_height(self.fonts, self.left[1], pw),
                  _panel_height(self.fonts, self.right[1], pw))
         vf = self.fonts.ui(38, bold=True)
-        vlines = wrap_text(self.verdict, vf, W * 0.82) if self.verdict else []
+        vlines = wrap_text(_lc(self.verdict), vf, W * 0.82) if self.verdict else []
         block = 46 + ph + (60 + len(vlines) * 50 if vlines else 0)
         top = (H - block) / 2 + 46 + int((1 - appear) * 18)
 
         for i, (label, code) in enumerate((self.left, self.right)):
             x = x0 + i * (pw + gap)
             col = theme.BAD if i == 0 else theme.GOOD
-            _code_panel(img, self.fonts, x, top, pw, ph, code, label=label, label_color=col)
+            _code_panel(img, self.fonts, x, top, pw, ph, code,
+                        label=_lc(label) or None, label_color=col)
 
         if vlines:
             vy = top + ph + 60
