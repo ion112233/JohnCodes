@@ -57,6 +57,16 @@
     },
     { "type": "code", "code": "names = [\"Ada\", \"Alan\", \"Grace\"]\n\nwith open(\"report.txt\", \"w\") as f:\n    f.write(\"name list\\n\")\n    for name in names:\n        f.write(name + \"\\n\")\n\nprint(\"wrote report.txt\")" },
     {
+      "type": "narration",
+      "text": "Run that and there is a new file, report dot txt, next to your script, with four lines in it. Run the same program again and you get the same four lines, not eight, because mode w wiped the file before rewriting it. That is what you want for a report. Now contrast it with append. Here is a tiny logger. Every time it runs it opens log dot txt in mode a and writes one line. Because it is append mode, each run adds a line and keeps everything already there. Run it three times and the file has three lines, in order. With mode w it would only ever hold the single most recent line, and the history, the whole point of a log, would be gone."
+    },
+    { "type": "code", "code": "with open(\"log.txt\", \"a\") as f:\n    f.write(\"program ran\\n\")\n\nprint(\"logged\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py  # run 3 times",
+      "output": "logged\nlogged\nlogged"
+    },
+    {
       "type": "gotcha",
       "code": "# you have a log file with 500 lines\nwith open(\"log.txt\", \"w\") as f:\n    f.write(\"new entry\\n\")",
       "badLine": 2,

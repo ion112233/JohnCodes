@@ -104,6 +104,16 @@ def build_short(question_path: str | Path, cfg: Config, *,
             narration_windows.append((clock + off, clock + off + dd))
         clock += scene.duration
 
+    def _flush_hold(audio, adur: float):
+        """Play leftover narration as its own scene, holding on the current code
+        (or a blank editor). Used when narration isn't adjacent to a code demo."""
+        if audio is None:
+            return
+        buf = code_buffer or " "
+        sc = TypingScene(cfg, fonts, q, start_code=buf, end_code=buf,
+                         duration=max(3.5, adur + 1.4), lead=0.0, seed=f"{q.id}-hold{len(scenes)}")
+        add(sc, audio, adur, 0.3)
+
     # ---- opener ----
     if q.is_episode:
         odur = max(cfg.episode_min, (hook_dur + cfg.title_pad) if hook_dur else cfg.episode_min)
@@ -183,8 +193,9 @@ def build_short(question_path: str | Path, cfg: Config, *,
                 p_audio, p_dur, 0.35, chapter=seg.card_title)
 
         elif seg.type == "card_question":
-            # the question and the answer are both read aloud; the answer appears
-            # `question_reveal_gap` seconds after the question shows up.
+            # narration queued before this plays first, as its own hold scene
+            _flush_hold(p_audio, p_dur)
+            p_audio, p_dur = None, 0.0
             q_audio, q_dur = _say(narrator, f"Quick check. {seg.question}", tts_cache)
             a_audio, a_dur = _say(narrator, seg.answer, tts_cache) if seg.answer else (None, 0.0)
             reveal = max(cfg.question_reveal_gap, q_dur + 1.0)
@@ -197,9 +208,7 @@ def build_short(question_path: str | Path, cfg: Config, *,
 
     if pending:
         p_audio, p_dur = _say_all(narrator, pending, tts_cache, cfg.sample_rate)
-        sc = TypingScene(cfg, fonts, q, start_code=code_buffer, end_code=code_buffer or " ",
-                         duration=max(cfg.typing_min, p_dur + 1.2), lead=0.0, seed=f"{q.id}-hold")
-        add(sc, p_audio, p_dur, 0.3)
+        _flush_hold(p_audio, p_dur)
 
     # ---- closer ----
     if recap_seg is not None:

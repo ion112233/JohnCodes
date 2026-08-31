@@ -207,8 +207,8 @@ def load_question(path: str | Path) -> Question:
     if not isinstance(raw_segments, list) or not raw_segments:
         _err(path, "'segments' must be a non-empty array")
     segments = [_parse_segment(s, path, i) for i, s in enumerate(raw_segments)]
-    if not any(s.type == "code" for s in segments):
-        _err(path, "at least one 'code' segment is required")
+    if not any(s.type in ("code", "gotcha", "compare") for s in segments):
+        _err(path, "at least one 'code', 'gotcha' or 'compare' segment is required")
 
     return Question(
         id=qid,
