@@ -1,0 +1,161 @@
+{
+  "id": "ep04-numbers-and-logic",
+  "title": "Numbers, operators & boolean logic",
+  "topic": "Basic Python · Episode 4",
+  "prompt": "Do arithmetic, handle floating-point quirks, compare values, and combine conditions with and, or and not.",
+  "episode": { "number": 4, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 13,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode four. This episode is about numbers, and about logic, and the two are more connected than they look. We will start with arithmetic, the ordinary maths operators, plus a couple you have probably not seen before, and the shortcut way to update a variable. Then we will look at floating point numbers, and the genuinely surprising way they sometimes behave, and the round function that helps you deal with it. Then comparison operators, which are how you ask Python a precise yes or no question about two values. And finally the boolean operators, and, or, and not, which let you combine those questions into a real condition. Everything in this episode feeds directly into the next one, on if statements, so think of this as laying the track. Let's get into it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Arithmetic", "cardSubtitle": "the maths operators" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The basic operators are exactly what you would expect. A plus sign for addition, a minus sign for subtraction, and the star, the asterisk, for multiplication. Python does not use the letter x for multiply, like you might write on paper, it uses the star, always. For division, you use the forward slash. But there is something important to know about it. In Python, the forward slash always gives you back a float, a decimal number, even when the division comes out perfectly even. Twenty divided by four is five point zero, with a point zero on the end, not just plain five. That surprises people. If you actually want a whole number result, there is a second division operator, two forward slashes together, called floor division. It divides, and then throws away anything after the decimal point, always rounding down, giving you a whole number. And its natural partner is the percent sign, which here is called modulo. Modulo gives you the remainder of a division. Seven modulo three is one, because three goes into seven twice, with one left over. Modulo sounds obscure and mathematical, but it comes up constantly in real code. The classic example, a number is even if that number modulo two equals zero, and odd otherwise. There is also a double star, two asterisks, for powers. Two, double star, ten, is two to the power of ten."
+    },
+    { "type": "code", "code": "price = 20\nqty = 3\ntotal = price * qty\nprint(total)" },
+    {
+      "type": "narration",
+      "text": "Let's see the division operators side by side, because the difference matters. Same two numbers every time, and four completely different answers. Plain slash gives a float, three point four. Double slash gives just the whole part, three. Percent gives the remainder, two. And the double star does powers. It is really worth spending a minute in the shell getting a feel for these, especially floor division and modulo, because they are new. A quick real world example of modulo. Say you have a number of seconds, and you want it as minutes and seconds. Total seconds, floor divided by sixty, gives you the whole minutes. Total seconds, modulo sixty, gives you the leftover seconds. Those two operators, together, are how you break any quantity into a bigger unit and a remainder. Hours and minutes, dollars and cents, pages and lines, it is the same pattern every time."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "17 / 5", "output": "3.4" },
+        { "input": "17 // 5", "output": "3" },
+        { "input": "17 % 5", "output": "2" },
+        { "input": "2 ** 10", "output": "1024" },
+        { "input": "10 % 2", "output": "0" }
+      ]
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Two more things about arithmetic. First, Python follows the normal order of operations, the one you learned in school. Multiplication and division happen before addition and subtraction, and powers happen before those. If you are ever unsure, or if the expression is getting hard to read, just add round brackets to force the order and make your intent obvious. Two plus three, times four, is fourteen. But bracket the two plus three, and it is twenty. Second, there is a shorthand for the very common job of updating a variable based on its own current value. Instead of writing score equals score plus ten, you can write score, plus equals, ten. It means exactly the same thing, take the current score, add ten, store it back. And it works for all the operators. Minus equals, star equals, slash equals. You will see plus equals everywhere, especially once we start counting things up inside loops."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "2 + 3 * 4", "output": "14" },
+        { "input": "(2 + 3) * 4", "output": "20" },
+        { "input": "score = 100", "output": "" },
+        { "input": "score += 25", "output": "" },
+        { "input": "score", "output": "125" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "What does 7 // 2 give, and what does 7 % 2 give?",
+      "answer": "7 // 2 is 3 (the whole part). 7 % 2 is 1 (the remainder)."
+    },
+
+    { "type": "card_topic", "cardTitle": "Floats", "cardSubtitle": "why 0.1 + 0.2 isn't 0.3" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here is something that looks exactly like a bug, but is not. Type nought point one, plus nought point two, into Python, and instead of a clean nought point three, you get nought point three, followed by a string of zeros, and then a four right at the very end. This is not Python being broken, and it is not just a Python thing, almost every programming language does this. It is a fundamental fact about how computers store decimal numbers. Under the hood, a computer stores numbers in binary, in base two. And just like the fraction one third cannot be written exactly as a decimal, it goes nought point three three three forever, most simple decimals like nought point one cannot be written exactly in binary. So the computer stores the closest value it possibly can, and that value is very slightly off. Do a bit of arithmetic with several of these slightly off values, and the tiny errors add up into something you can actually see."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The practical rules you need to take away are these. Rule one. Never check whether two floats are exactly equal with the double equals operator. Nought point one plus nought point two, double equals nought point three, comes back False, and that is technically correct, because they really are not exactly equal. Rule two. Whenever you show a float to a person, round it first. The round function takes the number, and then, optionally, how many decimal places you want to keep. Round of that sum, to two places, gives you a clean nought point three. Round of pi, to two places, gives you three point one four. Rule three, if you are ever working with real money, plain floats are not the right tool, there are better options in Python for that, and you should look them up when the time comes. For everything else in this course, floats are fine, as long as you round before you display."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "0.1 + 0.2", "output": "0.30000000000000004" },
+        { "input": "0.1 + 0.2 == 0.3", "output": "False" },
+        { "input": "round(0.1 + 0.2, 2)", "output": "0.3" },
+        { "input": "round(3.14159, 2)", "output": "3.14" },
+        { "input": "round(2.5)", "output": "2" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "One quirk of round itself, worth a quick mention so it does not surprise you. When a number is exactly halfway between two whole numbers, like two point five, Python does not always round up. It rounds to the nearest even number. So two point five rounds to two, and three point five rounds to four. It is called banker's rounding, and it exists to avoid a slight upward bias when you round a large batch of numbers. You will not run into it often, just do not panic when two point five becomes two."
+    },
+
+    { "type": "card_topic", "cardTitle": "Comparisons", "cardSubtitle": "asking a yes or no question" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A comparison operator takes two values, and gives you back a single boolean, True or False, nothing else. There are six of them. Double equals asks 'are these two equal'. An exclamation mark, then an equals sign, asks 'are these not equal'. And then the four you already know from maths class, less than, greater than, less than or equal to, greater than or equal to, each written the way you would expect, with the equals sign coming second. Now, the single most important thing in this whole episode, and I want you to really hear this. A single equals sign is assignment. It is a command. It puts a value into a variable, and it does not produce a true or false. A double equals sign is a comparison. It is a question. It checks whether two things are the same, and it hands back True or False. Mixing these two up is easily the most common bug in your first month of programming, and everyone does it, repeatedly. If you mean 'is the total the same as sixty', you must write total, double equals, sixty. Say it in your head as 'total, is it equal to, sixty'. Writing total, single equals, sixty, where a question was expected, is at best an error that stops you, and at worst it quietly assigns and moves on, and now your program is subtly wrong and you have no idea where."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A couple more things. Comparisons work on strings too, not just numbers. Strings compare alphabetically, character by character, so the string apple is less than the string banana. And it is case sensitive, capital letters actually sort before lowercase ones, which is occasionally surprising. Also, Python lets you chain comparisons in a way most languages do not. You can write nought, less than, x, less than, ten, all on one line, and it checks that x is between nought and ten, reading exactly like the maths. And finally, there are a few handy built in functions in this area. Abs gives you the absolute value, stripping off a minus sign. Min and max take several values, or a list, and give you the smallest or largest."
+    },
+    {
+      "type": "code",
+      "code": "price = 20\nqty = 3\ntotal = price * qty\nprint(total)\n\nprint(total == 60)\nprint(total > 50)\nprint(0 < total < 100)" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "10 == 10", "output": "True" },
+        { "input": "10 != 10", "output": "False" },
+        { "input": "3 <= 3", "output": "True" },
+        { "input": "\"apple\" < \"banana\"", "output": "True" },
+        { "input": "abs(-7)", "output": "7" },
+        { "input": "max(4, 9, 2)", "output": "9" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Boolean logic", "cardSubtitle": "and, or, not" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Comparisons give you single true or false answers. The boolean operators let you combine several of them into one condition. There are three, and they are just the plain English words. And is true only when both sides are true. Read it as 'this, and also that'. Or is true when at least one side is true. Note that it is an inclusive or, so it is also true when both sides happen to be true, which is different from how we sometimes use the word 'or' in everyday speech. And not simply flips a boolean over. Not True is False. Not False is True. You use these three to build up a real world condition out of smaller questions. For example. This order qualifies for free shipping if the total is over fifty, and the customer is a member. That is two separate yes or no questions, joined together with and. Or. The form is invalid if the name is empty, or the email is empty. Two questions joined with or. In our little program here, we work out whether the total counts as a big order, and whether the price counts as cheap, and then we combine those two facts every possible way. Read each line as an English sentence and it just makes sense."
+    },
+    {
+      "type": "code",
+      "code": "price = 20\nqty = 3\ntotal = price * qty\nprint(total)\n\nbig = total > 50\ncheap = price < 30\nprint(big and cheap)\nprint(big or cheap)\nprint(not big)" },
+    {
+      "type": "narration",
+      "text": "In the shell you can walk through every combination. And needs both sides to be true. Or needs just one. Not flips whatever it is given. Notice how naturally these read. Not, open bracket, five greater than three, close bracket, is just 'it is not the case that five is greater than three', which is False."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "True and True", "output": "True" },
+        { "input": "True and False", "output": "False" },
+        { "input": "True or False", "output": "True" },
+        { "input": "False or False", "output": "False" },
+        { "input": "not (5 > 3)", "output": "False" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "Is `True and False` true or false? And `True or False`?",
+      "answer": "and needs both, so False. or needs just one, so True."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One last note that connects straight back to episode two. Because of truthiness, and, or and not do not actually require booleans, they work on any value at all. When Python sees a value where it expects a true or false, it uses the truthiness rules, an empty string is falsy, a non empty one is truthy, zero is falsy, and so on. This is why you will often see conditions like, if name and age, meaning 'if both name and age have been filled in'. It looks a little magic the first time, but it is just and, plus truthiness. We will use this pattern properly in the next episode. And one thing about and and or that is nice to know, they stop as soon as they have their answer. If the left side of an and is already false, Python does not even look at the right side, because the whole thing cannot be true. That is called short circuiting, and occasionally you will use it deliberately."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "So you can now do real arithmetic, including the two new operators and the plus equals shorthand, you are no longer surprised by floating point, and you can ask Python precise yes or no questions and combine them into conditions. That last part is the entire foundation of the next episode, where we finally use these conditions to make the program actually decide what to do. If, elif, and else."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "/ always gives a float; // is whole-number division; % is the remainder; ** is power",
+        "score += 10 is shorthand for score = score + 10 — you'll see it everywhere in loops",
+        "floats are approximate — never test them with ==, and round() before you show them",
+        "== is a question (compare); = is a command (assign) — mixing them up is the #1 early bug",
+        "and needs both sides true, or needs one, not flips it — and thanks to truthiness they take any value"
+      ],
+      "next": "EP 5 — Lists & tuples"
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+{
+  "id": "ep05-lists-and-tuples",
+  "title": "Lists & tuples",
+  "topic": "Basic Python · Episode 5",
+  "prompt": "Store many values in a list, use its methods, understand the aliasing trap, and meet the tuple.",
+  "episode": { "number": 5, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 16,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode five. So far, every variable we have made holds exactly one value. One name, one score, one number. But real programs deal with collections of things. A shopping cart full of items. A list of test scores. Every line in a file. The results of a database query. This episode introduces the list, which is Python's workhorse for holding many values in a definite order, and it is honestly one of the most useful tools in the entire language. We will cover how to make a list, how to reach into it, the methods for adding, removing, and reordering items, and then a trap around how lists are shared that catches almost every single beginner. After that we will meet the tuple, which is the list's locked down cousin, and finish with a genuinely elegant trick called unpacking. Let's get into it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Lists", "cardSubtitle": "many values, in order" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You make a list with square brackets, and you separate the items inside with commas. Here is a variable called cart, holding a list of three strings, milk, eggs, and bread. The first thing to understand about a list is that it keeps its items in order. The order you put them in is the order they stay in, and unlike a set, which we meet next episode, that order is genuinely part of the data. A list of steps in a recipe is not the same list if you shuffle it. The second thing. Because a list is an ordered sequence, exactly like a string was, indexing and slicing work in precisely the same way. Cart, square bracket, zero, is the first item, milk. Cart, square bracket, minus one, is the last item, bread. A slice like cart, one, colon, three, gives you back a smaller list containing the middle items, and note it gives you a list, even if it only contains one item. Everything you learned about indexing and slicing strings last episode transfers directly, the zero based positions, the negative indices, the stop-not-included rule, all of it. Third, the length function, len, tells you how many items are in the list, which you will use constantly, especially to check a list is not empty before you try to use it. A list can hold any type of value, numbers, strings, booleans, even other lists, and it can even mix types in the same list, though in practice you usually keep a list to one kind of thing because it makes the code easier to reason about. And a list can be empty, just an open and a close square bracket with nothing between, which is very often exactly how you start, before adding items into it one at a time in a loop."
+    },
+    { "type": "code", "code": "cart = [\"milk\", \"eggs\", \"bread\"]\nprint(cart)\nprint(cart[0])\nprint(len(cart))" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "cart = [\"milk\", \"eggs\", \"bread\"]", "output": "" },
+        { "input": "cart[-1]", "output": "'bread'" },
+        { "input": "cart[0:2]", "output": "['milk', 'eggs']" },
+        { "input": "len(cart)", "output": "3" },
+        { "input": "\"eggs\" in cart", "output": "True" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "That last line is a bonus, and it is the same in you saw with strings. The word in, used like that, asks 'is this item somewhere in the list', and gives you back True or False. It is a clean, readable way to check membership before you do something, for example, checking whether a username is already in a list of taken names. It does a full scan of the list to check, so for a very large list there are faster tools, which we will meet next episode, but for everyday use, in is perfect."
+    },
+    {
+      "type": "narration",
+      "text": "A couple of ways to make a list, besides just typing the items in square brackets. The list function, with something sequence-like inside it, builds a list from that. So list of a string gives you a list of its individual characters. And later in the course you will meet range, which produces a sequence of numbers, and wrapping list around a range is a very common way to get a list like nought, one, two, three, four. For now, just know that square brackets is the direct way, and list, open bracket, is the convert-something-into-a-list way."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One more thing before we move on to changing lists. You can also assign to a position, to replace an item in place. Cart, square bracket, one, equals, cheese, throws out whatever was at index one and puts cheese there instead. Lists can hold other lists too, which is how you represent a grid or a table, a list of rows, where each row is itself a list. You get at an item with two sets of square brackets, one for the row, one for the column within it. We will not lean on nested lists much in this course, but it is worth knowing they exist, so a list of lists does not throw you when you see it."
+    },
+
+    { "type": "card_topic", "cardTitle": "List methods", "cardSubtitle": "adding, removing, reordering" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Lists come with a set of methods for changing their contents. Append adds one item onto the end. This is the one you will use the most, by a wide margin, especially for building a list up inside a loop. Insert adds an item at a specific position, pushing everything from that point onward along by one. Remove deletes the first item that matches a value you give it, so cart dot remove eggs finds eggs and takes it out, and if eggs is not in the list, that is an error. Pop removes an item by its position, and also hands that item back to you as a value, and with no position given it pops the last item, which is exactly how you use a list as a stack. Sort rearranges the whole list into order, in place, alphabetical order for strings, smallest first for numbers. Reverse flips the order end to end. And extend takes another list and tacks all of its items onto the end, which is different from append, append would add the other list as a single nested item."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now, here is the crucial difference from last episode. String methods returned a brand new string, because a string can never be changed. List methods do not do that. They change the list you already have, right there in place, and most of them hand back None. So you write cart dot append butter, on its own line, with no equals sign, no assignment, and afterwards the cart itself is one item longer. Because append returns None, writing cart equals cart dot append butter is a classic and painful mistake, it appends the item, but then it replaces your whole cart with None. Same trap with sort. Write cart dot sort, not cart equals cart dot sort. If you want a sorted copy while leaving the original alone, there is a separate built in function, sorted, with a d on the end, that returns a new sorted list. Method, sorts in place. Function, returns a copy. That pattern shows up a lot in Python."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A few more list tools worth knowing about. Index, given a value, tells you the position where it first appears, and errors if it is not there, so it is the list version of the string find. Count tells you how many times a value appears in the list. The del statement, del space cart square bracket one, deletes the item at that position entirely, shuffling everything after it down. And you can even assign to a slice, replacing a whole range of items at once with a different number of items, which is powerful but easy to overuse, so reach for it sparingly. You do not need all of these on day one. Append, remove, pop, sort, and len will cover the vast majority of what you do with lists for a long time."
+    },
+    {
+      "type": "code",
+      "code": "cart = [\"milk\", \"eggs\", \"bread\"]\nprint(cart)\nprint(cart[0])\nprint(len(cart))\ncart.append(\"butter\")\ncart.remove(\"eggs\")\nprint(cart)\ncart.sort()\nprint(cart)" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "nums = [3, 1, 2]", "output": "" },
+        { "input": "nums.append(5)", "output": "" },
+        { "input": "nums", "output": "[3, 1, 2, 5]" },
+        { "input": "nums.sort()", "output": "" },
+        { "input": "nums", "output": "[1, 2, 3, 5]" },
+        { "input": "nums.pop()", "output": "5" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Mutability", "cardSubtitle": "the aliasing trap" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "This is the most important idea in the episode, so slow right down here. Remember, from episode two, that a variable is a name that points at a value. With numbers and strings, that never really mattered, because those values can not be changed, so it made no difference whether two variables pointed at the same one or at copies. Lists can be changed. And that makes the pointing suddenly matter a great deal. Watch this carefully. We make a list, and call it a. Then we write b equals a. Now. This does not make a copy of the list. There is no copying happening at all. It just makes the name b point at the exact same list that a is pointing at. One list. Two names on it. Two labels on the same box. So when we then call b dot append four, and afterwards look at a, a has changed too. It contains the four now. Because a and b were never two lists, they were always one list with two names, and it does not matter which name you use to change it."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "This trips up absolutely everyone, and usually in a sneaky way, by passing a list into a function, having the function modify it, and being baffled when the original list outside the function has changed. So, how do you get a real, independent copy when you actually want one? You have to ask for it explicitly. a dot copy gives you a new list with the same items in it. A full slice, a, square bracket, colon, square bracket, does the same thing, it is an older style but you will see it. Or wrapping the list function around it, list, open bracket, a, close bracket. Any of those three, and now b is genuinely its own separate list, and appending to b leaves a completely alone. The rule of thumb. If you did not explicitly copy it, you are sharing it."
+    },
+    {
+      "type": "narration",
+      "text": "One small warning about the copy. It is what is called a shallow copy. It gives you a new outer list, but if that list contains other lists inside it, those inner lists are still shared between the copy and the original. For the flat lists of strings and numbers you will use for a long time, a plain copy is exactly what you want. Just file away that if you ever have a list of lists and things get weird after copying, a shallow copy is probably why, and there is a deep copy tool for that day. Also, this whole idea, that assignment shares rather than copies, is not special to lists. It is true of every mutable value in Python. Lists are just where you meet it first, and most often."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "a = [1, 2, 3]", "output": "" },
+        { "input": "b = a", "output": "" },
+        { "input": "b.append(4)", "output": "" },
+        { "input": "a", "output": "[1, 2, 3, 4]" },
+        { "input": "c = a.copy()", "output": "" },
+        { "input": "c.append(99); a", "output": "[1, 2, 3, 4]" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "b = a, then b.append(5). What is in a now?",
+      "answer": "The 5 too. b and a are one list — make a copy with a.copy() or a[:]."
+    },
+
+    { "type": "card_topic", "cardTitle": "Tuples", "cardSubtitle": "a list that can't be changed" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A tuple is almost exactly like a list, but with one defining difference. It is immutable. Once you have made a tuple, you cannot add to it, you cannot remove from it, and you cannot change any of its items. It is frozen for life. You write a tuple with round brackets instead of square ones, and commas between the items. So a point in two dimensions might be the tuple three comma four. Actually, the brackets are often optional, it is really the commas that make a tuple, but using the round brackets makes your intent clear, so do that. Indexing works, slicing works, len works, the in check works, all exactly like a list. What is missing is anything that would change it, there is no append, no remove, no sort, because those would not make sense on something that cannot change. If you try to assign to a position in a tuple, Python raises a TypeError and stops. So when would you actually choose a tuple over a list? Two situations, mainly. First, when you have a small, fixed group of values that belong together and should not be messed with. An x and a y coordinate. A red, green, blue colour. A latitude and longitude pair. A day, month, year. The tuple communicates to the reader 'this is one single thing that happens to have parts', whereas a list says 'this is a collection that might grow or shrink'. That distinction is a real signal to whoever reads your code next. Second, tuples are used all over the place inside Python itself, behind the scenes, and the very next topic is the clearest example of that."
+    },
+    {
+      "type": "code",
+      "code": "cart = [\"milk\", \"eggs\", \"bread\"]\nprint(cart)\nprint(cart[0])\nprint(len(cart))\ncart.append(\"butter\")\ncart.remove(\"eggs\")\nprint(cart)\ncart.sort()\nprint(cart)\n\npoint = (3, 4)\nprint(point[0])" },
+    {
+      "type": "compare",
+      "leftLabel": "list — can grow",
+      "left": "items = [\"a\", \"b\"]\nitems.append(\"c\")",
+      "rightLabel": "tuple — locked",
+      "right": "point = (3, 4)\npoint[0] = 9",
+      "verdict": "a list for a collection that changes; a tuple for a fixed record."
+    },
+
+    { "type": "card_topic", "cardTitle": "Unpacking", "cardSubtitle": "many variables in one line" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here is that elegant trick I promised. If you have a tuple, or a list, with a known number of items in it, you can pull all of them straight into separate variables in a single line. You write the variable names on the left, separated by commas, then an equals sign, then the sequence on the right. So x comma y equals point takes the tuple three comma four, and puts three into x, and four into y, in one go. This is called unpacking, and once you have seen it you will want to use it everywhere. The one requirement, the number of names on the left has to exactly match the number of items on the right, otherwise Python complains that there are too many or too few values. Where this really shines is swapping two variables. In most programming languages, swapping the values of x and y requires a temporary third variable to hold one of them while you move the other. In Python, you just write x comma y equals y comma x, on a single line, and it is done. Behind the scenes, Python builds a tuple out of the right hand side first, the current y and the current x, and then unpacks that tuple into the names on the left. Clean, obvious, and very characteristic of the language."
+    },
+    {
+      "type": "code",
+      "code": "cart = [\"milk\", \"eggs\", \"bread\"]\nprint(cart)\nprint(cart[0])\nprint(len(cart))\ncart.append(\"butter\")\ncart.remove(\"eggs\")\nprint(cart)\ncart.sort()\nprint(cart)\n\npoint = (3, 4)\nprint(point[0])\n\nx, y = point\nprint(x, y)\nx, y = y, x\nprint(x, y)" },
+    {
+      "type": "narration",
+      "text": "Unpacking shows up in more places than you might expect. When we get to loops, you will loop over a list of pairs and unpack each pair right in the loop header. When we get to dictionaries, next episode, iterating over one hands you key value pairs that you unpack. And functions can return several values at once by returning a tuple, which the caller then unpacks. So this small idea, names on the left, sequence on the right, is worth getting really comfortable with now, because it keeps coming back."
+    },
+    {
+      "type": "narration",
+      "text": "Run the whole file, and you can follow the story. The cart starts with three items, gets butter appended, loses eggs, and ends up sorted. Then the tuple, and we print its first item. Then x and y are unpacked out of the point, printed as three and four, and then swapped, and printed again as four and three, with no temporary variable anywhere in sight."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "['milk', 'eggs', 'bread']\nmilk\n3\n['bread', 'butter', 'milk']\n['bread', 'butter', 'milk']\n3\n3 4\n4 3"
+    },
+    {
+      "type": "card_question",
+      "question": "How do you swap the values of x and y in a single line?",
+      "answer": "x, y = y, x"
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Lists are going to be everywhere from here on. You can build them, index them, slice them, reshape them with methods, and, most importantly, you understand the sharing trap, which is the one thing that would otherwise quietly bite you. Next episode covers the other two collections you really need, dictionaries and sets, and then, finally, we start making the program actually make decisions."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a list holds ordered values in [square brackets]; index, slice, len() and 'in' all work like strings",
+        "list methods (.append, .remove, .sort, .pop) change the list in place and return None",
+        "b = a does NOT copy — both names point at one list; use a.copy() or a[:] for a real copy",
+        "a tuple is a list you can't change, written with (round brackets) — for small fixed records",
+        "unpacking: x, y = point splits a sequence into variables; x, y = y, x swaps them"
+      ],
+      "next": "EP 6 — Dictionaries & sets"
+    }
+  ]
+}

@@ -12,6 +12,8 @@ Segment scenes:
 """
 from __future__ import annotations
 
+import re
+
 from PIL import Image, ImageDraw
 
 from . import theme
@@ -49,6 +51,20 @@ def _uc(s: str | None) -> str:
     "BASIC PYTHON · EPISODE 1 / 15", "THE TAKEAWAY", panel badges, "NEXT") —
     renders uppercase."""
     return s.upper() if s else ""
+
+
+def _next_label(s: str | None) -> str:
+    """Recap card's 'what's next' line. "EP 3 — Strings, ..." renders as
+    "EP 3 — Strings, string methods & f-strings" — EP uppercase, the episode
+    title capitalised on its first letter, everything after that lowercase."""
+    if not s:
+        return ""
+    m = re.match(r"^\s*ep\s*(\d+)\s*[—–-]\s*(.+)$", s.strip(), re.I)
+    if not m:
+        return _lc(s)
+    num, title = m.group(1), m.group(2).strip().lower()
+    title = title[:1].upper() + title[1:]
+    return f"EP {num} — {title}"
 
 
 def _gradient_bg(W: int, H: int) -> Image.Image:
@@ -494,7 +510,7 @@ class RecapCard(Scene):
                 y += len(wl) * 56 + 26
             y += 46
             nf = self.fonts.ui(32, bold=True)
-            nt = f"NEXT  ·  {_lc(self.next_up)}"
+            nt = f"NEXT  ·  {_next_label(self.next_up)}"
             _tri(d, (W - d.textlength(nt, font=nf)) / 2 - 44, y + 20, 30, theme.ACCENT)
             d.text(((W - d.textlength(nt, font=nf)) / 2, y), nt, font=nf, fill=theme.ACCENT)
         return img

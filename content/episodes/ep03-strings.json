@@ -1,0 +1,209 @@
+{
+  "id": "ep03-strings",
+  "title": "Strings, string methods & f-strings",
+  "topic": "Basic Python · Episode 3",
+  "prompt": "Index and slice text, use the common string methods, and format output cleanly with f-strings.",
+  "episode": { "number": 3, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 17,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode three. This one is all about strings, which is just the technical word for text. You will use strings more than any other type in the language, because almost every program has to deal with words at some point. Names, messages, the contents of a file, whatever the user typed at a prompt. So we are going to go deep. We will build strings by joining pieces together, and repeating them. We will reach inside a string to pull out single characters, or whole chunks, using indexing and slicing. We will meet the most useful string methods, the little built in tools for cleaning up and transforming text, and there are a lot of good ones. We will cover f-strings, which are Python's clean, modern way of dropping values into a piece of text, along with a bit of formatting. And we will finish with escape characters and multi-line strings. This is one of the longer episodes in the course, but strings really are worth the time, they come up in everything. Let's get started."
+    },
+
+    { "type": "card_topic", "cardTitle": "Building strings", "cardSubtitle": "joining pieces of text together" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "First, a proper reminder of what a string actually is. It is a sequence of characters, sitting inside quotes. Single quotes or double quotes, Python genuinely does not care which, as long as the one you open with matches the one you close with. A string can be a single letter, a word, a full sentence, or completely empty, just two quotes with nothing between them. Now, here we have two strings. First, pointing at the text Ada. And last, pointing at the text Lovelace. To join two strings together, you use the plus sign. This is called concatenation, which is a big intimidating word for a very simple idea, stick them end to end. Notice we also add a string containing just a single space, in the middle. That is because plus does not add any spacing for you at all. It joins the pieces exactly as they are, character for character. Leave out that space string and you would get Adalovelace, all run together. The result of all this joining is a brand new string, Ada, space, Lovelace, which we store in a variable we have called name."
+    },
+    { "type": "code", "code": "first = \"Ada\"\nlast = \"Lovelace\"\nname = first + \" \" + last\nprint(name)" },
+    {
+      "type": "narration",
+      "text": "The plus sign joins strings. There is a second operator that also works on strings, and it is the star, the multiply sign, which repeats a string a given number of times. The string dash, times twenty, gives you a line of twenty dashes, which is a genuinely handy way to draw a separator in your output. The string ha, times three, gives you hahaha. Both plus and star are quick and readable for small formatting jobs. But there is a catch, and it is one you will hit in your first hour. The two sides of a plus have to be the same kind of thing. You can join a string to a string. You can not join a string to a number. Python will refuse."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "\"ab\" + \"cd\"", "output": "'abcd'" },
+        { "input": "\"ha\" * 3", "output": "'hahaha'" },
+        { "input": "\"-\" * 20", "output": "'--------------------'" },
+        { "input": "\"score: \" + 95", "output": "TypeError: can only concatenate str (not \"int\") to str" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "That last line is the error you will meet constantly at the start. You have a number, and you try to glue it into a message with a plus sign, and Python stops you dead. The quick fix is to wrap the number in str, s t r, which converts it to text first, and then the plus works because now both sides are strings. Keep that in your back pocket. But honestly, once we get to f-strings later in this episode, you will almost never need to do that conversion by hand again. The plus sign approach to building messages is something you will quickly grow out of."
+    },
+    {
+      "type": "narration",
+      "text": "One more useful thing before we move on. The word in, used between two strings, checks whether the first one appears anywhere inside the second. So, the letter n, in, the word banana, is True. The word cat, in, the word category, is also True, because those three letters appear in a row. And it works the other way too, the word xyz, in, banana, is False. This is the clean, readable way to check 'does this text contain that text', and you will use it a lot, for example to check if an at sign appears in something a user claims is an email address."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "\"n\" in \"banana\"", "output": "True" },
+        { "input": "\"cat\" in \"category\"", "output": "True" },
+        { "input": "\"z\" in \"banana\"", "output": "False" },
+        { "input": "\"apple\" < \"banana\"", "output": "True" },
+        { "input": "\"Ada\" == \"ada\"", "output": "False" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "Those last two lines are a preview of the next episode. Strings can be compared with the less than and equals operators, just like numbers. They compare alphabetically, so apple comes before banana. And comparison is case sensitive. Capital A d a and lowercase a d a are not equal, because a capital A and a lowercase a are genuinely different characters to the computer. That is exactly why lowercasing both sides before you compare is such a common move."
+    },
+
+    { "type": "card_topic", "cardTitle": "Indexing", "cardSubtitle": "pulling out one character" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A string is a sequence, and that means every single character in it has a position, a number, and you can ask Python for the character at any position you like. This is called indexing. You write the string, or a variable holding a string, then square brackets, then the position number you want inside them. Now, the one rule that trips up every single beginner, without exception, is this. Positions start at zero, not at one. So in the word Python, the capital P is at index zero. The letter y is at index one. The letter t is at index two, h is three, o is four, and the final n is at index five, even though the word has six letters in it. First character is index zero. Last character is index length minus one. Say that a few times, out loud if you have to, because getting it wrong by one is the single most common small bug in programming, and it even has a name, the off by one error. Python also gives you a shortcut for counting from the other end. A negative index counts backwards from the end of the string. Index minus one is the last character. Index minus two is the second to last. Minus three, third from the end. This is not just a convenience, it is genuinely useful, because it means you can grab the last character of a string without knowing or caring how long the string is."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "word = \"Python\"", "output": "" },
+        { "input": "word[0]", "output": "'P'" },
+        { "input": "word[1]", "output": "'y'" },
+        { "input": "word[5]", "output": "'n'" },
+        { "input": "word[-1]", "output": "'n'" },
+        { "input": "word[-2]", "output": "'o'" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "One more important thing about indexing. If you ask for a position that does not exist, say index ten in a six letter word, Python does not quietly give you an empty string, and it does not give you None. It raises an error, called an IndexError, and your program stops right there. So whenever you are indexing based on a calculation, rather than a fixed number you typed, you need to be sure that number stays inside the string. This is exactly the kind of thing slicing, which is next, handles much more gracefully."
+    },
+    {
+      "type": "gotcha",
+      "code": "word = \"Python\"\nprint(word[10])",
+      "badLine": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(word[10])\nIndexError: string index out of range"
+    },
+    {
+      "type": "card_question",
+      "question": "In the string \"code\", what is at index 0, and what is at index -1?",
+      "answer": "Index 0 is 'c'. Index -1 is 'e', the last character."
+    },
+
+    { "type": "card_topic", "cardTitle": "Slicing", "cardSubtitle": "pulling out a whole chunk" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Indexing gives you exactly one character. Slicing gives you a range of them, a whole substring. Inside the square brackets, instead of a single number, you put a start position, then a colon, then a stop position. And here is the part you have to remember, because it feels wrong at first. The slice includes the character at the start position, but it stops just before the stop position. The stop itself is not included. So word, square bracket, one, colon, four, gives you the characters at positions one, two, and three. That is three characters, not four. It feels off for about a week, and then something clicks, and you start to appreciate it, because the length of the slice is simply stop minus start, four minus one is three, no mental arithmetic needed. You can also leave either number out entirely. Leave out the start, and the slice begins at the very beginning of the string. Leave out the stop, and it runs all the way to the end. Leave out both, just a colon, and you get a copy of the whole string. And there is an optional third number, after a second colon, called the step. It says 'take every nth character'. A step of two takes every other one. And a step of minus one walks through the string backwards, which happens to be the shortest way to reverse a string in the whole language."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "word = \"Python\"", "output": "" },
+        { "input": "word[1:4]", "output": "'yth'" },
+        { "input": "word[:3]", "output": "'Pyt'" },
+        { "input": "word[3:]", "output": "'hon'" },
+        { "input": "word[::2]", "output": "'Pto'" },
+        { "input": "word[::-1]", "output": "'nohtyP'" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "And unlike indexing, slicing is very forgiving. If your stop number runs off the end of the string, past where it actually ends, Python does not raise an error. It just gives you everything up to the end and stops. If your start is already past the end, you get an empty string back, no complaint. So slicing is the safe way to say 'give me the first ten characters, or however many there are if it is shorter'. That robustness is a real reason to reach for a slice instead of a loop when you just need a chunk of a string."
+    },
+
+    { "type": "card_topic", "cardTitle": "String methods", "cardSubtitle": "the built-in text toolbox" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A method is a function that belongs to a value. You call it by writing the value, then a dot, then the method name, then parentheses, with any arguments inside. Strings come with a large and genuinely useful toolbox of these. Upper gives you a copy of the string with every letter capitalised. Lower does the opposite, everything lowercase, which is perfect for comparing text without caring about case. Strip removes any spaces, tabs, or newlines from the very start and the very end of the string, leaving the middle alone, and it is the standard way to clean up something a user typed. Replace takes two arguments, the old text and the new text, and swaps every occurrence it can find. Split breaks a string into a list of pieces, cutting wherever it finds the character you pass in, most often a space, to chop a sentence into a list of words. And its exact opposite is join, which takes a list of strings and glues them back into one string with a separator you choose."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "There are more. Find tells you the index where a piece of text first appears, or minus one if it is not in there at all. Count tells you how many times something appears. Startswith and endswith give you a True or False for whether the string begins or ends with a given piece of text, which is great for checking file names. Title gives you a copy with the first letter of each word capitalised, nice for tidying up a name someone typed in all lowercase. And there is a family of methods that start with is, like isdigit and isalpha, which tell you whether a string is made entirely of digits, or entirely of letters, which is one way to check input before you try to convert it. But there is one thing you must understand about every single one of these methods. Strings are immutable. That is the technical word for 'cannot be changed after it is created'. A string is fixed, permanently, the moment it exists. So upper does not modify your string, it physically cannot. What it does is build a brand new string and hand that back to you. If you want to keep the uppercase version, you have to catch that return value in a variable. Writing name dot upper on a line by itself, and then expecting the name variable to have changed, is the classic beginner mistake with strings. Nothing changed, because nothing can. You just built a new string and threw it away."
+    },
+    {
+      "type": "code",
+      "code": "first = \"Ada\"\nlast = \"Lovelace\"\nname = first + \" \" + last\nprint(name)\nprint(name.upper())\nprint(name.replace(\"a\", \"@\"))\nprint(name.split(\" \"))" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "\"  hi there  \".strip()", "output": "'hi there'" },
+        { "input": "\"one two three\".split(\" \")", "output": "['one', 'two', 'three']" },
+        { "input": "\"-\".join([\"a\", \"b\", \"c\"])", "output": "'a-b-c'" },
+        { "input": "\"banana\".count(\"a\")", "output": "3" },
+        { "input": "\"report.txt\".endswith(\".txt\")", "output": "True" },
+        { "input": "s = \"hi\"; s.upper(); s", "output": "'hi'" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "After s = \"hi\" and then s.upper(), what does s hold?",
+      "answer": "Still \"hi\". Methods return a new string; they never change the original."
+    },
+
+    { "type": "card_topic", "cardTitle": "f-strings", "cardSubtitle": "dropping values into text, cleanly" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now the part that will change how you write Python. Building messages by hand, with plus signs and str calls scattered everywhere, gets ugly and error prone very fast. Miss a space, or a plus, and it breaks. The f-string fixes all of that. You put the letter f directly before the opening quote of the string, no space. Then, anywhere inside that string, you can write a variable name inside curly braces, and Python drops that variable's value straight in at that spot. No plus signs. No converting numbers to text, it does that for you automatically. So f, quote, name scored score percent, with name and score in braces, reads almost exactly like the sentence you would say out loud, and it just produces the right text. And it is not limited to plain variables. You can put a small expression inside the braces, like score divided by two, and Python evaluates it and drops the result in. You can even call a method in there, like name dot upper."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "f-strings also support formatting instructions, which go after a colon, inside the braces, right after the value. The most common one, for a float, is colon, point, two, f. That means 'show this number with exactly two decimal places'. So a price of nineteen point five would print as nineteen point five zero, which is what you want for money. You can also control width and alignment. Colon, then a number like ten, pads the value out to ten characters wide, which is how you line up columns of text without using tabs. A greater than sign before the width pushes the text to the right, a less than sign to the left, a caret centres it. You do not need to memorise all of this now. Just know that when you see a colon inside an f-string brace, that is a formatting instruction, and there is a whole mini language for it that you can look up when you need it. The two you will actually use early on are point two f for money, and a width number for columns."
+    },
+    {
+      "type": "code",
+      "code": "first = \"Ada\"\nlast = \"Lovelace\"\nname = first + \" \" + last\nprint(name)\nprint(name.upper())\nprint(name.replace(\"a\", \"@\"))\nprint(name.split(\" \"))\n\nscore = 95\nprint(f\"{name} scored {score}%\")\nprint(f\"average: {score / 3:.2f}\")" },
+    {
+      "type": "compare",
+      "leftLabel": "the old way",
+      "left": "print(name + \" scored \"\n      + str(score) + \"%\")",
+      "rightLabel": "an f-string",
+      "right": "print(f\"{name} scored {score}%\")",
+      "verdict": "same output. one of these you can read at a glance."
+    },
+    {
+      "type": "card_question",
+      "question": "Inside an f-string, how do you show a float with 2 decimal places?",
+      "answer": "Put :.2f after the value, like {price:.2f}."
+    },
+
+    { "type": "card_topic", "cardTitle": "Escapes & multi-line", "cardSubtitle": "special characters inside strings" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Last topic. Some characters are awkward to put inside a string directly. A new line, for example, because pressing Enter would end the line of code. Or a double quote, inside a string that you opened with double quotes, because Python would think that is where the string ends. The solution is the backslash, which starts what is called an escape sequence. It tells Python 'the next character is special, do not take it literally'. Backslash n means 'put a new line here'. Backslash t means 'put a tab here', which is handy for lining up columns. And backslash then a quote means 'an actual quote character, part of the text, not the end of the string'. The key thing to see is that when you print a string containing backslash n, you do not see a backslash and an n on the screen. You see the line actually break at that point. The backslash and the n were an instruction, not content. Now, if you need a real block of text with several genuine line breaks in it, typing backslash n over and over is miserable. There is a much tidier way. Wrap the whole thing in triple quotes, that is three double quote marks in a row, and then inside it you can just press Enter and the line breaks become part of the string. That is how people write longer blocks of text, and later in the course you will see it is also how the description at the top of a function is written."
+    },
+    {
+      "type": "code",
+      "code": "first = \"Ada\"\nlast = \"Lovelace\"\nname = first + \" \" + last\nprint(name)\nprint(name.upper())\nprint(name.replace(\"a\", \"@\"))\nprint(name.split(\" \"))\n\nscore = 95\nprint(f\"{name} scored {score}%\")\nprint(f\"average: {score / 3:.2f}\")\n\nprint(\"line one\\nline two\")\nprint(\"col1\\tcol2\\tcol3\")" },
+    {
+      "type": "narration",
+      "text": "Run the whole file, and you can watch it all come together in the output. The concatenated name, the uppercase version, the replace turning every a into an at sign, the split producing a list, the two f-strings including the one rounded to two places, and then finally the backslash n actually breaking a line, and the backslash t spacing out three columns."
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Ada Lovelace\nADA LOVELACE\n@d@ Lovel@ce\n['Ada', 'Lovelace']\nAda Lovelace scored 95%\naverage: 31.67\nline one\nline two\ncol1\tcol2\tcol3"
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "That was a big one, but you now have real command over text. You can build it, repeat it, reach into it with an index or a slice, transform it with a whole toolbox of methods, and format your output properly with f-strings. Next episode we go back to numbers, and dig into arithmetic, the floating point quirks, comparison, and the boolean logic that every if statement in the language is built on."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "join strings with +, repeat with * — a number needs str() first, or just use an f-string",
+        "indexing starts at 0; the last character is index -1; a bad index is an IndexError",
+        "slicing s[start:stop] includes start, stops before stop; a slice never errors on a bad range",
+        "string methods (.upper, .strip, .replace, .split, .join) return a NEW string — strings never change",
+        "f-strings: f before the quote, then {value} or {value:.2f} anywhere inside — the clean way to format"
+      ],
+      "next": "EP 4 — Numbers, operators & boolean logic"
+    }
+  ]
+}
