@@ -30,9 +30,10 @@ Produce **exactly one JSON object** — no prose, no code fences.
 
 `targetMinutes` is a hard constraint — `build` warns past ±8%. The voice runs at
 a fixed calm pace, so **runtime is set purely by how much narration you write**.
-Rule of thumb: **~170 words per target minute** — a 12-minute episode needs
-roughly **2,000 words** of narration total. Under-writing is the usual failure;
-write generously, it's a teaching video.
+Rule of thumb: **~165 words per target minute** — a 12-minute episode ≈ 2,000
+words, a 17-minute episode ≈ 2,800. Under-writing is the usual failure by a wide
+margin; write two full, thorough sentences where you're tempted to write one.
+Draft-build (`--draft`, ~2–3 min) and check the runtime line before the real render.
 
 ## Structure per episode
 
