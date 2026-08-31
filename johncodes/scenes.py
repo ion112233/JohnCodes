@@ -38,9 +38,17 @@ def _tri(d, x, cy, h, color):
 
 
 def _lc(s: str | None) -> str:
-    """All card text is rendered lowercase — the channel's house style.
+    """Card BODY text (titles, questions, answers, subtitles, recap points,
+    verdicts) renders lowercase — the channel's house style.
     (Code inside code/terminal/repl/gotcha/compare panels is never touched.)"""
     return s.lower() if s else ""
+
+
+def _uc(s: str | None) -> str:
+    """Card LABEL text — the little kicker over a card ("RECAP", "QUICK CHECK",
+    "BASIC PYTHON · EPISODE 1 / 15", "THE TAKEAWAY", panel badges, "NEXT") —
+    renders uppercase."""
+    return s.upper() if s else ""
 
 
 def _gradient_bg(W: int, H: int) -> Image.Image:
@@ -91,7 +99,7 @@ class TitleCard(Scene):
         y = (H - block_h) / 2 - 20 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        ktext = "python   ·   interview"
+        ktext = "PYTHON   ·   INTERVIEW"
         d.text(((W - d.textlength(ktext, font=kicker)) / 2, y), ktext, font=kicker, fill=theme.ACCENT)
         y += kh + gap1
         for ln in title_lines:
@@ -101,7 +109,7 @@ class TitleCard(Scene):
         y += gap1
 
         pill_font = self.fonts.ui(30, bold=True)
-        label = _lc(self.q.difficulty)
+        label = _uc(self.q.difficulty)
         pw = d.textlength(label, font=pill_font)
         topic_font = self.fonts.ui(30)
         topic = _lc(self.q.topic)
@@ -277,7 +285,7 @@ class QuestionCard(Scene):
         y = (H - block) / 2 - 10 + dy
 
         kicker = self.fonts.ui(34, bold=True)
-        kt = "quick check"
+        kt = "QUICK CHECK"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT_ORANGE)
         y += 56
         for ln in qlines:
@@ -315,13 +323,13 @@ class ExplainCard(Scene):
         y = (H - block_h) / 2 - 40 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        kt = "the takeaway"
+        kt = "THE TAKEAWAY"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT_GREEN)
         y += kh + gap1
 
         val_font = self.fonts.ui(56, bold=True)
         label_font = self.fonts.ui(25, bold=True)
-        chips = [("time", self.q.complexity.time), ("space", self.q.complexity.space)]
+        chips = [("TIME", self.q.complexity.time), ("SPACE", self.q.complexity.space)]
         chip_w, gap = 420, 44
         x0 = (W - (chip_w * 2 + gap)) / 2
         for i, (lab, val) in enumerate(chips):
@@ -339,7 +347,7 @@ class ExplainCard(Scene):
             y += lh
 
         cta = self.fonts.ui(34, bold=True)
-        ct = "follow for daily python interview prep"
+        ct = "follow for daily python interview prep"   # body text — stays lowercase
         cw = d.textlength(ct, font=cta)
         fy = H * 0.84
         _tri(d, (W - cw) / 2 - 46, fy + 22, 32, theme.ACCENT)
@@ -412,7 +420,7 @@ class EpisodeCard(Scene):
         y = (H - block) / 2 - 10 + dy
 
         kicker = self.fonts.ui(37, bold=True)
-        kt = f"{_lc(ep.series)}   ·   episode {ep.number} / {ep.of}"
+        kt = f"{_uc(ep.series)}   ·   EPISODE {ep.number} / {ep.of}"
         d.text(((W - d.textlength(kt, font=kicker)) / 2, y), kt, font=kicker, fill=theme.ACCENT)
         y += 44 + 46
         for ln in tlines:
@@ -463,7 +471,7 @@ class RecapCard(Scene):
         y = (H - block) / 2 - 30 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        d.text(((W - d.textlength("recap", font=kicker)) / 2, y), "recap",
+        d.text(((W - d.textlength("RECAP", font=kicker)) / 2, y), "RECAP",
                font=kicker, fill=theme.ACCENT_GREEN)
         y += 60 + 20
 
@@ -486,7 +494,7 @@ class RecapCard(Scene):
                 y += len(wl) * 56 + 26
             y += 46
             nf = self.fonts.ui(32, bold=True)
-            nt = f"next  ·  {_lc(self.next_up)}"
+            nt = f"NEXT  ·  {_lc(self.next_up)}"
             _tri(d, (W - d.textlength(nt, font=nf)) / 2 - 44, y + 20, 30, theme.ACCENT)
             d.text(((W - d.textlength(nt, font=nf)) / 2, y), nt, font=nf, fill=theme.ACCENT)
         return img
@@ -625,7 +633,7 @@ class CompareScene(Scene):
             x = x0 + i * (pw + gap)
             col = theme.BAD if i == 0 else theme.GOOD
             _code_panel(img, self.fonts, x, top, pw, ph, code,
-                        label=_lc(label) or None, label_color=col)
+                        label=_uc(label) or None, label_color=col)
 
         if vlines:
             vy = top + ph + 60
