@@ -1,0 +1,164 @@
+{
+  "id": "ep06-dicts-and-sets",
+  "title": "Dictionaries & sets",
+  "topic": "Basic Python · Episode 6",
+  "prompt": "Look values up by name with a dictionary, and use a set for uniqueness and fast membership.",
+  "episode": { "number": 6, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 12,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode six. Last episode you learned the list, which holds values in order and lets you get at them by their position. This episode covers the other two collections you really need to know. The dictionary, which lets you look values up by a meaningful name instead of a number, and which is probably the second most used type in the whole language, right after the list. And the set, which holds a collection of unique items, no duplicates allowed, and which is brilliant at answering one specific question very fast, is this thing in here. For each one we will cover how to build it, how to change it, how to loop over it, and the handful of operations that make it worth reaching for. By the end of this episode you will have all three of Python's core collections in your toolkit. Let's get into it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Dictionaries", "cardSubtitle": "look things up by name" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A dictionary stores pairs. Each pair has a key, and a value. You look the value up by its key, exactly the way you look up a word in a real dictionary to find its definition, and that is where the name comes from. You write one with curly braces. Inside, each pair is a key, then a colon, then its value, and the pairs are separated by commas. Here we have a dictionary called ages, mapping three names to three numbers. Ada maps to thirty six, Alan to forty one, Grace to forty five. To get a value out, you write the dictionary, then square brackets, then the key. So ages, square bracket, Ada, gives you thirty six. Notice it is square brackets for the lookup, even though you built the thing with curly braces. That trips people up for about a day and then never again."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now, compare this to a list. With a list, you find something by its position. Give me item number two. With a dictionary, you find something by a name that actually means something. Give me the entry for Ada. When your data has natural labels, a dictionary is almost always the better choice, because ages of Ada reads far better than a list where you just have to remember that Ada happens to be at index zero. The keys are usually strings, but they can be numbers too, or even tuples, basically anything that cannot be changed. Every key has to be unique. If you write the same key twice when building the dictionary, the second value simply wins, there is no error. The values, on the other hand, can be absolutely anything. Numbers, strings, lists, even other dictionaries. And the values do not have to be unique, two different keys can map to the same value, no problem. A dictionary is the natural way to represent one single thing that has several named fields, like a user, with a name, an email, and an age, all bundled together in one tidy object."
+    },
+    { "type": "code", "code": "ages = {\"Ada\": 36, \"Alan\": 41, \"Grace\": 45}\nprint(ages[\"Ada\"])\nprint(len(ages))" },
+    {
+      "type": "narration",
+      "text": "There is one sharp edge, and it is the same shape as the one on lists. If you look up a key that is not in the dictionary, you do not get None back. You get an error, a KeyError, and your program stops right there. That is a real problem when you are not certain the key is present, which is often. So there is a safer method, called get. Ages dot get, Ada, gives you thirty six, exactly like the square brackets would. But ages dot get, someone not in there, gives you None instead of crashing. And you can pass a second argument to get, a fallback value to return when the key is missing. Ages dot get, unknown person, zero, hands you zero for anyone not in the dictionary. That fallback version is what you want an awful lot of the time."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "ages = {\"Ada\": 36, \"Alan\": 41}", "output": "" },
+        { "input": "ages[\"Ada\"]", "output": "36" },
+        { "input": "ages.get(\"Grace\")", "output": "" },
+        { "input": "ages.get(\"Grace\", 0)", "output": "0" },
+        { "input": "\"Alan\" in ages", "output": "True" }
+      ]
+    },
+    {
+      "type": "gotcha",
+      "code": "ages = {\"Ada\": 36}\nprint(ages[\"Grace\"])",
+      "badLine": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(ages[\"Grace\"])\nKeyError: 'Grace'"
+    },
+    {
+      "type": "narration",
+      "text": "That last line in the shell is worth stopping on. The in check, used on a dictionary, checks the keys, not the values. So Alan in ages is True, because Alan is a key. But forty one in ages would be False, even though forty one is one of the values sitting right there. In always checks the keys of a dictionary. If you genuinely need to know whether a value appears, you check against ages dot values, which we will meet in a moment. This keys-not-values behaviour is not an accident. Looking something up by key is the whole reason dictionaries exist, and Python makes that the fast, default operation. Searching the values is possible, but it is the slow path, because it has to look at every pair."
+    },
+
+    { "type": "card_topic", "cardTitle": "Changing a dict", "cardSubtitle": "add, update, remove" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Dictionaries are mutable. You change them in place, like a list, not like a string. To add a new pair, or to change an existing one, you just assign to a key. Ages, square bracket, Katherine, equals, ninety seven. If Katherine was not already a key, that line adds her. If she was, that line overwrites her old value. Same syntax for both cases, which is genuinely convenient, you do not have to check first. To remove a pair, the del statement works. Del space ages square bracket Alan, and Alan and his value are gone. Or you can use the pop method, which removes the pair and also hands you back its value, so you can use it on the way out. Pop errors if the key is missing, unless you give it a fallback, just like get."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "There is one pattern with dictionaries that is so common it is worth planting now, even though we cannot fully use it until we have loops. Counting things. You keep a dictionary of counts, and for each item you come across, you do, counts, square bracket, item, equals, counts dot get, item, zero, plus one. Read that out. Take the current count for this item, defaulting to zero if we have never seen it before, add one to it, and store it back. Run that over a list of words and you end up with a dictionary mapping each word to how many times it appeared. Tallying votes, counting letter frequencies, tracking inventory, they are all this exact line. We will write it for real in episode eight."
+    },
+    {
+      "type": "code",
+      "code": "ages = {\"Ada\": 36, \"Alan\": 41, \"Grace\": 45}\nprint(ages[\"Ada\"])\nprint(len(ages))\nages[\"Katherine\"] = 97\nages[\"Ada\"] = 37\ndel ages[\"Alan\"]\nprint(ages)" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "d = {\"a\": 1}", "output": "" },
+        { "input": "d[\"b\"] = 2", "output": "" },
+        { "input": "d", "output": "{'a': 1, 'b': 2}" },
+        { "input": "d[\"a\"] = 99", "output": "" },
+        { "input": "d.pop(\"b\")", "output": "2" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Looping over a dict", "cardSubtitle": "keys, values, items" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You will very often want to go through a whole dictionary and do something with every pair. There are three methods for this, and picking the right one keeps the code clean. Keys gives you just the keys. Values gives you just the values. And items gives you both, as key value pairs, which you unpack, exactly like the tuple unpacking from last episode. So, for name comma age in ages dot items, colon, gives you a loop where, on each pass, name holds the key and age holds the value. That is the one you will reach for most, by a mile. If you just write for something in ages, with no dot items, you get the keys, one at a time, which is occasionally what you want but usually not. One more thing worth knowing. Dictionaries remember the order you inserted things in. For a long time in Python's history they did not, the order was scrambled, so if you ever read older advice that says dictionaries are unordered, that changed years ago, they keep insertion order now."
+    },
+    {
+      "type": "code",
+      "code": "ages = {\"Ada\": 36, \"Alan\": 41, \"Grace\": 45}\nprint(ages[\"Ada\"])\nprint(len(ages))\nages[\"Katherine\"] = 97\nages[\"Ada\"] = 37\ndel ages[\"Alan\"]\nprint(ages)\n\nfor name, age in ages.items():\n    print(name, \"is\", age)" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "37\n3\n{'Ada': 37, 'Grace': 45, 'Katherine': 97}\nAda is 37\nGrace is 45\nKatherine is 97"
+    },
+    {
+      "type": "card_question",
+      "question": "d.get(\"x\") on a dict with no \"x\" key — what do you get?",
+      "answer": "None (or your fallback if you pass one). d[\"x\"] would raise KeyError instead."
+    },
+
+    { "type": "card_topic", "cardTitle": "Sets", "cardSubtitle": "a bag of unique things" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A set is a collection with two defining rules. First, every item is unique. Put the same value in twice and the duplicate is silently dropped, a set just cannot contain two of anything. Second, there is no order. You cannot index into a set, there is no position zero, and if you print one, the items can come out in any arrangement. You write a set with curly braces, like a dictionary, but with just values inside, no colons. There is one gotcha with that. Empty curly braces make an empty dictionary, not an empty set, so for an empty set you specifically have to write set, open bracket, close bracket. Sets are the right tool for two jobs. The first is removing duplicates from a collection. Wrap the set function around a list, and you get a set containing each distinct value once. Wrap the list function back around that, and you have your original list with the duplicates stripped out. The second job, and this is the important one, is fast membership testing."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here is why fast membership matters. When you write, is this item in this list, Python has to walk through the list, checking each item, until it finds a match or runs off the end. For a short list, who cares. For a list of a hundred thousand items, checked inside a loop, that is slow, painfully slow. A set does not work that way. It uses the values themselves to jump more or less straight to the answer, so, is this in the set, is nearly instant no matter how big the set is. The rule of thumb. If you are going to ask, is this in here, many times, against a large collection, and you do not care about order, build a set once and check against that. The code looks identical, the difference is all under the hood."
+    },
+    {
+      "type": "code",
+      "code": "nums = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]\nunique = set(nums)\nprint(unique)\nprint(len(unique))\nprint(4 in unique)" },
+    {
+      "type": "compare",
+      "leftLabel": "list — scans every time",
+      "left": "names = [\"ada\", \"alan\", ...]\nif \"grace\" in names:\n    ...",
+      "rightLabel": "set — instant lookup",
+      "right": "names = {\"ada\", \"alan\", ...}\nif \"grace\" in names:\n    ...",
+      "verdict": "same code. for many lookups against a big collection, use a set."
+    },
+
+    { "type": "card_topic", "cardTitle": "Set operations", "cardSubtitle": "combining two sets" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Sets have a few operators that come straight out of maths, and they are genuinely useful for comparing two groups of things. The vertical bar is union, everything that is in either set, or both. The ampersand is intersection, only the things that are in both sets. The minus sign is difference, the things in the first set that are not in the second. And a caret is symmetric difference, the things that are in exactly one of the two sets but not in both. Picture a concrete example. You have a set of users who bought product A, and a set of users who bought product B. Everyone who bought at least one, that is A bar B. People who bought both, A ampersand B. People who bought A but never touched B, A minus B. That is a lot of real insight for three tiny operators. You can also add a single item to a set with the add method, and remove one with discard, which, unlike remove, does not raise an error if the item was not in the set to begin with."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "a = {1, 2, 3, 4}", "output": "" },
+        { "input": "b = {3, 4, 5, 6}", "output": "" },
+        { "input": "a | b", "output": "{1, 2, 3, 4, 5, 6}" },
+        { "input": "a & b", "output": "{3, 4}" },
+        { "input": "a - b", "output": "{1, 2}" }
+      ]
+    },
+    {
+      "type": "card_question",
+      "question": "What does {1, 2, 3} & {2, 3, 4} give you?",
+      "answer": "{2, 3} — the intersection, the items that are in both sets."
+    },
+    {
+      "type": "narration",
+      "text": "One quick note before we wrap up, connecting back to episode five. Just as a list has an immutable cousin, the tuple, a set has one too, called a frozenset. You will not need it often, but there is one place it matters. The items in a set have to be immutable themselves, which means you can put strings and numbers and tuples into a set, but you cannot put a list into a set, and you cannot use a list as a dictionary key. If you ever see a TypeError that says unhashable type list, that is what it is telling you, you tried to use something changeable as a key or a set item. The fix is usually to convert that list to a tuple first."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "So now you have all three collections. A list, for ordered values you get at by position. A dictionary, for values you look up by a meaningful key. And a set, for uniqueness and fast membership checks. Between these three, plus the simple types from the earlier episodes, you can model just about any data you will meet. Next episode, at last, the program starts making decisions. If, elif, and else."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a dict maps keys to values: d[key] to look up, d.get(key, fallback) to look up safely",
+        "d[key] = value both adds and updates; a missing key with d[key] raises KeyError",
+        "loop with  for k, v in d.items()  — and 'in' on a dict checks the keys, not the values",
+        "a set holds unique, unordered items; set(a_list) drops duplicates; 'in' on a set is fast",
+        "set operators: | union, & intersection, - difference"
+      ],
+      "next": "EP 7 — Conditionals (if / elif / else)"
+    }
+  ]
+}

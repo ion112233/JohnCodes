@@ -1,0 +1,139 @@
+{
+  "id": "ep09-functions",
+  "title": "Functions",
+  "topic": "Basic Python · Episode 9",
+  "prompt": "Package code into named, reusable functions with parameters, return values, defaults and local scope.",
+  "episode": { "number": 9, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 12,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode nine. So far our programs have been one long script, running from top to bottom. That works fine for tiny programs, but it falls apart surprisingly fast as things grow. This episode is about functions, which let you take a chunk of code, give it a name, and then run it whenever you want, as many times as you want, just by writing that name. Functions are how you avoid repeating yourself. They are how you break one big scary problem into a handful of small, named, understandable pieces. And honestly, they are how you keep a program readable at all past about fifty lines. We will cover defining and calling a function, passing information in with parameters, getting a result back out with return, giving parameters default values, and the idea of scope, which is where your variables actually live. This is a big episode and an important one. Let's get into it."
+    },
+
+    { "type": "card_topic", "cardTitle": "Defining & calling", "cardSubtitle": "name a piece of code" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You define a function with the keyword def, then the name you want to give it, then a pair of round brackets, then a colon. And underneath, indented, the body, the code that makes up the function. Here we define a function called greet, and its body is a single print statement. Now, here is the key thing that confuses people at first. Defining a function does not run it. When Python reaches that def line, all it does is make a note to itself, there is now a function called greet, and then it moves straight on. The code in the body does not execute at that point. Not one line of it."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "To actually run the function, you call it. Calling means writing its name, followed by a pair of round brackets. Greet, open bracket, close bracket. Every single time you write that, the entire body of the function runs, from top to bottom. So if you call greet three times, the greeting prints three times, all from that one definition. The brackets are not optional and they are not decoration. Writing greet on its own, with no brackets, does not call the function. It just refers to the function object itself, which is occasionally a useful thing to do but is usually a bug where you forgot the brackets and wondered why nothing happened."
+    },
+    { "type": "code", "code": "def greet():\n    print(\"hello there!\")\n\ngreet()\ngreet()" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "hello there!\nhello there!"
+    },
+    {
+      "type": "narration",
+      "text": "Why bother, for a one line function? Two reasons, and they only grow as your programs do. First, if that greeting logic ever needs to change, you change it in one place, the function, and every call gets the new behaviour. Without a function, you would be hunting down every copy. Second, and honestly more important, the name. When you read greet, you know what that line does without reading its insides. A well named function turns ten confusing lines into one clear sentence. That is the real job of functions, not saving typing, but giving names to ideas so the rest of your code reads like a description of what it does."
+    },
+
+    { "type": "card_topic", "cardTitle": "Parameters", "cardSubtitle": "passing information in" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A function that always does exactly the same thing every time is a bit limited. Parameters are what fix that. A parameter is a variable name that you write inside the function's brackets when you define it. It acts as a placeholder, a promise that says, someone will hand me a value here. Then, when you call the function, you pass in an actual value, which is called an argument, and that value gets assigned to the parameter for the duration of that one call. Here, greet takes a parameter called name. Inside the body, name behaves as a completely ordinary variable. When we call greet with the string Ada, name becomes Ada just for that call. When we call it again with Alan, name becomes Alan. One function definition, different behaviour every time, all driven by what you pass in."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You can have several parameters, separated by commas in the definition, and then you pass several arguments, also comma separated, in the same order. The first argument goes to the first parameter, the second to the second, and so on. This is called positional, because position is what matches them up. The names you choose for your parameters are entirely up to you, and as always, they should describe what the value is going to be used for. And a quick sanity check, if you call a function with the wrong number of arguments, too few or too many, Python raises a TypeError and tells you exactly how many it expected. It does not guess."
+    },
+    { "type": "code", "code": "def greet(name, times):\n    for i in range(times):\n        print(\"hi,\", name)\n\ngreet(\"Ada\", 2)\ngreet(\"Grace\", 1)" },
+    {
+      "type": "narration",
+      "text": "It is worth being precise about the two words, because people use them loosely. A parameter is the name in the definition, the placeholder. An argument is the actual value you hand over at the call. So in def greet, name is a parameter. In greet of Ada, the string Ada is an argument. Not a big deal in conversation, but when an error message says, missing one required positional argument, name, you now know exactly what it is telling you, you called the function without giving it a value for that slot."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "def add(a, b):\n...     print(a + b)", "output": "" },
+        { "input": "add(2, 3)", "output": "5" },
+        { "input": "add(10, 100)", "output": "110" },
+        { "input": "add(\"ab\", \"cd\")", "output": "abcd" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "return", "cardSubtitle": "getting a result back" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "So far our functions just print things. But most of the time, you want a function to compute a value and hand it back to you, so that you can do something with it. That is what the return keyword does. When Python hits a return statement inside a function, two things happen. The function stops right there, immediately, even if there was more code below. And the value after the word return gets sent back out, to whatever line called the function. Here, add takes two numbers and returns their sum. Notice it does not print anything at all. The line, result equals add of two and three, calls the function, receives five back, and stores that five in a variable called result. Now result is just a normal variable holding five, and you can print it, or add it to something else, or stick it in a list."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "This is the crucial distinction to lock in. Print shows something on the screen and then it is gone, you cannot get it back. Return hands a value back to your program so it can keep working with it. A function that prints its answer is a dead end, you can look at the answer but you cannot use it. A function that returns its answer is a building block, you can feed its result into the next thing. As a beginner, when in doubt, return. You can always print the returned value at the call site if you want to see it. Also, a function can have several return statements, typically inside different branches of an if, and whichever one runs first ends the function, that is the early exit I mentioned last episode."
+    },
+    { "type": "code", "code": "def add(a, b):\n    return a + b\n\nresult = add(2, 3)\nprint(\"the answer is\", result)\nprint(add(result, 100))" },
+    {
+      "type": "narration",
+      "text": "And here is the mistake almost everyone makes at least once. You write a function that does a calculation, but you forget to return the result. Here, double is supposed to double a number, but the body just computes n times two, as an expression, and then throws the result away, because nothing catches it. There is no return. So when we call double, we get back None, the no value value from episode two, because a function that runs off the end without hitting a return automatically returns None. The print then shows None, or, more likely, the arithmetic on the next line blows up with a TypeError, because you cannot add one to None. If a function is meant to give you an answer, it must have a return."
+    },
+    {
+      "type": "gotcha",
+      "code": "def double(n):\n    n * 2          # computed, then discarded\n\nx = double(5)\nprint(x + 1)",
+      "badLine": 5,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 5, in <module>\n    print(x + 1)\nTypeError: unsupported operand type(s) for +: 'NoneType' and 'int'\n\ndouble() has no return, so x is None.  fix: return n * 2"
+    },
+
+    { "type": "card_topic", "cardTitle": "Defaults & keywords", "cardSubtitle": "optional arguments" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You can give a parameter a default value, by writing an equals sign and a value after it in the function definition. Once a parameter has a default, that argument becomes optional when you call the function. If you pass a value for it, your value is used. If you leave it out entirely, the default kicks in. Here, greet has a parameter called greeting that defaults to the string hello. Call greet with just a name, and you get hello, comma, name. Call it with a name and your own greeting, and you get that instead. One rule, parameters with defaults have to come after the ones without defaults, in the definition, otherwise Python cannot line the arguments up. Separately, when you call a function, you can name the arguments explicitly, writing greeting equals hey, rather than just relying on their position. That is called using a keyword argument, and it makes a call far easier to read when there are several arguments, especially a bare True or False, which at a call site tells the reader absolutely nothing about what it controls."
+    },
+    { "type": "code", "code": "def greet(name, greeting=\"hello\"):\n    print(greeting + \",\", name)\n\ngreet(\"Ada\")\ngreet(\"Grace\", \"welcome back\")\ngreet(\"Alan\", greeting=\"hey\")" },
+    {
+      "type": "narration",
+      "text": "One trap with default values, so you have heard it once. Do not use a list, or a dictionary, or any other mutable thing, as a default value. Write def f, items equals None, and then, inside, if items is None, set items to an empty list. The reason is subtle, the default is created once when the function is defined, not fresh on each call, so a mutable default gets quietly shared and accumulates changes between calls. You will not hit this for a while, but when you get a bug where a function seems to remember data from last time, this is usually why."
+    },
+
+    { "type": "card_topic", "cardTitle": "Scope", "cardSubtitle": "where a variable lives" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Last big idea, and it explains a lot of otherwise baffling behaviour. Variables that are created inside a function are local to that function. They exist only while the function is running, and only inside it. The parameters count as local, and anything you assign in the body is local. The moment the function returns, all of them simply vanish. Code outside the function cannot see them, cannot read them, they are gone. This is a feature, not a limitation. It means you can happily use a variable called total inside one function without caring one bit whether some completely different part of your program also uses a variable called total. They are in separate worlds. They never collide."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Variables created at the top level of your file, outside of any function, are called global. Functions are allowed to read a global variable. But, and this catches people, a function cannot change a global just by assigning to that name. If a function assigns to a name, Python treats that as creating a brand new local variable that happens to share the name, and it shadows the global for the length of the call, then disappears, leaving the real global untouched. The clean way to work, and the way that will save you hours, is this. Whatever a function needs, pass it in as an argument. Whatever a function produces, get it back out through return. Do not reach out and touch globals from inside functions. When you follow that, each function becomes a sealed box that you can understand completely on its own, without holding the rest of the program in your head."
+    },
+    {
+      "type": "gotcha",
+      "code": "def add_tax(price):\n    total = price * 1.2\n\nadd_tax(100)\nprint(total)",
+      "badLine": 5,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 5, in <module>\n    print(total)\nNameError: name 'total' is not defined\n\n'total' is local to add_tax and gone once it returns.\nfix: return total, and catch it:  total = add_tax(100)"
+    },
+    {
+      "type": "card_question",
+      "question": "A function does a calculation but has no `return`. What does calling it give you?",
+      "answer": "None. Every function that has no return statement hands back None."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Functions are the tool that lets programs actually grow without becoming a mess. Name a behaviour with def. Feed it data through parameters. Get a result out with return. Keep its insides private with local scope, and communicate only through arguments in and return values out. From here on, you will be writing functions constantly, they are the unit you think in. Next episode is a short, very practical one, learning to actually read the error messages Python throws at you, so that when something breaks, and it will, you know exactly what it is telling you."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "def names a function; it only runs when you call it with name() — the brackets matter",
+        "parameters are placeholders in the definition; arguments are the real values you pass in",
+        "return hands a value back to the caller — a function with no return gives you None",
+        "default values (def f(x, n=1)) make an argument optional; keyword args (f(n=1)) read better",
+        "variables inside a function are local and private — pass data in, return results out"
+      ],
+      "next": "EP 10 — Reading Python error messages"
+    }
+  ]
+}

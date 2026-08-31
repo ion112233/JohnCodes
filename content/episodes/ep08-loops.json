@@ -1,0 +1,149 @@
+{
+  "id": "ep08-loops",
+  "title": "Loops (for / while)",
+  "topic": "Basic Python · Episode 8",
+  "prompt": "Repeat work with a for loop over a collection, a while loop until a condition changes, plus break, continue and range.",
+  "episode": { "number": 8, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 12,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode eight. Last episode your program learned to make a decision. This episode it learns to repeat. Loops are how you do the same work over and over without copying and pasting the code, whether that is going through every item in a list, counting from one to a hundred, or waiting for the user to finally type something valid. We will cover the for loop, which walks through a collection one item at a time. The range function, which is how you count. The while loop, which keeps going until a condition changes. And break and continue, which give you fine control over a loop from inside its own body. Loops plus conditionals together are the whole of what programmers call control flow, so once you have this episode under your belt, you can genuinely sit down and write programs that do things. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "The for loop", "cardSubtitle": "do something for each item" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The for loop is the one you will use most, by far. It takes a collection, and it runs a block of code once for each item in it. You write for, then a variable name of your own choosing, then the word in, then the collection, then a colon. And underneath, indented, the code to run each time round. Here we have a list of names, and the loop, for name in names, colon. On the first pass through the loop, the variable name holds the string Ada, and the print runs. On the second pass, name holds Alan, and the print runs again. On the third, name holds Grace. Then the list is exhausted, the loop ends, and the program carries on with whatever comes after it, at the outer indentation."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The loop variable is just an ordinary variable. You pick its name, and by strong convention you make it the singular of whatever the collection is. Name for a list called names. Letter for a string. Row for a list of rows. That little habit makes the loop body read like a sentence. And the collection can be more than just a list. You can loop over a string, which gives you one character at a time. You can loop over a tuple. You can loop over the keys of a dictionary, or over dict dot items to get key value pairs that you unpack right there in the for line, name comma age, exactly like last episode's unpacking. Anything that is a sequence or a collection, you can loop over."
+    },
+    { "type": "code", "code": "names = [\"Ada\", \"Alan\", \"Grace\"]\n\nfor name in names:\n    print(\"hello,\", name)\n\nprint(\"done\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "hello, Ada\nhello, Alan\nhello, Grace\ndone"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A very common thing to do inside a for loop is build up a result as you go. You start with an empty container, or a zero, before the loop begins. Then, on each pass, you add to it. Here we start total at zero, and then, for each price in a list of prices, we do total plus equals price, using that shorthand from episode four. After the loop finishes, total holds the sum of every price. This pattern, set up an accumulator, loop and add to it, use the result afterward, is one you will write hundreds of times in your programming life. Summing a column of numbers. Counting how many items match a condition. Filtering a list down to just the ones you want by appending them to a new list. Building a report string piece by piece. They are all this exact shape, an empty thing before the loop, growing inside it."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "total = 0", "output": "" },
+        { "input": "for p in [10, 25, 5]:\n...     total += p", "output": "" },
+        { "input": "total", "output": "40" },
+        { "input": "for c in \"hi\":\n...     print(c)", "output": "h\ni" }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "One thing to be careful about, and it connects to the aliasing lesson from episode five. Do not add items to a list, or remove items from it, while you are looping over that same list. It confuses the loop, because the thing it is walking through is changing underneath it, and you end up skipping items or hitting them twice. If you need to build a filtered version of a list, loop over the original, and append the ones you want to keep to a brand new, separate list. Read from one, write to the other."
+    },
+    {
+      "type": "narration",
+      "text": "And that counting pattern I promised you back in episode six. Here it is for real. You start with an empty dictionary called counts. Then, for each word in a list of words, you do, counts, square bracket, word, equals, counts dot get, word, zero, plus one. On the first time you see a word, get returns the zero fallback, you add one, and store one. Every time after that, get returns the current count, you add one, and store it back. When the loop finishes, counts maps every word to how many times it appeared. A loop, plus a dictionary, plus the get method with a fallback. That is tallying anything."
+    },
+
+    { "type": "card_topic", "cardTitle": "range", "cardSubtitle": "looping a set number of times" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Sometimes you do not have a collection to loop over. You just want to do something a specific number of times, or count through a series of numbers. That is exactly what range is for. Range of five gives you the numbers zero, one, two, three, four. Look carefully. It starts at zero, and it stops before the five. That is the same not included rule you saw with slicing, and it is deliberately consistent. So, for i in range of five, runs the loop body five times, with i taking the values zero, then one, and so on up to four. You can also give range a start and a stop, so range of one comma six gives you one, two, three, four, five. And a third number for the step, so range of zero comma one hundred comma ten gives you zero, ten, twenty, thirty, and so on."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One anti pattern to know about. If you catch yourself writing, for i in range of len of some list, purely so that you can then use i to index into that list with square brackets, stop. There is almost always a cleaner way. If you only need the items, loop over the list directly, for item in the list. If you need the position as well as the item, wrap the list in the enumerate function, for index comma item in enumerate of the list, and Python hands you both on every pass, no manual indexing, no off by one risk. Reserve range for when you genuinely just need to count, like doing something exactly ten times, or building a countdown."
+    },
+    {
+      "type": "code",
+      "code": "for i in range(5):\n    print(\"tick\", i)\n\nprint()\n\nfor i in range(3, 0, -1):\n    print(i)\nprint(\"go!\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "tick 0\ntick 1\ntick 2\ntick 3\ntick 4\n\n3\n2\n1\ngo!"
+    },
+
+    { "type": "card_topic", "cardTitle": "The while loop", "cardSubtitle": "repeat until something changes" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The for loop runs a known number of times, once per item. The while loop is a different animal. It runs for as long as a condition stays true, and you do not necessarily know in advance how many times that will be. You write while, then a condition, then a colon, then the indented block. When Python reaches it, it checks the condition. If the condition is true, it runs the whole block, then it goes back and checks the condition again, and if it is still true it runs the block again, and it keeps doing that. The moment the condition comes out false, the loop stops and the program moves on past it."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The absolutely critical thing, and the thing that catches every single beginner at least once, is that something inside the loop body has to eventually make that condition become false. If nothing in the loop ever changes the condition, it stays true forever, the loop never ends, and your program just hangs there doing the same thing endlessly. Here we count down from three. The condition is, count greater than zero. Inside the loop, we print count, and then, crucially, on the next line, we do count minus equals one. That subtraction is the thing that eventually drives count down to zero and stops the loop. Delete that one line, and the program prints three, forever, until you kill it."
+    },
+    { "type": "code", "code": "count = 3\n\nwhile count > 0:\n    print(count)\n    count -= 1\n\nprint(\"liftoff\")" },
+    {
+      "type": "narration",
+      "text": "Here is the classic infinite loop, laid out so you recognise it in the wild. The condition never changes anywhere inside the loop body, so it stays true forever, and the program is just stuck, printing the same thing on repeat until you force it to stop, which on most systems is control C in the terminal. When a while loop hangs on you, and it will happen, the very first thing to check is, what inside this loop is supposed to change the condition, and is that line actually being reached on every pass, or is it hiding inside an if that never runs."
+    },
+    {
+      "type": "gotcha",
+      "code": "count = 3\nwhile count > 0:\n    print(\"stuck\")\n    # forgot: count -= 1",
+      "badLine": 2,
+      "error": "no error — the program just never stops.\ncount is always 3, so count > 0 is always true.\npress Ctrl+C to kill it.  fix: change count inside the loop."
+    },
+    {
+      "type": "narration",
+      "text": "So, when do you use which. If you are going through the items of a collection, or doing something a fixed, countable number of times, use a for loop. It is shorter, and it structurally cannot run away from you, it stops when the items run out. Use a while loop only when you genuinely do not know how many rounds you will need. The most common honest use of while is, keep asking the user for input until they give you something valid, which we will build properly in episode eleven."
+    },
+
+    { "type": "card_topic", "cardTitle": "break & continue", "cardSubtitle": "controlling a loop from inside" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Two keywords let you steer a loop from within its own body. Break stops the loop immediately and jumps to whatever code comes after it, no matter how many items were left to process. You use break when you have found what you were looking for, and there is simply no point in continuing. Continue is gentler. It skips the rest of the current pass and jumps straight ahead to the next item, staying in the loop. You use continue to quietly ignore items you do not care about, without wrapping the whole rest of the body in an if."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here they are together. We loop through a list of numbers. If a number is negative, we continue, which skips it and moves on. If a number is over one hundred, we print, too big, stopping, and then break, which ends the loop right there. Everything else, the numbers that are neither negative nor huge, we print normally. Both keywords always act on the innermost loop they sit inside, so if you have a loop inside a loop, a break only breaks out of the inner one. And there is a very common idiom, a while True loop, which on its own would run forever, deliberately paired with a break somewhere inside it under some condition. That is the clean, readable way to write, loop until this specific thing happens, and then get out."
+    },
+    {
+      "type": "code",
+      "code": "for n in [4, -1, 8, 200, 15]:\n    if n < 0:\n        continue\n    if n > 100:\n        print(\"too big, stopping\")\n        break\n    print(\"ok:\", n)" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "ok: 4\nok: 8\ntoo big, stopping"
+    },
+    {
+      "type": "card_question",
+      "question": "What's the difference between break and continue?",
+      "answer": "break ends the whole loop; continue skips to the next item and keeps looping."
+    },
+    {
+      "type": "narration",
+      "text": "Two small extras you will see. A for loop can have an else on it, which runs only if the loop finished normally without ever hitting a break. It is niche, but it is the tidy way to write, search for something, and do this if you never found it. And you can nest loops, a loop inside a loop, which is how you work through a grid, the outer loop over rows, the inner loop over the columns in each row. Just watch the indentation, and remember a break only breaks the loop it is directly in."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "That is loops, and with them, you have all of control flow. Your programs can now decide, and repeat, which really is most of what programming is at the mechanical level. A for loop to go through things, range to count, a while loop for until X happens, and break and continue to steer from inside. Next episode we package code up into functions, so you can name a piece of behaviour, reuse it anywhere, and stop repeating yourself."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "for item in collection: runs the block once per item — the workhorse loop",
+        "range(n) counts 0 to n-1; range(a, b, step) for other sequences; enumerate for index + item",
+        "while condition: repeats while it's true — something inside MUST change the condition",
+        "for a known count use for; for 'until X happens' use while (often while True + break)",
+        "break ends the loop now; continue skips to the next pass"
+      ],
+      "next": "EP 9 — Functions"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "id": "ep12-file-io",
+  "title": "File I/O",
+  "topic": "Basic Python · Episode 12",
+  "prompt": "Read and write text files with open(), the with statement, and the read / write modes.",
+  "episode": { "number": 12, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 8,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode twelve. Everything our programs have done so far vanishes the instant they stop running. Every variable, every list, every dictionary, whatever the user carefully typed in, all of it, gone the moment the program exits. This episode is about making things stick around, by reading from and writing to files on the disk. We will cover opening a file, reading it either all at once or line by line, writing to a new file, the important difference between overwriting a file and adding to it, and the with statement, which is the correct way to do all of this. It is a short, very practical episode. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "Reading a file", "cardSubtitle": "open, read, close" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "To work with a file, the first thing you do is open it. The open function takes two things. The name of the file, and a mode, which is a short string that says what you intend to do with it. The mode r, for read, is the default, so you can often leave it off, but being explicit does not hurt. Open hands you back a file object, which is the thing you then actually read from or write to. The read method, called with no arguments, gives you the entire contents of the file as one single big string, with all the newline characters still in it. When you are finished with a file, you should close it, by calling the close method, which flushes any pending writes and releases the file so other programs can use it."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here is that written out. We open names dot txt in read mode, read the whole thing into a variable called text, print it, and close the file. This works, and you will see code like it. But there is a real problem with it, and it is why nobody experienced actually writes it this way. If anything between the open and the close raises an error, and remember, lots of things raise errors, then the close line never runs. The file is left open. Do that enough times and your program runs out of file handles and starts failing in confusing ways. There is a better way that closes the file for you no matter what, and that is the next topic."
+    },
+    { "type": "code", "code": "f = open(\"names.txt\", \"r\")\ntext = f.read()\nprint(text)\nf.close()" },
+
+    { "type": "card_topic", "cardTitle": "The with statement", "cardSubtitle": "open it the right way" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The correct way to open a file is the with statement. You write, with open, then the file name and the mode, then, as f, then a colon. That gives you the file object in a variable, here called f. Then, indented underneath, you do all your work with f. And here is the whole reason to use it. When that indented block ends, for any reason whatsoever, whether it finished normally or an error was raised partway through, Python automatically closes the file for you. You never write close yourself, and you can never forget to. This is the pattern to use every single time you touch a file, no exceptions."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Inside the with block, reading works the same as before. But there is a nicer way to go through a file than read, which dumps everything into one giant string. You can loop directly over the file object itself, with a for loop, and it hands you the file one line at a time. Each line you get comes with its trailing newline character still attached, so almost always the first thing you do inside the loop is call strip on the line, which removes that newline along with any stray leading or trailing spaces. Here we open the file, loop over its lines, strip each one to clean it up, and print it with a little bullet in front. Looping line by line is also the memory friendly way to handle a huge file, because you only ever hold one line at a time, not the whole thing."
+    },
+    { "type": "code", "code": "with open(\"names.txt\", \"r\") as f:\n    for line in f:\n        clean = line.strip()\n        print(\"-\", clean)" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "- Ada\n- Alan\n- Grace"
+    },
+
+    { "type": "card_topic", "cardTitle": "Writing a file", "cardSubtitle": "modes w and a" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "To write to a file, you open it in mode w, for write. Then you use the write method, passing it a string. One thing that surprises everyone the first time, write does not add a newline for you the way print does. It writes exactly the string you give it and nothing more. So if you want each thing on its own line in the file, you have to put a backslash n at the end of each string yourself. Now, the big warning about mode w, and this one has actually cost people real data. The moment you open a file in write mode, Python empties it. Completely. If that file had contents, they are gone, wiped, before you have written a single character. So if you meant to add something to an existing file, and you opened it with w, you have just erased it."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "When you actually want to add to the end of an existing file, keeping everything that is already there, you use mode a, for append. Everything else works exactly the same, write just adds to the end of the file instead of replacing the whole thing. Use w when you are generating a fresh file each time, like a report. Use a when you are adding entries to a running log. And a useful detail, if the file does not exist yet, both w and a will happily create it for you, so you do not have to make it first. In this example we take a list of names and write out a little report file, one name per line, with a header at the top."
+    },
+    { "type": "code", "code": "names = [\"Ada\", \"Alan\", \"Grace\"]\n\nwith open(\"report.txt\", \"w\") as f:\n    f.write(\"name list\\n\")\n    for name in names:\n        f.write(name + \"\\n\")\n\nprint(\"wrote report.txt\")" },
+    {
+      "type": "gotcha",
+      "code": "# you have a log file with 500 lines\nwith open(\"log.txt\", \"w\") as f:\n    f.write(\"new entry\\n\")",
+      "badLine": 2,
+      "error": "no error — but log.txt now contains ONE line.\nmode \"w\" empties the file the instant it opens.\nto add to it and keep the rest, use mode \"a\"."
+    },
+
+    { "type": "card_topic", "cardTitle": "A few practical notes", "cardSubtitle": "paths, lists, and missing files" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A few things you will run into. First, the file name you pass to open is really a path. If it is just a bare name, like names dot txt, Python looks for it in whatever folder your program is being run from, which is not always the folder the script lives in, and that catches people. For anything real, you will want to be explicit about the path. There is a module in the standard library called pathlib that makes building paths that work the same on Windows, Mac and Linux almost painless, and it is worth looking up when you need it. Second, a common shortcut, if you want every line of a file as a list of strings, wrap the list function around the file object, or call the readlines method. Third, if you try to open a file that does not exist, in read mode, you get a FileNotFoundError. And that, from last episode, is a perfect example of an expected outside failure that try and except is made for."
+    },
+    {
+      "type": "card_question",
+      "question": "You open an existing file with open(\"data.txt\", \"w\"). What happens to its contents?",
+      "answer": "Gone. Mode \"w\" empties the file immediately. Use \"a\" to keep them and add on."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "So now your programs can genuinely remember things between runs. Always open files with a with statement, so they close themselves even when something goes wrong. Read with a for loop over the file, and strip each line. Write with mode w for a brand new file, mode a to add to one that exists. And keep w in mind as the one that quietly empties the file. Next episode we look at splitting a program across multiple files, and pulling in ready made code from Python's enormous standard library, with import."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "always use  with open(path, mode) as f:  — it closes the file for you, even on an error",
+        "read: f.read() for the whole thing; for line in f: for one line at a time (then line.strip())",
+        "write: f.write(text) — it does NOT add a newline, put \\n in yourself",
+        "mode \"r\" read (default), \"w\" write (EMPTIES the file first!), \"a\" append to the end",
+        "opening a missing file in \"r\" raises FileNotFoundError — a job for try / except"
+      ],
+      "next": "EP 13 — Modules & imports"
+    }
+  ]
+}

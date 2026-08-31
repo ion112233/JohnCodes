@@ -1,0 +1,101 @@
+{
+  "id": "ep13-modules-and-imports",
+  "title": "Modules & imports",
+  "topic": "Basic Python · Episode 13",
+  "prompt": "Pull in code with import, use the standard library, split your own code into files, and use the __main__ guard.",
+  "episode": { "number": 13, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 8,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode thirteen. Here is some good news. You do not have to write everything yourself. Python comes with a huge collection of ready made, tested code, called the standard library, covering dates and times, randomness, maths, working with files and folders, reading common data formats, even talking to the internet. And separately, as your own programs grow past a single file, you will want to split your code across several files too. Both of those things use the same tool, the import statement. This episode covers importing from the standard library, the two different import styles and when to use each, making and using your own module, and finally that mysterious line, if name equals main, that you have almost certainly seen at the bottom of Python files and wondered about. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "import", "cardSubtitle": "pull in code from elsewhere" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A module is, at its simplest, just a file of Python code that someone else already wrote, that you are allowed to use. To use one, you import it, and by convention you do that with a line right at the top of your file. Import random. Import math. When Python runs that line, it finds and runs that module once, and then gives you access to everything inside it, through the module's name followed by a dot. So after import random, you can call random dot randint, one, six, which gives you a random whole number between one and six inclusive, like rolling a single die. Random dot choice, handed a list, picks one item from it at random. After import math, math dot sqrt gives you a square root, math dot pi is the value of pi, math dot floor rounds down."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The pattern is always the same. Module name, then a dot, then the thing you want from it. And that dot is doing real work for readability. When you are reading someone's code and you see math dot sqrt, you know instantly where that came from, and where to go look it up. It is not some mystery function that might be defined anywhere. A handful of standard library modules are worth knowing about early. Random, for games, shuffling, and picking things. Datetime, for working with dates and times. Json, for reading and writing that extremely common data format. And os and pathlib, for dealing with files and folders and paths. You do not need to learn their contents now, just know the names exist so you can search for them."
+    },
+    { "type": "code", "code": "import random\n\ndie = random.randint(1, 6)\nprint(\"you rolled\", die)\n\npick = random.choice([\"heads\", \"tails\"])\nprint(pick)" },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "import math", "output": "" },
+        { "input": "math.sqrt(144)", "output": "12.0" },
+        { "input": "round(math.pi, 4)", "output": "3.1416" },
+        { "input": "import random", "output": "" },
+        { "input": "random.randint(1, 100)", "output": "42" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "from ... import", "cardSubtitle": "the other style" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "There is a second form of import. From a module, import a specific name out of it. From math import sqrt. After that line, you can just write sqrt, directly, with no math dot in front. This is handy when you use one particular thing from a module very heavily, and typing the module prefix on every single use gets noisy and clutters the code. The trade off is that you lose that little signpost telling you where sqrt came from. And there is a real danger if two different modules both happen to have a function with the same name, say both have a function called load. If you import both by name, the second import silently overwrites the first, and you get very confusing behaviour. So the guidance is, by default, import the module and use the dot. Only use the from form for a small number of names that you genuinely type constantly. And one form you will see but should avoid, from a module import star, with an asterisk. That dumps every single name from the module into your file at once, and now you have no idea what you have got, or what it might have quietly clobbered."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "clear where it's from",
+      "left": "import math\n\nr = math.sqrt(x)\narea = math.pi * r * r",
+      "rightLabel": "short, for heavy use",
+      "right": "from math import sqrt, pi\n\nr = sqrt(x)\narea = pi * r * r",
+      "verdict": "default to 'import module'. use 'from' for a few names you type a lot."
+    },
+
+    { "type": "card_topic", "cardTitle": "Your own modules", "cardSubtitle": "split code across files" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Every Python file that you write is itself a module, and other files of yours can import it, using the exact same import statement. Say you have a file called helpers dot py, and inside it you have defined a function called greet. In another file, sitting in the same folder, you write import helpers at the top, and then, anywhere below, you can call helpers dot greet. That is it. Same syntax as the standard library, because as far as Python is concerned there is no difference, it is all just modules. This is how real programs are organised. Related functions grouped together into files with sensible names. A models file, a helpers file, a main file that imports the others and wires everything together. It keeps each file small enough to hold in your head. One thing to be aware of, when you import your own module, Python runs that whole file, top to bottom, the first time. So any code sitting at the top level of helpers dot py, not tucked inside a function, actually runs at the moment you import it. Which leads straight into the last topic."
+    },
+    { "type": "code", "code": "# ---- helpers.py ----\ndef greet(name):\n    return \"hello, \" + name\n\n# ---- solution.py ----\nimport helpers\n\nmsg = helpers.greet(\"Ada\")\nprint(msg)" },
+
+    { "type": "card_topic", "cardTitle": "if __name__ == \"__main__\"", "cardSubtitle": "what that line does" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You have almost certainly seen this line near the bottom of Python files and wondered what on earth it means. Here it is. Every module has a hidden built in variable called name, with two underscores on each side of it. When you run a file directly, by typing python solution dot py in the terminal, Python sets that file's name variable to the string main, also with the underscores. But when a file gets imported by another file, its name variable is instead set to the module's actual name, like helpers. So the line, if name equals main, colon, is a test that asks, am I being run directly, as the main program, or am I merely being imported by something else so it can borrow my functions."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "What you do with that test is this. You put your program's actual do something code, the part that kicks the whole thing off, inside that if block. Then, when you run the file directly, the test is true, and that code runs, and your program starts. But when some other file imports this one, just to reuse a function from it, the test is false, so the code inside the if does not run, it does not accidentally launch your whole program as a side effect of an import. It is the standard, universally recognised way to make a Python file usable both as a runnable program and as an importable library at the same time. Get in the habit of it, put your functions at the top, a main function, and then if name equals main, main."
+    },
+    { "type": "code", "code": "def greet(name):\n    return \"hello, \" + name\n\ndef main():\n    print(greet(\"Ada\"))\n    print(greet(\"Alan\"))\n\nif __name__ == \"__main__\":\n    main()" },
+    {
+      "type": "card_question",
+      "question": "What is a module, in Python?",
+      "answer": "Just a .py file. import runs it once and gives you its names via module.name."
+    },
+    {
+      "type": "narration",
+      "text": "One last thing, just so you have heard the words. The standard library is huge, but it is not everything. For code that is not in it, other people's published packages, there is a tool called pip that downloads and installs them from the internet. And you would normally do that inside a thing called a virtual environment, which keeps each project's set of installed packages separate from every other project's, so they do not interfere. Setting that up properly is a whole topic of its own, and sits just past the edge of this course. But now you know the terms to search for, pip, and virtual environment, the day you need a library that Python does not already ship with."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "So, import brings in code, whether that is from Python's vast standard library or from your own other files. Prefer importing the module and using the dot, so the reader always knows where a name came from. Split big programs into modules with clear names. And put your run it code inside an if name equals main block, so that a single file can serve as both a program and a library. Next episode we take the last big step of the course, defining your very own types, with classes."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "import module, then use module.thing() — the dot shows where it came from",
+        "from module import name  gives you name directly — use it sparingly, and avoid import *",
+        "every .py file is a module; import your own exactly like the standard library",
+        "standard library highlights to know by name: random, datetime, json, math, pathlib",
+        "if __name__ == \"__main__\": runs only when the file is run directly, not when imported"
+      ],
+      "next": "EP 14 — Intro to OOP (classes & objects)"
+    }
+  ]
+}

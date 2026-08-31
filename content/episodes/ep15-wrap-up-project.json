@@ -1,0 +1,111 @@
+{
+  "id": "ep15-wrap-up-project",
+  "title": "Mini wrap-up project",
+  "topic": "Basic Python · Episode 15",
+  "prompt": "Build a complete number-guessing game from scratch, using everything from the course.",
+  "episode": { "number": 15, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 10,
+  "filename": "game.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome to the final episode of Basic Python. There are no new concepts this time. Instead, we are going to build one small, complete program, starting from a blank file, and along the way you will see almost every single thing from this course working together. Variables, types, f-strings, a while loop, an if elif else, functions, the random module, try and except, and reading and writing a file. The program is a number guessing game. The computer picks a secret number between one and a hundred, you guess, it tells you higher or lower, and it keeps score, saving your best result to a file so it survives between runs. We will build it in five stages, and at every stage it will be a working program that runs. Let's start."
+    },
+
+    { "type": "card_topic", "cardTitle": "The core loop", "cardSubtitle": "pick a number, take a guess" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "We always start with the smallest possible thing that actually runs. We import random, which we met in episode thirteen. We define a function called play, from episode nine. Inside it, random dot randint, one, one hundred, picks our secret number and stores it. Then we ask for a guess with input, and convert it to a number with int, straight from episode one. For now we do not check the guess at all, we just print the secret so we can confirm the picking works. And at the bottom of the file, outside the function, we call play. Run it, and it asks for a guess and then reveals the number. It is not a game yet, obviously. But it runs, and it does one real thing, and that is always how you should begin. Get the skeleton running first, then add features to something that already works, rather than writing forty lines and hoping."
+    },
+    { "type": "code", "code": "import random\n\ndef play():\n    secret = random.randint(1, 100)\n    guess = int(input(\"guess: \"))\n    print(\"the secret was\", secret)\n\nplay()" },
+    {
+      "type": "narration",
+      "text": "Already, look at the decisions baked into this tiny start. We put the logic in a function called play, rather than just writing it at the top level, because we know it is going to grow and we want it contained and named. We used randint from the random module instead of trying to invent randomness ourselves. And we are printing the secret temporarily, as a scaffold, something we will delete once we trust the rest. Printing intermediate values to check your assumptions is not cheating, it is how everyone works. You just remove the scaffolding at the end."
+    },
+
+    { "type": "card_topic", "cardTitle": "Loop & feedback", "cardSubtitle": "higher, lower, correct" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now it becomes an actual game. We wrap the guessing part in a while True loop, from episode eight. Each time round the loop, we take a guess, and then we run a small if, elif, else, from episode seven. If the guess is below the secret, we print, higher. If it is above the secret, we print, lower. And if it is neither below nor above, then it must be equal, so we print, correct, and then we return. That return is doing two jobs, it ends the function, and because it ends the function it also ends the loop, which is the clean way out of a while True. Run this version and you have a genuinely playable game. Guess a number, get a hint, adjust, guess again, until you land it exactly."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef play():\n    secret = random.randint(1, 100)\n    while True:\n        guess = int(input(\"guess: \"))\n        if guess < secret:\n            print(\"higher\")\n        elif guess > secret:\n            print(\"lower\")\n        else:\n            print(\"correct!\")\n            return\n\nplay()" },
+    {
+      "type": "terminal",
+      "command": "python game.py",
+      "output": "guess: 50\nlower\nguess: 25\nhigher\nguess: 37\ncorrect!"
+    },
+    {
+      "type": "narration",
+      "text": "The elif here is not strictly required, we could have written else, and then an if inside it. But elif says exactly what we mean, three mutually exclusive cases, check them in order, take the first match. And notice we do not need an explicit check for guess equals secret. If it is not less than, and not greater than, it must be equal, so the else branch is that case, for free. That is the same simplification we saw with the grade checker in episode seven. Small thing, but it is the difference between code that reads cleanly and code that is technically correct but noisy."
+    },
+
+    { "type": "card_topic", "cardTitle": "Make it robust", "cardSubtitle": "count guesses, survive bad input" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "There are two problems with what we have. If the player types the word banana instead of a number, the int call raises a ValueError and the whole game crashes with a traceback. And we are not keeping any score. Both are quick to fix with what we already know. For the input, we pull it out into its own function called ask int, built on the while True, plus try, plus except pattern from episode eleven. It tries to read and convert the input, returns it straight away if that works, and just prints a hint and loops around to ask again if the conversion raised a ValueError. Now bad input can never crash the game, and, because it is a separate function, we could reuse it in any other program that needs a number from the user. For the score, back in play, we add a guesses counter. It starts at zero before the loop, we do guesses plus equals one on every pass, from episode four, and, crucially, at the end we return it, instead of just returning with nothing, so that whoever called play finds out how many guesses it took. That returned value is what the high score feature is going to be built on. We also drop the count into a friendly f-string, from episode three, so the win message reads nicely."
+    },
+    {
+      "type": "narration",
+      "text": "It is worth pausing on what just happened structurally. We had one function, play, that did everything. We noticed that reading a validated integer is its own distinct job, used in one place now but reusable, and we lifted it out into ask int. That move, spot a self contained responsibility, give it a name, pull it into its own function, is something you will do constantly as programs grow. Play is now shorter and reads better, and ask int can be tested and understood entirely on its own."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef ask_int(prompt):\n    while True:\n        try:\n            return int(input(prompt))\n        except ValueError:\n            print(\"numbers only, please\")\n\ndef play():\n    secret = random.randint(1, 100)\n    guesses = 0\n    while True:\n        guess = ask_int(\"guess: \")\n        guesses += 1\n        if guess < secret:\n            print(\"higher\")\n        elif guess > secret:\n            print(\"lower\")\n        else:\n            print(f\"nice, {guesses} tries\")\n            return guesses\n\nplay()" },
+
+    { "type": "card_topic", "cardTitle": "Save the best score", "cardSubtitle": "a file that persists" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Last feature. We want to remember the best score between runs, and the only way to do that is a file on disk, from episode twelve. Two small functions handle it. Load best opens best dot txt and reads a number out of it. But the very first time you ever run the game, that file does not exist, so we wrap it in try and except, and catch the FileNotFoundError, and return None to mean, there is no best yet. Save best opens the file in write mode and writes the score into it, converted to a string first because write only takes strings. Then we replace that bare play call at the bottom with a proper main function, from episode nine again. Main plays one round, loads the old best, and compares. If there is no best yet, or if this score is lower, meaning fewer guesses, which is better, we announce a new best and save it. Otherwise we just show the record to beat."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "And finally, we wrap the call to main inside if name equals main, from episode thirteen. That way, if someone ever imported this file just to reuse the ask int function, importing it would not suddenly launch a game at them. Run it directly, though, and main runs. Here is the whole thing, about forty lines. Every function has one clear job. The risky parts are contained. The state that needs to survive is in a file. This is what a small, complete, well organised Python program looks like."
+    },
+    {
+      "type": "code",
+      "code": "import random\n\ndef ask_int(prompt):\n    while True:\n        try:\n            return int(input(prompt))\n        except ValueError:\n            print(\"numbers only, please\")\n\ndef play():\n    secret = random.randint(1, 100)\n    guesses = 0\n    while True:\n        guess = ask_int(\"guess: \")\n        guesses += 1\n        if guess < secret:\n            print(\"higher\")\n        elif guess > secret:\n            print(\"lower\")\n        else:\n            print(f\"nice, {guesses} tries\")\n            return guesses\n\ndef load_best():\n    try:\n        with open(\"best.txt\") as f:\n            return int(f.read())\n    except FileNotFoundError:\n        return None\n\ndef save_best(score):\n    with open(\"best.txt\", \"w\") as f:\n        f.write(str(score))\n\ndef main():\n    print(\"guess my number, 1 to 100\")\n    score = play()\n    best = load_best()\n    if best is None or score < best:\n        print(\"a new best score!\")\n        save_best(score)\n    else:\n        print(f\"best to beat: {best}\")\n\nif __name__ == \"__main__\":\n    main()" },
+    {
+      "type": "narration",
+      "text": "Run it once, win in five guesses, and it writes five into best dot txt as the record. Quit the program completely. Run it again, win in eight this time, and it tells you the record to beat is still five, because it read that back from the file. Run it a third time, win in three, new best, and the file updates to three. The score genuinely persists across separate runs of the program, because it is sitting on the disk now, not in a variable that dies when the program exits."
+    },
+    {
+      "type": "terminal",
+      "command": "python game.py",
+      "output": "guess my number, 1 to 100\nguess: 50\nhigher\nguess: 75\nlower\nguess: 62\nnice, 3 tries\na new best score!"
+    },
+    {
+      "type": "narration",
+      "text": "Take one more look at the shape of the finished program. All the functions are defined first. Then main, which is the conductor, it calls the others in order and holds the overall flow. Then the if name equals main line at the very bottom, which starts the whole thing. You can read main on its own and understand what the program does, print a header, play a round, load the best, compare, save if it is a record. Each of those is a function name that tells you what it does. And if you want to know how ask int survives bad input, you drop into that one function and read six lines. That is the payoff of everything in this course. A program you can understand a piece at a time, instead of all at once."
+    },
+    {
+      "type": "card_question",
+      "question": "Why does the high score survive after the program exits?",
+      "answer": "It's written to best.txt on disk. Variables vanish on exit; files don't."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "And that is a complete program, about forty lines, built entirely from the pieces you have collected over fifteen episodes. Look at it. There is nothing advanced in there. It is just the basics, the print, the variable, the loop, the if, the function, the file, combined thoughtfully. That is what programming actually is, most of the time. Small, well understood parts, put together to do something useful. You now genuinely know enough Python to build real things. So here is the only homework that matters. Go and build something small that you actually want to exist. A tool that saves you five minutes a day. A little game. A script that renames your files. Whatever it is. Building something you care about is how all of this stops being video knowledge and becomes yours. Thank you for watching Basic Python. Now go write some code."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "start with the smallest thing that runs, then grow it one feature at a time",
+        "pull repeated or risky bits into their own small functions (ask_int, load_best, save_best)",
+        "while True + return/break is the clean 'loop until X' shape; try/except keeps input safe",
+        "a file is how state survives between runs — everything else disappears on exit",
+        "you have the whole toolkit now — go build something you actually want"
+      ],
+      "next": "that's the course — now go build something"
+    }
+  ]
+}

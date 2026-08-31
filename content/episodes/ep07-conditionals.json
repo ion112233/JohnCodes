@@ -1,0 +1,109 @@
+{
+  "id": "ep07-conditionals",
+  "title": "Conditionals (if / elif / else)",
+  "topic": "Basic Python · Episode 7",
+  "prompt": "Make your program choose what to do, using if, elif and else with the conditions from episode 4.",
+  "episode": { "number": 7, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 8,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode seven. Up to now, every program we have written runs straight through, top to bottom, doing exactly the same thing every single time. This episode is where that changes. Conditionals let your program look at a value, and decide what to do next based on it. This is a shorter episode, because you already did the hard part back in episode four, building conditions with comparisons and with and, or, and not. Now we just plug those conditions into an if statement and act on them. We will cover if on its own, if paired with an else, the elif for handling a run of separate cases, how to combine and nest conditions, and a couple of mistakes that are very easy to make and very annoying to find. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "if", "cardSubtitle": "run this code, only sometimes" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The simplest form is the word if, then a condition, then a colon. And then, indented underneath, the code that should run when that condition turns out to be true. This is exactly the indentation rule from episode one, the colon opens a block, and the indented lines below it belong to that block. Here we ask the user for their age, convert it to a number with int, and then, if age is greater than or equal to eighteen, we print, you can vote. That print is indented under the if, so it only runs when the condition is true. If age comes out less than eighteen, Python simply skips the entire indented block and carries straight on. Any line that is not indented, back at the left margin, runs no matter what, because it is not part of the if at all. So the thank you line at the very bottom always prints, whatever the age was."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The condition after the word if can be anything that evaluates to true or false. A plain comparison, like age greater than or equal to eighteen. A combination built with the boolean operators, like age greater than eighteen and has id. Or, because of truthiness from episode two, it can just be a value on its own. If name, with nothing else, means, if name is a non empty string, do this. If my list, means, if the list has anything in it. That shortcut reads nicely and you will use it constantly, but it is worth being aware that it is truthiness doing the work, not a hidden comparison."
+    },
+    { "type": "code", "code": "age = int(input(\"your age: \"))\n\nif age >= 18:\n    print(\"you can vote\")\n\nprint(\"thanks\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "your age: 21\nyou can vote\nthanks"
+    },
+
+    { "type": "card_topic", "cardTitle": "else", "cardSubtitle": "otherwise, do this" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Very often you want to do one thing when the condition is true, and a different thing when it is false. That is exactly what else is for. You write the word else, then a colon, lined up directly underneath the if, at the same level of indentation. Then its own indented block below it. And here is the guarantee. Exactly one of the two blocks runs, always. If the condition is true, the if block runs and the else block is skipped entirely. If the condition is false, the if block is skipped and the else block runs. There is no way for both of them to run, and no way for neither to run. So in this version, either the program prints, you can vote, or it prints, too young, sorry. One or the other, every time, guaranteed. An if with no else is fine when you only care about the true case. Add the else the moment you have something specific to say about the false case too."
+    },
+    { "type": "code", "code": "age = int(input(\"your age: \"))\n\nif age >= 18:\n    print(\"you can vote\")\nelse:\n    print(\"too young, sorry\")\n\nprint(\"thanks\")" },
+
+    { "type": "card_topic", "cardTitle": "elif", "cardSubtitle": "several cases in a row" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "When there are more than two possibilities, you use elif, which is just short for else if. You can stack as many elif branches as you like, each with its own condition, and then an else at the very end to catch everything that did not match any of them. Here is a grade checker. Python checks the conditions from the top downward. The instant one of them comes out true, Python runs that block, and then skips every remaining branch, it does not keep checking. So if the score is ninety five, the very first condition, score greater than or equal to ninety, is true, it prints, grade A, and it is completely done. It never even looks at the eighty check or the seventy check."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "This top to bottom, first match wins behaviour has two practical consequences. One, you almost always want your conditions ordered from most specific, or in this case highest, to least specific. If you put the seventy check first, then a score of ninety five would match it and wrongly get a C, because Python stops at the first true one. Two, you do not have to write the lower bound on each branch. For the B case, we just write score greater than or equal to eighty. We do not need, and score less than ninety, because if Python is even looking at the B branch, we already know the score was below ninety, otherwise the A branch would have caught it and we would never have got here. That is a subtle but real simplification that first match wins gives you for free."
+    },
+    { "type": "code", "code": "score = int(input(\"score: \"))\n\nif score >= 90:\n    print(\"grade: A\")\nelif score >= 80:\n    print(\"grade: B\")\nelif score >= 70:\n    print(\"grade: C\")\nelse:\n    print(\"grade: F\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "score: 84\ngrade: B"
+    },
+    {
+      "type": "card_question",
+      "question": "In an if / elif / elif chain, how many of the blocks run?",
+      "answer": "At most one — the first whose condition is true. The rest are skipped."
+    },
+
+    { "type": "card_topic", "cardTitle": "Nesting & combining", "cardSubtitle": "conditions inside conditions" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You can put an if inside another if. This is called nesting, and the inner block just gets indented one more level, so it sits eight spaces in instead of four. Nesting is sometimes genuinely the clearest way to express a rule, especially when the inner check only makes sense if the outer one passed. But it can also get out of hand fast. Three or four levels deep and the code marches so far across the page that nobody can follow the logic. Very often, you can flatten a nested if by combining the conditions with and. The version on the left checks logged in, and then, inside, separately checks is admin. The version on the right just checks logged in and is admin, in a single condition. Same result, and the flat one is much easier to read at a glance. As a rule of thumb, if you catch yourself nesting more than two levels deep, stop and ask whether an and, or an early exit, would be cleaner. We will see the early exit trick when we cover functions."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "nested",
+      "left": "if logged_in:\n    if is_admin:\n        show_panel()",
+      "rightLabel": "combined",
+      "right": "if logged_in and is_admin:\n    show_panel()",
+      "verdict": "prefer 'and' over an extra level of nesting when you can."
+    },
+
+    { "type": "card_topic", "cardTitle": "Easy mistakes", "cardSubtitle": "two that get everyone" },
+    {
+      "type": "narration",
+      "text": "Two things to watch for, and you will hit both. The first, straight from episode four, do not use a single equals sign in a condition. If age is eighteen has to be written with a double equals sign. In modern Python, a single equals there is usually a flat out syntax error, which is actually good news, because it stops you immediately rather than quietly doing the wrong thing. The second mistake is subtler and nastier. This code looks like it checks whether the answer is the word yes, or the letter y. But it does not do that at all. Python reads it as two separate things joined by or. Is answer equal to yes. Or, is the string capital Y. And a non empty string, like capital Y sitting there on its own, is always truthy. So the whole condition is always true, and this branch runs no matter what the user typed. The fix is to spell out both comparisons in full. Answer double equals yes, or answer double equals capital Y. Or, cleaner, lowercase the answer first with dot lower, and then just compare it against yes once."
+    },
+    {
+      "type": "gotcha",
+      "code": "answer = input(\"continue? \")\n\nif answer == \"yes\" or \"y\":\n    print(\"always prints!\")",
+      "badLine": 3,
+      "error": "no error — but the condition is ALWAYS true.\n\"y\" on its own is a non-empty string, so it is truthy.\nfix:  if answer == \"yes\" or answer == \"y\":"
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "That is conditionals. Your program can now look at a value and branch on it. If for a single case, else for the other side, elif for a run of cases, all checked top to bottom with first match wins. Keep your conditions ordered most specific first, prefer and over deep nesting, and remember to write out every comparison in full. Next episode we add the other half of control flow, loops, so the program can also repeat things."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "if condition: runs the indented block only when the condition is true",
+        "else: runs when the if was false — exactly one of the two blocks always runs",
+        "elif chains several cases; Python takes the FIRST true one and skips the rest",
+        "prefer 'and' over deep nesting; order elif conditions most-specific first",
+        "use == not = in a condition; and write 'x == a or x == b', never 'x == a or b'"
+      ],
+      "next": "EP 8 — Loops (for / while)"
+    }
+  ]
+}

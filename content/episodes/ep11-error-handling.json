@@ -1,0 +1,99 @@
+{
+  "id": "ep11-error-handling",
+  "title": "Error handling (try / except)",
+  "topic": "Basic Python · Episode 11",
+  "prompt": "Catch errors with try / except so a bad input doesn't crash your program, and know when not to.",
+  "episode": { "number": 11, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 8,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode eleven. Last episode you learned to read errors after they happen. This episode you learn to catch them as they happen, before they crash your program. Because sometimes an error is not a bug in your code at all. It is just something going wrong that you could reasonably have seen coming. The user types the word banana when you politely asked for their age. A file you wanted to open has been moved or deleted. The internet is down. You do not want your entire program to fall over and dump a scary traceback on some poor user for that. You want to handle it, print a friendly message, and carry on. The tool for this is try and except. We will cover the basic shape, catching specific errors rather than all errors, the standard pattern for validating user input, and, just as importantly, when you should not use any of this. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "try / except", "cardSubtitle": "attempt something risky" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The shape looks like this. You write the word try, then a colon, and then, indented underneath, the code that might fail. Below that block, you write the word except, then a colon, and indented under that, the code to run if something in the try block raised an error. When Python runs this, it goes into the try block and starts executing it. If everything in there works fine, the except block is skipped completely, as if it were not there. But if any line in the try block raises an error, Python stops the try block right at that line, does not run the rest of it, jumps down into the except block, runs that instead, and then carries on with the rest of the program as normal. No crash. No traceback. The program survives."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here it is concretely. We ask for an age, and inside the try block we convert it with int and print what it will be next year. If the user typed an actual number, the int works, the whole try block finishes, and we are done. If they typed something that is not a number, the int call raises a ValueError, so Python bails out of the try block at that point, jumps to the except, and prints, that was not a number. Either way, whichever path it took, the program keeps running and reaches the done line at the bottom. That is the whole point. The risky operation is contained."
+    },
+    { "type": "code", "code": "raw = input(\"your age: \")\n\ntry:\n    age = int(raw)\n    print(\"next year you'll be\", age + 1)\nexcept:\n    print(\"that wasn't a number\")\n\nprint(\"done\")" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "your age: twelve\nthat wasn't a number\ndone"
+    },
+
+    { "type": "card_topic", "cardTitle": "Catch the right thing", "cardSubtitle": "name the exception" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The version we just wrote has what is called a bare except. Just the word except, with no error type after it. That catches absolutely any error at all, and it is a bad habit. Here is why. Suppose you make a typo inside the try block, you write ag instead of age. That is a NameError, a genuine bug in your code. But the bare except catches it too, swallows it silently, and prints, that was not a number. Which is completely misleading, and now you have a real bug that is actively being hidden from you by your own error handling. So, name the exception you actually expect to happen. Write except ValueError, colon. Now the except block only runs for a ValueError, the specific thing you were guarding against. Any other error, like your NameError typo, sails right past the except and gives you a proper, honest traceback, which is exactly what you want when there is a real bug."
+    },
+    {
+      "type": "narration",
+      "text": "You can also grab hold of the error object itself, by writing except ValueError as e. Then, inside the block, the variable e holds the actual error, and you can print it, or write it to a log file, which is useful when you want to record what went wrong without stopping. And you can have several except blocks, one after another, each catching a different error type, if the risky code could fail in more than one way. The guiding principle throughout, catch the narrowest, most specific exception that covers the situation you are genuinely handling, and nothing wider than that."
+    },
+    {
+      "type": "compare",
+      "leftLabel": "hides bugs",
+      "left": "try:\n    age = int(raw)\nexcept:\n    print(\"bad input\")",
+      "rightLabel": "handles what it means to",
+      "right": "try:\n    age = int(raw)\nexcept ValueError:\n    print(\"bad input\")",
+      "verdict": "name the exception. a bare except silently eats your typos too."
+    },
+
+    { "type": "card_topic", "cardTitle": "The input loop", "cardSubtitle": "keep asking until it's valid" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Here is the pattern you will use most, and it pulls together this episode with the last several. You want to keep asking the user for a number, over and over, until they actually give you a valid one. So, you wrap the whole asking process in a while True loop, which, on its own, would run forever. Inside that loop, you try to read the input and convert it. If the conversion works, you return the value, which exits the function and therefore ends the loop cleanly. If the conversion raises a ValueError, you catch it, print a helpful hint about what you wanted, and then the loop simply goes around again and asks one more time. Put all of this inside a function called ask int, and you now have a reusable, genuinely bulletproof input routine. You can call it anywhere in your program that you need a number from the user, and it will never crash, and it will never let bad data through to the rest of your code. This little function is worth keeping in a snippets file."
+    },
+    { "type": "code", "code": "def ask_int(prompt):\n    while True:\n        try:\n            return int(input(prompt))\n        except ValueError:\n            print(\"please type a whole number\")\n\nage = ask_int(\"your age: \")\nprint(\"got it:\", age)" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "your age: abc\nplease type a whole number\nyour age: 4.5\nplease type a whole number\nyour age: 30\ngot it: 30"
+    },
+
+    { "type": "card_topic", "cardTitle": "else, finally & when not to", "cardSubtitle": "the rest of the story" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Two optional additions to the shape. An else block, which you put after the except, runs only if the try block finished with no error at all. It is for the code that should run on success, kept deliberately separate from the risky part, so that you are not accidentally wrapping error handling around code that was never risky in the first place. And a finally block runs no matter what, error or no error, caught or not caught. It is for cleanup that absolutely has to happen regardless, like closing a file or a network connection. You will not need finally very often in basic Python, because the with statement, which we meet in the very next episode, handles the most common cleanup case for you automatically. But it exists for the times you do."
+    },
+    {
+      "type": "narration",
+      "text": "And the single most important point of this whole episode. Do not reach for try and except as your first move. It is not a tool for preventing bugs, and it is not a way to make an annoying error message disappear. It is specifically for handling situations that you genuinely expect might go wrong, and that are outside your control. Bad user input. A missing file. A server that is not responding. If you can check for the problem ahead of time with a plain if statement instead, do that, it is almost always clearer. If a key might be missing from a dictionary, use dot get. If a file might not exist, you can check first. And never, ever, use a bare except just to make a red error go away without understanding what it was telling you. That error was trying to help."
+    },
+    {
+      "type": "card_question",
+      "question": "Why is `except ValueError:` better than a bare `except:`?",
+      "answer": "It only catches what you expect. A bare except also hides your typos and real bugs."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "So, try the risky thing, except the specific error you expect, and your program bends instead of breaking. The while True, plus try, plus except pattern for user input is one to just commit to memory, you will type it again and again. But use error handling only for expected, outside failures, not to paper over your own bugs. Next episode we work with files, reading them, writing them, and the with statement that keeps it all tidy."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "try: risky code — except SomeError: what to do if it fails; then the program carries on",
+        "always name the exception (except ValueError) — a bare except hides real bugs too",
+        "the input pattern: while True + try/except, return or break on success, re-ask on failure",
+        "else runs on success, finally runs no matter what (rarely needed in basic Python)",
+        "use it for expected outside failures (bad input, missing file) — not to hide your own bugs"
+      ],
+      "next": "EP 12 — File I/O"
+    }
+  ]
+}

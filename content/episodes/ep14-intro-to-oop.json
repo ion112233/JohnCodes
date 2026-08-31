@@ -1,0 +1,132 @@
+{
+  "id": "ep14-intro-to-oop",
+  "title": "Intro to OOP (classes & objects)",
+  "topic": "Basic Python · Episode 14",
+  "prompt": "Define your own type with a class: __init__, attributes on self, methods, and many instances from one blueprint.",
+  "episode": { "number": 14, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 12,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode fourteen. This is the last big concept in the course. Object oriented programming, usually shortened to OOP. It sounds heavy and academic, but the core idea is genuinely simple. So far, you have been using types that Python gives you. Strings, lists, dictionaries. A class lets you define your own type, bundling some data together with the functions that operate on that data, in one named unit. We will cover what a class actually is, how to define one, the special init method that sets each object up, how an object stores its data on something called self, how to give a class methods, and how you create many separate objects from a single class definition. If you have ever felt like your program is a loose pile of related variables and functions that clearly belong together but are just scattered around, a class is the tool that groups them. Let's go."
+    },
+
+    { "type": "card_topic", "cardTitle": "Classes & objects", "cardSubtitle": "a blueprint, and things built from it" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Two words to get straight before we write anything. A class is a blueprint. It describes what some kind of thing is. What data it holds, and what it can do. An object, which is also called an instance, is an actual, concrete thing built from that blueprint. The classic analogy is a cookie cutter and cookies. The class is the cutter, one single cutter. Each object is a cookie stamped out with it, and you can make as many cookies as you want, and each one is its own separate cookie. Or, in code terms, the class BankAccount describes the general idea of a bank account. It has an owner and a balance, and you can deposit to it and withdraw from it. Then Ada's account and Alan's account are two separate objects, two instances, each carrying its own owner and its own balance, both built from that one class."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "And here is something that might reframe the whole course for you. You have been using classes and objects this entire time without knowing it. The string is a class. Every single string you have ever made is an object of that class. That is precisely why they all have the same set of methods, upper, lower, strip, split, and so on. That shared behaviour comes from the string class. The list is a class, and every list is an object of it, which is why every list has append and sort. So OOP is not some exotic new thing. It is the mechanism that has been quietly powering everything you have done. Now you are going to build your own."
+    },
+
+    { "type": "card_topic", "cardTitle": "Defining a class", "cardSubtitle": "class and __init__" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You define a class with the keyword class, then the name you want, then a colon. By a very strong convention, class names start with a capital letter and use what is called CamelCase, so you would write BankAccount, with a capital B and a capital A and no underscores, not bank underscore account. Inside the class, indented, you define its methods, which are just functions that live inside the class and belong to it. The most important method, and the one you will write for nearly every class, is called init, spelled with two underscores, then i n i t, then two more underscores. It is short for initialise. Python calls init automatically, for you, every time you create a new object from the class. Its whole job is to set up that particular object's starting data."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Every method in a class, including init, takes a first parameter that, by convention, is always called self. Self refers to the specific object that the method is being called on. So inside init, when we write self dot owner equals owner, that means, take the owner value that was passed in, and store it on this particular object, under the name owner. Same for self dot balance. To actually create an object, you write the class name followed by round brackets, just like calling a function. BankAccount, open bracket, Ada, comma, one hundred, close bracket. Python makes a fresh, blank object, then calls init on it, with self being that new object, and owner being Ada, and balance being one hundred. After init finishes setting things up, Python hands you back the completed object, and you store it in a variable."
+    },
+    { "type": "code", "code": "class BankAccount:\n    def __init__(self, owner, balance):\n        self.owner = owner\n        self.balance = balance\n\naccount = BankAccount(\"Ada\", 100)\nprint(account.owner)\nprint(account.balance)" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Ada\n100"
+    },
+    {
+      "type": "narration",
+      "text": "A few things people stumble on with init. It is spelled with two underscores before and two after, and Python calls it for you, you never write account dot init yourself. The name self is a convention, not a keyword, you could technically call it something else, but every Python programmer everywhere calls it self, so you should too, or your code will look wrong to everyone. And the parameters of init, owner and balance here, are separate from the attributes, self dot owner and self dot balance. It is common to give them the same name, as we did, but that assignment line, self dot owner equals owner, is really saying, take the value that was passed in and pin it onto this object permanently."
+    },
+
+    { "type": "card_topic", "cardTitle": "Attributes", "cardSubtitle": "data that lives on the object" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The pieces of data stored on an object are called its attributes. We create them inside init, by writing self dot something equals a value. And from outside the class, you read an attribute with the same dot syntax, account dot balance. The key thing to really internalise is that each object carries its very own set of attributes, completely independently of every other object of the same class. If we make a second account, for Alan, it has its own owner attribute and its own balance attribute. Changing Ada's balance does not touch Alan's in any way, they are separate boxes. This independence is exactly why a class is more than just a dictionary with extra steps. Sure, you could represent an account as a dictionary, with an owner key and a balance key. But then the code that knows how to correctly deposit and withdraw is off somewhere else in your program, and nothing connects it to the data it is supposed to manage. A class keeps the data, and the behaviour that goes with it, together, in one named place."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        { "input": "a = BankAccount(\"Ada\", 100)", "output": "" },
+        { "input": "b = BankAccount(\"Alan\", 50)", "output": "" },
+        { "input": "a.balance = 999", "output": "" },
+        { "input": "a.balance", "output": "999" },
+        { "input": "b.balance", "output": "50" }
+      ]
+    },
+
+    { "type": "card_topic", "cardTitle": "Methods", "cardSubtitle": "things the object can do" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A method is a function defined inside the class, and it describes something that objects of that class can do. Just like init, every method takes self as its first parameter, and that is how the method gets at the object's own attributes. Here we add a deposit method and a withdraw method to BankAccount. Deposit takes self and an amount, and does self dot balance plus equals amount, which changes this object's balance. Withdraw is a little smarter. It first checks whether there is enough money, and if there is not, it prints a message and does not change anything. That is a small piece of business logic, the rule that you cannot overdraw, and now it lives right next to the data it protects, instead of being something every caller has to remember to check."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "To call a method, you write the object, then a dot, then the method name, then its arguments in brackets. But, and this is important, you do not pass self yourself. Python fills self in for you, automatically, from whatever object is sitting in front of the dot. So account dot deposit, fifty, actually runs the deposit method with self being account, and amount being fifty. You just provide fifty. We can also give the class a method called show, that prints the account nicely using an f-string, pulling the owner and the balance together into one readable line. Now the account knows how to display itself."
+    },
+    { "type": "code", "code": "class BankAccount:\n    def __init__(self, owner, balance):\n        self.owner = owner\n        self.balance = balance\n\n    def deposit(self, amount):\n        self.balance += amount\n\n    def withdraw(self, amount):\n        if amount > self.balance:\n            print(\"insufficient funds\")\n        else:\n            self.balance -= amount\n\n    def show(self):\n        print(f\"{self.owner}: ${self.balance}\")\n\naccount = BankAccount(\"Ada\", 100)\naccount.deposit(50)\naccount.withdraw(30)\naccount.withdraw(500)\naccount.show()" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "insufficient funds\nAda: $120"
+    },
+    {
+      "type": "narration",
+      "text": "Notice how the withdraw method reads. It checks self dot balance, it changes self dot balance, all through self. Every method, when it wants to touch the object's own data, goes through self dot something. If you forget the self, and just write balance inside a method, Python looks for a local variable or a global called balance, does not find the attribute, and you get a NameError. That missing self is probably the single most common beginner mistake with classes. Any time a method needs the object's own data, it is self dot that data."
+    },
+    {
+      "type": "card_question",
+      "question": "What is `self` inside a method?",
+      "answer": "The particular object the method was called on — how it reaches its own attributes."
+    },
+
+    { "type": "card_topic", "cardTitle": "Many objects", "cardSubtitle": "one class, independent instances" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The real power of all this shows up when you make several objects at once. Here we create three accounts, put them straight into a list, and then loop over that list, calling deposit and then show on each one. One class definition, written once, and now we can manage any number of accounts with a simple for loop. Each object keeps its own state, its own balance, entirely separate from the others, so the loop just does the same operation to each in turn. This is the shape of a huge amount of real software. A game with many enemies, each an object with its own health and position. A shop with many products, each an object with its own price and stock. A chat with many users. You define the class once, describing one of the thing, carefully, and then you spin up as many objects as the situation calls for."
+    },
+    {
+      "type": "narration",
+      "text": "One more genuinely useful method to know about. If you define a method called repr, with the double underscores, that returns a string, then Python uses it whenever it needs to show your object, for example when you print a list of them, or type one at the shell. Without it, printing an account just gives you something ugly like, BankAccount object at some memory address. With a good repr returning something like, BankAccount, Ada, one hundred, your objects become readable everywhere, which makes debugging far nicer. It is the first double underscore method most people add to their classes after init."
+    },
+    {
+      "type": "narration",
+      "text": "There is, of course, a lot more to object oriented programming than this. Inheritance, where one class builds on top of another and extends it, so you might have an Animal class and then a Dog class that gets everything from Animal plus its own extras. Special methods, with the double underscores, that hook your objects into Python's operators, so you could make your own type that supports the plus sign or the less than comparison. Class attributes, that are shared across every instance rather than being per object. But a class with an init and a few methods, producing objects that each hold their own data, that is the solid core, and it will genuinely take you a very long way before you need any of the rest."
+    },
+    { "type": "code", "code": "accounts = [\n    BankAccount(\"Ada\", 100),\n    BankAccount(\"Alan\", 40),\n    BankAccount(\"Grace\", 75),\n]\n\nfor acc in accounts:\n    acc.deposit(10)\n    acc.show()" },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Ada: $110\nAlan: $50\nGrace: $85"
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "That is the heart of object oriented programming. A class is a blueprint. Init sets up each new object's data, on self. Methods are functions that act on that data, and always take self first. And you make as many independent objects from the class as you need, each carrying its own state. You now have every core concept in beginner Python, from the very first print statement all the way here. The last episode of the course puts it all together, into one small, complete, working program."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a class is a blueprint; an object (instance) is a thing built from it — one class, many objects",
+        "__init__(self, ...) runs automatically on creation; store starting data with self.x = value",
+        "attributes are data on the object; each object has its own — read them with object.x",
+        "methods are functions in the class, always take self first — call them as object.method(args)",
+        "make an object by calling the class:  account = BankAccount(\"Ada\", 100)"
+      ],
+      "next": "EP 15 — Mini wrap-up project"
+    }
+  ]
+}

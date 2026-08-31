@@ -1,0 +1,96 @@
+{
+  "id": "ep10-reading-errors",
+  "title": "Reading Python error messages",
+  "topic": "Basic Python · Episode 10",
+  "prompt": "Read a traceback from the bottom up, and recognise the handful of errors you'll actually hit.",
+  "episode": { "number": 10, "of": 15, "series": "Basic Python" },
+  "targetMinutes": 6,
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Basic Python, episode ten. This is a short one, but it might genuinely be the most useful six minutes in the whole course. Because here is the truth about programming. Your code will break. Constantly. Every single day that you do this, for the rest of your life. The difference between a frustrating wasted hour, and a two minute fix, is almost entirely whether you can read the error message that Python gives you. Beginners tend to do one of two things when they see a wall of red text. They panic and start randomly changing lines, or they scroll past it and ignore it. But that red text is not noise. It is Python telling you, very precisely, what went wrong, and where. So let's learn to actually read it."
+    },
+
+    { "type": "card_topic", "cardTitle": "The traceback", "cardSubtitle": "what all that red text means" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "When Python hits an error it cannot deal with, it prints something called a traceback, and then it stops. Let's look at a real one. This little program tries to print a variable called nam, but we actually named it name, up on the first line. A typo. Here is what Python shows us. The very first line just says, Traceback, most recent call last. That is a fixed header, it says the same thing every time, you can ignore it. Then there is a block that shows a file name, a line number, and the actual line of code from your file. In this case, line two, print of nam. That block is Python pointing at exactly where in your code it was standing when everything went wrong. And then the final line, the important one, the one you should read first. NameError, colon, name nam is not defined."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "That last line is the diagnosis. It has two parts. The error type, here NameError, which is a category. And a plain English explanation, the name nam is not defined, which tells you the specifics. So the whole message, read as a sentence, is, on line two, you tried to use something called nam, and there is no such thing anywhere. Which is completely correct, we never made a variable called nam, we made one called name. So the fix is obvious once you have actually read the message, fix the typo."
+    },
+    {
+      "type": "gotcha",
+      "code": "name = \"Ada\"\nprint(nam)",
+      "badLine": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(nam)\nNameError: name 'nam' is not defined. Did you mean: 'name'?"
+    },
+    {
+      "type": "narration",
+      "text": "Notice Python even took a guess at the end. Did you mean, name. Recent versions of Python are genuinely helpful like this, offering the likely fix for common typos, so always read the whole message, right to the end, before you start debugging. And here is the one rule for reading any traceback, no matter how long. Start at the bottom. The last line is the what. The block of lines just above it is the where. If the traceback is really long, with many file blocks stacked up, that is Python showing you the whole chain of function calls that led to the crash, and the one you usually care about is the lowest block that is still in a file you wrote, not one buried deep inside some library."
+    },
+
+    { "type": "card_topic", "cardTitle": "The common ones", "cardSubtitle": "you'll meet these again and again" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The good news is that you have actually already met most of the errors you are going to hit, scattered across the last few episodes. Let's put clear names to them, all in one place. A NameError means you used a variable or a function name that does not exist. Almost always a typo, or using something before the line that defines it. A TypeError means you did an operation on the wrong type of thing. Adding a string to a number. Calling something with round brackets that is not actually a function. A ValueError means the type was right, but the actual value was not acceptable. The classic is int of the word hello, a string was fine, but that particular string is not a number."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Continuing the list. An IndexError means you asked a list or a string for a position that is out of range, like index ten in a six item list. A KeyError means you asked a dictionary for a key it does not contain. And an AttributeError means you used a dot, a method or an attribute, on something that does not have it, like trying to call dot append on a string, strings do not have append. That is basically the entire cast of characters you will deal with for a long, long time. Here is a TypeError to practise on. Read it from the bottom. The last line says you can only join a string to a string, not an integer. The line above says that happened on line two. So, on line two, you tried to add a number to a string with a plus."
+    },
+    {
+      "type": "gotcha",
+      "code": "age = 30\nprint(\"age: \" + age)",
+      "badLine": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(\"age: \" + age)\nTypeError: can only concatenate str (not \"int\") to str"
+    },
+
+    { "type": "card_topic", "cardTitle": "The SyntaxError", "cardSubtitle": "a different kind of error" },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One error type stands apart from all the others, and it behaves differently. The SyntaxError. Every other error we have talked about happens while your program is running. A SyntaxError happens before your program runs at all, not a single line executes, because Python could not even make sense of your code as valid Python in the first place. A missing colon after an if or a for. An unclosed bracket, or an unclosed quote. Because nothing ran, a SyntaxError does not have that chain of function calls. It just has the file, a line number, and a little arrow, a caret, pointing at roughly the spot where Python got confused and gave up."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "And here is the catch that will waste your time if you do not know it. The line number a SyntaxError reports is where Python noticed the problem, which is very often the line after the real mistake. Say you forget the closing bracket at the end of line one. Python does not know anything is wrong yet, an expression can continue across lines. So it happily reads onto line two, still looking for that bracket, and only when it hits something that cannot possibly belong does it finally give up, and it blames line two. So the habit to build, with any SyntaxError, always look at the line above the one it points at, and carefully count your opening and closing brackets, and your quotes, on that line."
+    },
+    {
+      "type": "gotcha",
+      "code": "total = (10 + 5\nprint(total)",
+      "badLine": 2,
+      "error": "  File \"solution.py\", line 2\n    print(total)\n    ^^^^^\nSyntaxError: '(' was never closed\n\nthe real problem is the missing ) on line 1."
+    },
+    {
+      "type": "card_question",
+      "question": "You get a traceback. Which line tells you WHAT went wrong?",
+      "answer": "The last line — the error type and its plain-English message. Always read bottom-up."
+    },
+
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Do not be afraid of the red text. It is the most honest, most useful feedback you will ever get as a programmer. Read it from the bottom up. The last line is the diagnosis, the type and the explanation. The lines above it are the location. Learn the six or so common error types and what each one actually means. And with a SyntaxError specifically, remember to look one line up from where it points. Next episode, instead of just reading errors after they happen, we learn to catch them as they happen and handle them gracefully, with try and except."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "read a traceback from the BOTTOM: last line = what went wrong, lines above = where",
+        "NameError = typo / undefined; TypeError = wrong type; ValueError = right type, bad value",
+        "IndexError = position out of range; KeyError = missing dict key; AttributeError = no such method",
+        "SyntaxError happens before anything runs, and often points one line too late — check the line above",
+        "recent Python often suggests the fix ('Did you mean...') — read the whole message"
+      ],
+      "next": "EP 11 — Error handling (try / except)"
+    }
+  ]
+}
