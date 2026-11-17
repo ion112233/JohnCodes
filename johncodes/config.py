@@ -96,6 +96,14 @@ class Config:
     def output_path(self) -> Path:
         return self._abs(self.output_dir)
 
+    def video_dir(self, qid: str) -> Path:
+        """output/<id>/video — the full-length video, chapters, timeline, thumbnails."""
+        return self.output_path / qid / "video"
+
+    def shorts_dir(self, qid: str) -> Path:
+        """output/<id>/shorts — vertical clips cut from the full video."""
+        return self.output_path / qid / "shorts"
+
     @property
     def fonts_path(self) -> Path:
         return self._abs(self.fonts_dir)

@@ -41,13 +41,13 @@ python3 -m johncodes list
 # fast visual check — one PNG, no audio, ~1s
 python3 -m johncodes preview content/questions/0001-two-sum.json --at 0.6
 
-# render one Short  ->  output/two-sum/two-sum.mp4
+# render one video  ->  output/two-sum/video/two-sum.mp4
 python3 -m johncodes build content/questions/0001-two-sum.json
 
 # render all of them
 python3 -m johncodes build --all
 
-# YouTube thumbnails (1280x720, 4 layouts) -> output/<id>/thumbnails/
+# YouTube thumbnails (1280x720, 4 layouts) -> output/<id>/video/thumbnails/
 python3 -m johncodes thumbnail content/episodes/ep07-conditionals.json
 python3 -m johncodes thumbnail content/episodes/*.json --variants headline,curiosity
 ```
@@ -58,6 +58,27 @@ code window), `curiosity` (a big question + broken code + red result + huge "?")
 `thumbnail` block in the script (`headline`, `hook`, `snippet`, `question`, `bad`,
 `result`, `resultOk`); anything missing falls back to the title / code / first gotcha.
 A/B test two layouts per episode with YouTube's *Test & compare*.
+
+### Shorts (30-60 s, vertical) cut from the finished episodes
+
+```bash
+# one-off, for videos rendered before timeline.json existed (TTS only, no re-render)
+python3 -m johncodes timeline --all
+
+# pick + render 2-4 Shorts per episode  ->  output/<id>/shorts/
+python3 -m johncodes shorts content/episodes/ep07-conditionals.json
+python3 -m johncodes shorts --all --plan-only        # just show the picks
+```
+
+`build` writes `video/timeline.json` (every scene's time range + every spoken word's
+timestamp). `shorts` scans it for the most watchable 31-57 s windows — error reveals,
+quick-check cards, terminal payoffs — cut on sentence boundaries, never inside a topic
+change, and writes an editable `shorts/plan.json` (change a `hook`, `start` or `end`
+and re-run; `--replan` re-picks). 2 per episode, up to 4 when there are more strong
+moments. Each Short is 1080x1920: hook headline on top, the IDE/card enlarged in the
+middle, word-by-word captions (spoken word highlighted) below, "full lesson" end card.
+Every file is verified to be strictly inside 30-60 s. `shorts.txt` has the source
+timestamps plus a ready-to-paste title / description / hashtags.
 
 `make build Q=content/questions/0001-two-sum.json` wraps the same thing (and sets
 `PYTHONPATH` for you). Or `pip install -e .` and call `johncodes …` directly.
@@ -92,7 +113,7 @@ Two flavours share the format:
 | `card_question` | quick-check, answer fades in |
 | `card_recap` | closing bullets + "next episode" teaser |
 
-`build` writes `output/<id>/chapters.txt` (YouTube timestamps) and, for episodes,
+`build` writes `output/<id>/video/chapters.txt` (YouTube timestamps) and, for episodes,
 reports actual runtime vs `targetMinutes`. `--draft` renders fast at 15fps.
 
 `python3 -m johncodes preview <script.json> --scene typing|terminal|repl|gotcha|compare|opener|topic|question|recap`
@@ -132,5 +153,8 @@ content/
   question.schema.json
 prompts/generate_question.md
 assets/{fonts,music,sfx}/     (gitignored; drop your own files here)
-output/                       (gitignored; rendered Shorts)
+output/                       (gitignored)
+  <episode-id>/               e.g. ep07-conditionals
+    video/                    <id>.mp4, chapters.txt, timeline.json, thumbnails/
+    shorts/                   short-N-<hook>.mp4, shorts.txt, plan.json, thumbnails/ (covers)
 ```

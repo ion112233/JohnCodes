@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import subprocess
 import warnings
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional
 
@@ -22,6 +22,9 @@ warnings.filterwarnings("ignore")
 class VoiceClip:
     audio: np.ndarray   # float32 mono, sample_rate
     duration: float
+    # (word, start, end) in seconds from the start of ``audio`` — drives the
+    # word-by-word captions on the Shorts. Punctuation stays attached to its word.
+    words: list[tuple[str, float, float]] = field(default_factory=list)
 
 
 class Narrator:
@@ -39,26 +42,47 @@ class Narrator:
 
     def say(self, text: str) -> VoiceClip:
         pipe = self._pipeline()
+        sr = self.cfg.sample_rate
         chunks: list[np.ndarray] = []
-        for _, _, audio in pipe(text, voice=self.cfg.tts_voice, speed=self.cfg.tts_speed):
+        words: list[list] = []
+        offset = 0.0
+        for res in pipe(text, voice=self.cfg.tts_voice, speed=self.cfg.tts_speed):
+            audio = res.audio
             arr = audio.detach().cpu().numpy() if hasattr(audio, "detach") else np.asarray(audio)
-            chunks.append(arr.astype(np.float32))
+            arr = arr.astype(np.float32)
+            chunks.append(arr)
+            glued = False                      # previous token had no trailing space
+            for tok in res.tokens or []:
+                if tok.start_ts is None or tok.end_ts is None:
+                    glued = (tok.whitespace == "")
+                    continue
+                if glued and words:
+                    words[-1][0] += tok.text
+                    words[-1][2] = offset + tok.end_ts
+                else:
+                    words.append([tok.text, offset + tok.start_ts, offset + tok.end_ts])
+                glued = (tok.whitespace == "")
+            offset += len(arr) / sr
         if not chunks:
             return VoiceClip(np.zeros(1, np.float32), 0.0)
         full = np.concatenate(chunks)
-        full = _trim_silence(full, self.cfg.sample_rate)
-        return VoiceClip(full, len(full) / self.cfg.sample_rate)
+        a, b = _trim_bounds(full, sr)
+        lead = a / sr
+        trimmed = full[a:b]
+        dur = len(trimmed) / sr
+        return VoiceClip(trimmed, dur,
+                         [(w, max(0.0, s0 - lead), min(dur, max(0.0, e0 - lead)))
+                          for w, s0, e0 in words])
 
 
-def _trim_silence(x: np.ndarray, sr: int, thresh: float = 0.006, pad_ms: int = 60) -> np.ndarray:
+def _trim_bounds(x: np.ndarray, sr: int, thresh: float = 0.006, pad_ms: int = 60) -> tuple[int, int]:
     if x.size == 0:
-        return x
-    env = np.abs(x)
-    idx = np.where(env > thresh)[0]
+        return 0, 0
+    idx = np.where(np.abs(x) > thresh)[0]
     if idx.size == 0:
-        return x
+        return 0, len(x)
     pad = int(sr * pad_ms / 1000)
-    return x[max(0, idx[0] - pad): min(len(x), idx[-1] + pad)]
+    return max(0, idx[0] - pad), min(len(x), idx[-1] + pad)
 
 
 # ------------------------------------------------------------------- click synth

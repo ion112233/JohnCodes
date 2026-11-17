@@ -100,6 +100,42 @@ def cmd_preview(args) -> int:
     return 0
 
 
+def cmd_timeline(args) -> int:
+    """Back-fill output/<id>/video/timeline.json (TTS only, no video render)."""
+    from .audio import Narrator
+    from .pipeline import build_short
+
+    cfg = Config.load(args.config)
+    paths = ([p for p in discover(args.content) if load_question(p).is_episode]
+             if args.all else [Path(p) for p in args.question])
+    if not paths:
+        print("provide script file(s), or --all")
+        return 2
+    narrator = Narrator(cfg)
+    for p in paths:
+        build_short(p, cfg, narrator=narrator, timeline_only=True)
+    return 0
+
+
+def cmd_shorts(args) -> int:
+    """Cut 30-60 s vertical Shorts from rendered episodes -> output/<id>/shorts/."""
+    from .shorts import make_shorts
+
+    cfg = Config.load(args.config)
+    paths = ([p for p in discover(args.content) if load_question(p).is_episode]
+             if args.all else [Path(p) for p in args.question])
+    if not paths:
+        print("provide script file(s), or --all")
+        return 2
+    total = 0
+    for p in paths:
+        total += len(make_shorts(cfg, load_question(p), count=args.count, replan=args.replan,
+                                 plan_only=args.plan_only))
+    if not args.plan_only:
+        print(f"\n{total} Short(s)")
+    return 0
+
+
 def cmd_thumbnail(args) -> int:
     """Render the 1280x720 YouTube thumbnails (four layouts) for one script or all."""
     from .thumbnail import VARIANTS, render_thumbnails
@@ -178,6 +214,23 @@ def main(argv=None) -> int:
     p.add_argument("--out")
     _add_config_arg(p)
     p.set_defaults(func=cmd_preview)
+
+    tm = sub.add_parser("timeline", help="back-fill timeline.json for already-rendered videos")
+    tm.add_argument("question", nargs="*", help="script .json file(s)")
+    tm.add_argument("--all", action="store_true", help="every course episode in --content")
+    tm.add_argument("--content", default="content")
+    _add_config_arg(tm)
+    tm.set_defaults(func=cmd_timeline)
+
+    sh = sub.add_parser("shorts", help="cut 30-60 s vertical Shorts from rendered episodes")
+    sh.add_argument("question", nargs="*", help="script .json file(s)")
+    sh.add_argument("--all", action="store_true", help="every course episode in --content")
+    sh.add_argument("--content", default="content")
+    sh.add_argument("--count", type=int, help="force this many Shorts (default: 2-4 by potential)")
+    sh.add_argument("--replan", action="store_true", help="ignore shorts/plan.json and re-pick")
+    sh.add_argument("--plan-only", action="store_true", help="print the picks, render nothing")
+    _add_config_arg(sh)
+    sh.set_defaults(func=cmd_shorts)
 
     th = sub.add_parser("thumbnail", help="render YouTube thumbnails (1280x720) for a script")
     th.add_argument("question", nargs="*", help="script .json file(s)")
