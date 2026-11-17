@@ -6,6 +6,7 @@ passed as ``--config path.json`` on the CLI.
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass, field, fields
 from pathlib import Path
 from typing import Any, Optional
@@ -97,9 +98,10 @@ class Config:
         return self._abs(self.output_dir)
 
     def item_dir(self, q) -> Path:
-        """output/<series>/<id> for course episodes (e.g. output/Basic Python/ep01-…),
+        """output/<series_snake_case>/<id> for course episodes (e.g. output/basic_python/ep01-…),
         output/<id> for standalone interview questions."""
-        base = self.output_path / q.episode.series if getattr(q, "episode", None) else self.output_path
+        series = re.sub(r"[^a-z0-9]+", "_", q.episode.series.lower()).strip("_") if getattr(q, "episode", None) else ""
+        base = self.output_path / series if series else self.output_path
         return base / q.id
 
     def video_dir(self, q) -> Path:
