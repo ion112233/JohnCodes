@@ -477,7 +477,7 @@ class _Compositor:
         mask, shadow = self._panel_assets(ph)
         centre = SLOT_CENTER
         if self.cover:                      # no captions below -> centre the picture in the free space
-            centre = (self.badge_y + 56 + 40 + 1700) // 2
+            centre = (self.badge_y + 56 + 40 + 1800) // 2
         x, y = (SW - PANEL_W) // 2, centre - ph // 2
 
         img = self.bg.copy()
@@ -504,14 +504,6 @@ class _Compositor:
 
         # word-by-word captions, or the end card when nobody is talking
         if self.cover:                      # thumbnails carry no spoken text
-            ep = self.q.episode
-            if ep:                          # episode progress dots instead of captions
-                r, gap = 9, 34
-                x0 = (SW - (ep.of - 1) * gap) / 2
-                for i in range(ep.of):
-                    cx = x0 + i * gap
-                    d.ellipse([cx - r, 1770 - r, cx + r, 1770 + r],
-                              fill=YELLOW if i < ep.number else theme.BORDER_LT)
             return img
         if not self._draw_caption(d, t) and t > self.dur - 3.2:
             d.text((SW / 2, CAPTION_Y), "full lesson · link in description", font=self.cta_font,
