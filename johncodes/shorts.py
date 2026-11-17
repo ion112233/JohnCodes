@@ -23,6 +23,7 @@ import subprocess
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 
 from . import theme
@@ -311,9 +312,30 @@ def _caption_groups(words: list) -> list[dict]:
     return out
 
 
+_BG = np.array(theme.EDITOR_BG, dtype=np.int16)
+_FOCUS_MAX_SCALE = 1.3
+
+
+def _grab(video: Path, t: float) -> Image.Image:
+    raw = subprocess.run(["ffmpeg", "-v", "error", "-ss", f"{t:.3f}", "-i", str(video), "-frames:v", "1",
+                          "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], capture_output=True).stdout
+    return Image.frombuffer("RGB", (SRC_W, SRC_H), raw, "raw", "RGB", 0, 1)
+
+
+def _ink(arr: np.ndarray, x0: int, x1: int, y0: int, y1: int):
+    """(right, bottom) extent of non-background pixels inside a region, or None."""
+    reg = np.abs(arr[y0:y1, x0:x1].astype(np.int16) - _BG).max(axis=2) > 24
+    rows, cols = np.where(reg.any(axis=1))[0], np.where(reg.any(axis=0))[0]
+    if rows.size == 0:
+        return None
+    return x0 + int(cols.max()), y0 + int(rows.max())
+
+
 class _Compositor:
-    def __init__(self, cfg: Config, fonts: FontBook, q: Question, tl: dict, plan: ShortPlan):
-        self.q, self.tl, self.plan = q, tl, plan
+    def __init__(self, cfg: Config, fonts: FontBook, q: Question, tl: dict, plan: ShortPlan,
+                 video: Path | None = None, focus: bool = False, cover: bool = False):
+        self.q, self.tl, self.plan, self.cover = q, tl, plan, cover
+        self.video, self.focus, self._geo = video, focus, {}
         self.dur = plan.duration
         self.bg = _background()
         self.starts = [sc["start"] for sc in tl["scenes"]]
@@ -374,6 +396,46 @@ class _Compositor:
             self._panel[ph] = (mask, sh.filter(ImageFilter.GaussianBlur(26)))
         return self._panel[ph]
 
+    def _focus_geometry(self, idx: int):
+        """Crop boxes + scale that hide the Project tree and fit the code / console text.
+        Measured once per scene from its last frame (code fully typed, panel docked)."""
+        if idx not in self._geo:
+            sc = self.tl["scenes"][idx]
+            arr = np.asarray(_grab(self.video, max(sc["start"], sc["end"] - 0.25)))
+            run_top = None
+            if sc["kind"] in ("terminal", "gotcha"):
+                for y in range(200, 900):
+                    if np.abs(arr[y, 1000].astype(np.int16) - np.array(theme.PANEL_BG)).max() <= 5:
+                        run_top = y
+                        break
+            e_lim = run_top or 1055
+            code = _ink(arr, 430, 1895, 100, e_lim - 8)
+            e_right, e_bot = code if code else (900, 300)
+            eh = min(e_bot + 40, e_lim) - 52
+            ew = max(600, e_right + 50 - 324)
+            console = None
+            if run_top:
+                cons = _ink(arr, 0, 1895, run_top + 50, 1055)
+                c_right, c_bot = cons if cons else (700, run_top + 200)
+                console = (0, run_top, max(600, c_right + 50), c_bot + 34)
+            ed = (324, 52, 324 + ew, 52 + eh)
+            cw = console[2] if console else 0
+            ch = console[3] - console[1] if console else 0
+            s = min(PANEL_W / max(ew, cw), PANEL_H / (eh + ch), _FOCUS_MAX_SCALE)
+            self._geo[idx] = (ed, console, s)
+        return self._geo[idx]
+
+    def _focus_panel(self, src: Image.Image, idx: int) -> Image.Image:
+        ed, console, s = self._focus_geometry(idx)
+        parts = [src.crop(ed)] + ([src.crop(console)] if console else [])
+        sized = [p.resize((round(p.width * s), round(p.height * s)), Image.BILINEAR) for p in parts]
+        panel = Image.new("RGB", (PANEL_W, sum(p.height for p in sized)), theme.EDITOR_BG)
+        y = 0
+        for p in sized:
+            panel.paste(p, (0, y))
+            y += p.height
+        return panel
+
     def scene_at(self, t_abs: float) -> int:
         return max(0, bisect.bisect_right(self.starts, t_abs) - 1)
 
@@ -405,13 +467,18 @@ class _Compositor:
         native = self._native_scene(idx)
         if native is not None:
             panel = native.render(max(0.001, t_abs - self.starts[idx])).convert("RGB")
+        elif self.focus and self.kinds[idx] in ("code", "terminal", "gotcha"):
+            panel = self._focus_panel(src, idx)
         else:
             box = _CROPS[_KIND_CROP.get(self.kinds[idx], "card")]
             panel = src.crop(box).resize((PANEL_W, round(PANEL_W * (box[3] - box[1]) / (box[2] - box[0]))),
                                          Image.BILINEAR)
         ph = panel.height
         mask, shadow = self._panel_assets(ph)
-        x, y = (SW - PANEL_W) // 2, SLOT_CENTER - ph // 2
+        centre = SLOT_CENTER
+        if self.cover:                      # no captions below -> centre the picture in the free space
+            centre = (self.badge_y + 56 + 40 + 1700) // 2
+        x, y = (SW - PANEL_W) // 2, centre - ph // 2
 
         img = self.bg.copy()
         img.paste((0, 0, 0), (x - 80, y - 80 + 16), shadow)
@@ -421,7 +488,7 @@ class _Compositor:
                             outline=theme.BORDER_LT, width=3)
 
         # hook headline (pops in), alternating white / yellow lines
-        pop = 1.0 - ease_out_cubic(min(1.0, t / 0.35))
+        pop = 0.0 if self.cover else 1.0 - ease_out_cubic(min(1.0, t / 0.35))
         for i, ln in enumerate(self.hook_lines):
             ty = HOOK_TOP + i * self.hook_lh + pop * 46
             col = WHITE if i % 2 == 0 else YELLOW
@@ -436,6 +503,16 @@ class _Compositor:
         d.text((SW / 2, self.badge_y + 28), label, font=self.badge_font, fill=INK, anchor="mm")
 
         # word-by-word captions, or the end card when nobody is talking
+        if self.cover:                      # thumbnails carry no spoken text
+            ep = self.q.episode
+            if ep:                          # episode progress dots instead of captions
+                r, gap = 9, 34
+                x0 = (SW - (ep.of - 1) * gap) / 2
+                for i in range(ep.of):
+                    cx = x0 + i * gap
+                    d.ellipse([cx - r, 1770 - r, cx + r, 1770 + r],
+                              fill=YELLOW if i < ep.number else theme.BORDER_LT)
+            return img
         if not self._draw_caption(d, t) and t > self.dur - 3.2:
             d.text((SW / 2, CAPTION_Y), "full lesson · link in description", font=self.cta_font,
                    fill=SOFT, anchor="mm", stroke_width=7, stroke_fill=(10, 10, 12))
@@ -454,9 +531,9 @@ def _probe(path: Path) -> float:
 
 
 def render_short(cfg: Config, q: Question, tl: dict, video: Path, plan: ShortPlan,
-                 out_mp4: Path, cover_png: Path, fonts: FontBook) -> float:
+                 out_mp4: Path, fonts: FontBook, focus: bool = False) -> float:
     """Render one Short; returns its verified duration in seconds."""
-    comp = _Compositor(cfg, fonts, q, tl, plan)
+    comp = _Compositor(cfg, fonts, q, tl, plan, video=video, focus=focus)
     n = int(round(plan.duration * FPS))
     dur = n / FPS
     dec = subprocess.Popen(
@@ -471,7 +548,7 @@ def render_short(cfg: Config, q: Question, tl: dict, video: Path, plan: ShortPla
          "-af", f"afade=t=in:st=0:d=0.12,afade=t=out:st={dur - 0.4:.2f}:d=0.4",
          "-c:a", "aac", "-b:a", "192k", "-t", f"{dur:.3f}", "-movflags", "+faststart", str(out_mp4)],
         stdin=subprocess.PIPE)
-    frame_bytes, last, cover_at = SRC_W * SRC_H * 3, None, int(1.6 * FPS)
+    frame_bytes, last = SRC_W * SRC_H * 3, None
     try:
         for k in range(n):
             buf = dec.stdout.read(frame_bytes)
@@ -480,9 +557,6 @@ def render_short(cfg: Config, q: Question, tl: dict, video: Path, plan: ShortPla
             elif last is None:
                 break
             out = comp.frame(last, k / FPS)
-            if k == cover_at:
-                cover_png.parent.mkdir(parents=True, exist_ok=True)
-                out.save(cover_png)
             enc.stdin.write(out.tobytes())
     finally:
         enc.stdin.close()
@@ -494,6 +568,31 @@ def render_short(cfg: Config, q: Question, tl: dict, video: Path, plan: ShortPla
         out_mp4.unlink(missing_ok=True)
         raise SystemExit(f"{out_mp4.name}: rendered {got:.1f}s — outside the 30-60 s Shorts window")
     return got
+
+
+def _cover_time(tl: dict, plan: ShortPlan) -> float:
+    """Seconds into the Short that show the most interesting *finished* picture:
+    the traceback on screen, the quick-check question (answer still hidden), the
+    typed code or the terminal output."""
+    best, pri = None, {"gotcha": 4, "question": 3, "terminal": 2, "code": 1, "repl": 1, "compare": 1}
+    for sc in tl["scenes"]:
+        ov = min(plan.end, sc["end"]) - max(plan.start, sc["start"])
+        if sc["kind"] in pri and ov >= 4.0 and (best is None or pri[sc["kind"]] > pri[best["kind"]]):
+            best = sc
+    if best is None:
+        return 2.0
+    t = best["start"] + 3.0 if best["kind"] == "question" else best["end"] - 1.2
+    return min(max(t, plan.start + 1.0), plan.end - 1.0) - plan.start
+
+
+def render_cover(cfg: Config, q: Question, tl: dict, video: Path, plan: ShortPlan,
+                 out_png: Path, fonts: FontBook, focus: bool = False) -> Path:
+    """One 1080x1920 thumbnail per Short: hook headline + badge + the key picture, no captions."""
+    comp = _Compositor(cfg, fonts, q, tl, plan, video=video, focus=focus, cover=True)
+    t = _cover_time(tl, plan)
+    out_png.parent.mkdir(parents=True, exist_ok=True)
+    comp.frame(_grab(video, plan.start + t), t).save(out_png)
+    return out_png
 
 
 def write_summary(path: Path, q: Question, plans: list[ShortPlan], files: list[tuple[str, float]]) -> None:
@@ -511,7 +610,7 @@ def write_summary(path: Path, q: Question, plans: list[ShortPlan], files: list[t
 
 
 def make_shorts(cfg: Config, q: Question, *, count: int | None = None, replan: bool = False,
-                plan_only: bool = False) -> list[Path]:
+                plan_only: bool = False, focus: bool = False, covers_only: bool = False) -> list[Path]:
     video = cfg.video_dir(q.id) / f"{q.id}.mp4"
     if not video.exists():
         raise SystemExit(f"{q.id}: no rendered video at {video}")
@@ -533,13 +632,22 @@ def make_shorts(cfg: Config, q: Question, *, count: int | None = None, replan: b
         return []
 
     fonts = FontBook(cfg.fonts_path, cfg.mono_font, cfg.ui_font)
+    if covers_only:
+        thumbs = out_dir / "thumbnails"
+        for old in thumbs.glob("*.png"):
+            old.unlink()
+        for k, p in enumerate(plans, 1):
+            png = render_cover(cfg, q, tl, video, p, thumbs / f"short-{k}-{p.slug}.png", fonts, focus)
+            print(f"    ✓ {png.name}")
+        return []
     for old in out_dir.glob("short-*.mp4"):
         old.unlink()
     paths, files = [], []
     for k, p in enumerate(plans, 1):
         name = f"short-{k}-{p.slug}"
         mp4 = out_dir / f"{name}.mp4"
-        got = render_short(cfg, q, tl, video, p, mp4, out_dir / "thumbnails" / f"{name}.png", fonts)
+        got = render_short(cfg, q, tl, video, p, mp4, fonts, focus)
+        render_cover(cfg, q, tl, video, p, out_dir / "thumbnails" / f"{name}.png", fonts, focus)
         print(f"    ✓ {mp4.name}  ({got:.1f}s, {mp4.stat().st_size / 1e6:.1f} MB)")
         paths.append(mp4)
         files.append((mp4.name, got))

@@ -130,7 +130,8 @@ def cmd_shorts(args) -> int:
     total = 0
     for p in paths:
         total += len(make_shorts(cfg, load_question(p), count=args.count, replan=args.replan,
-                                 plan_only=args.plan_only))
+                                 plan_only=args.plan_only, focus=args.focus,
+                                 covers_only=args.covers_only))
     if not args.plan_only:
         print(f"\n{total} Short(s)")
     return 0
@@ -228,6 +229,10 @@ def main(argv=None) -> int:
     sh.add_argument("--content", default="content")
     sh.add_argument("--count", type=int, help="force this many Shorts (default: 2-4 by potential)")
     sh.add_argument("--replan", action="store_true", help="ignore shorts/plan.json and re-pick")
+    sh.add_argument("--focus", action="store_true",
+                    help="hide the Project tree and fit code / console text to the panel")
+    sh.add_argument("--covers-only", action="store_true",
+                    help="re-make just the one-per-Short thumbnails (no captions)")
     sh.add_argument("--plan-only", action="store_true", help="print the picks, render nothing")
     _add_config_arg(sh)
     sh.set_defaults(func=cmd_shorts)
