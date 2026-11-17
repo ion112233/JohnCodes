@@ -361,7 +361,7 @@ def _save(img: Image.Image, path: Path) -> Path:
 def render_thumbnails(cfg: Config, q: Question, out_dir: Path | None = None,
                       variants: list[str] | None = None) -> list[Path]:
     fonts = FontBook(cfg.fonts_path, cfg.mono_font, cfg.ui_font)
-    out_dir = Path(out_dir or cfg.video_dir(q.id) / "thumbnails")
+    out_dir = Path(out_dir or cfg.video_dir(q) / "thumbnails")
     out_dir.mkdir(parents=True, exist_ok=True)
     copy = _copy(q)
     paths = []

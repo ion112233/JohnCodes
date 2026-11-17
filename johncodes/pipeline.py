@@ -102,7 +102,7 @@ def build_short(question_path: str | Path, cfg: Config, *,
     """
     q: Question = load_question(question_path)
     fonts = FontBook(cfg.fonts_path, cfg.mono_font, cfg.ui_font)
-    outdir = cfg.video_dir(q.id)
+    outdir = cfg.video_dir(q)
     outdir.mkdir(parents=True, exist_ok=True)
     narrator = narrator or Narrator(cfg)
     tts_cache: dict = {}

@@ -47,7 +47,7 @@ python3 -m johncodes build content/questions/0001-two-sum.json
 # render all of them
 python3 -m johncodes build --all
 
-# YouTube thumbnails (1280x720, 4 layouts) -> output/<id>/video/thumbnails/
+# YouTube thumbnails (1280x720, 4 layouts) -> output/Basic Python/<id>/video/thumbnails/
 python3 -m johncodes thumbnail content/episodes/ep07-conditionals.json
 python3 -m johncodes thumbnail content/episodes/*.json --variants headline,curiosity
 ```
@@ -154,7 +154,8 @@ content/
 prompts/generate_question.md
 assets/{fonts,music,sfx}/     (gitignored; drop your own files here)
 output/                       (gitignored)
-  <episode-id>/               e.g. ep07-conditionals
+  Basic Python/               one folder per course series
+    <episode-id>/             e.g. ep07-conditionals
     video/                    <id>.mp4, chapters.txt, timeline.json, thumbnails/
     shorts/                   short-N-<hook>.mp4, shorts.txt, plan.json, thumbnails/ (covers)
 ```

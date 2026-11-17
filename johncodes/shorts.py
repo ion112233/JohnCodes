@@ -89,7 +89,7 @@ class _Sentence:
 
 
 def load_timeline(cfg: Config, q: Question) -> dict:
-    path = cfg.video_dir(q.id) / "timeline.json"
+    path = cfg.video_dir(q) / "timeline.json"
     if not path.exists():
         raise SystemExit(f"{q.id}: no timeline.json — run `python -m johncodes timeline "
                          f"{q.source_path}` (or rebuild the video) first")
@@ -603,14 +603,14 @@ def write_summary(path: Path, q: Question, plans: list[ShortPlan], files: list[t
 
 def make_shorts(cfg: Config, q: Question, *, count: int | None = None, replan: bool = False,
                 plan_only: bool = False, focus: bool = False, covers_only: bool = False) -> list[Path]:
-    video = cfg.video_dir(q.id) / f"{q.id}.mp4"
+    video = cfg.video_dir(q) / f"{q.id}.mp4"
     if not video.exists():
         raise SystemExit(f"{q.id}: no rendered video at {video}")
     tl = load_timeline(cfg, q)
     if abs(_probe(video) - tl["total"]) > 0.25:
         raise SystemExit(f"{q.id}: timeline.json doesn't match the rendered video — "
                          f"re-render it (`build`) so the cuts line up")
-    out_dir = cfg.shorts_dir(q.id)
+    out_dir = cfg.shorts_dir(q)
     plan_path = out_dir / "plan.json"
     plans = None if (replan or count) else load_plan(plan_path, tl)
     if plans is None:

@@ -96,13 +96,19 @@ class Config:
     def output_path(self) -> Path:
         return self._abs(self.output_dir)
 
-    def video_dir(self, qid: str) -> Path:
-        """output/<id>/video — the full-length video, chapters, timeline, thumbnails."""
-        return self.output_path / qid / "video"
+    def item_dir(self, q) -> Path:
+        """output/<series>/<id> for course episodes (e.g. output/Basic Python/ep01-…),
+        output/<id> for standalone interview questions."""
+        base = self.output_path / q.episode.series if getattr(q, "episode", None) else self.output_path
+        return base / q.id
 
-    def shorts_dir(self, qid: str) -> Path:
-        """output/<id>/shorts — vertical clips cut from the full video."""
-        return self.output_path / qid / "shorts"
+    def video_dir(self, q) -> Path:
+        """…/<id>/video — the full-length video, chapters, timeline, thumbnails."""
+        return self.item_dir(q) / "video"
+
+    def shorts_dir(self, q) -> Path:
+        """…/<id>/shorts — vertical clips cut from the full video."""
+        return self.item_dir(q) / "shorts"
 
     @property
     def fonts_path(self) -> Path:
