@@ -5,6 +5,14 @@
   "prompt": "Store many values in a list, use its methods, understand the aliasing trap, and meet the tuple.",
   "episode": { "number": 5, "of": 15, "series": "Basic Python" },
   "targetMinutes": 16,
+  "thumbnail": {
+    "headline": "lists &\ntuples",
+    "hook": "the aliasing trap",
+    "snippet": "nums = [1, 2, 3]\nnums.append(4)\npoint = (3, 4)\nx, y = point",
+    "question": "why did my list\nchange itself?",
+    "bad": "a = [1, 2]\nb = a\nb.append(3)\nprint(a)",
+    "result": "[1, 2, 3]   # a changed too!"
+  },
   "filename": "solution.py",
   "segments": [
     {

@@ -5,6 +5,15 @@
   "prompt": "Build a complete number-guessing game from scratch, using everything from the course.",
   "episode": { "number": 15, "of": 15, "series": "Basic Python" },
   "targetMinutes": 10,
+  "thumbnail": {
+    "headline": "build a\ngame",
+    "hook": "number guessing game",
+    "snippet": "secret = random.randint(1, 100)\nwhile True:\n    guess = int(input(\"guess: \"))\n    if guess < secret:\n        print(\"higher\")",
+    "question": "can you build\nthis yourself?",
+    "bad": "if guess < secret:\n    print(\"higher\")\nelif guess > secret:\n    print(\"lower\")",
+    "result": "correct!  (3 tries)",
+    "resultOk": true
+  },
   "filename": "game.py",
   "segments": [
     {

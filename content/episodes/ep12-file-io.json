@@ -5,6 +5,14 @@
   "prompt": "Read and write text files with open(), the with statement, and the read / write modes.",
   "episode": { "number": 12, "of": 15, "series": "Basic Python" },
   "targetMinutes": 8,
+  "thumbnail": {
+    "headline": "file i/o",
+    "hook": "make data stick around",
+    "snippet": "with open(\"log.txt\", \"a\") as f:\n    f.write(\"hi\\n\")",
+    "question": "what does\nmode \"w\" do?",
+    "bad": "with open(\"log.txt\", \"w\") as f:\n    f.write(\"new\")",
+    "result": "log.txt: 500 lines -> 1 line"
+  },
   "filename": "solution.py",
   "segments": [
     {

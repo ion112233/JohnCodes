@@ -22,6 +22,14 @@ Produce **exactly one JSON object** — no prose, no code fences.
   "prompt": "<one line: by the end you can …>",
   "episode": { "number": NN, "of": 15, "series": "Basic Python" },
   "targetMinutes": <the Est. Time from the outline>,
+  "thumbnail": {
+    "headline": "<2-3 words, lowercase, \\n between lines, e.g. \"lists &\\ntuples\">",
+    "hook": "<one curiosity/payoff line, <= 30 chars>",
+    "snippet": "<3-5 lines of code from the episode, <= 32 chars wide>",
+    "question": "<a big 'why…?' question, \\n between lines, <= 20 chars/line>",
+    "bad": "<2-4 lines of broken/surprising code>",
+    "result": "<the error or output line that code produces>"
+  },
   "segments": [ … ]
 }
 ```

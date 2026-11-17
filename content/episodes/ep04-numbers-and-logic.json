@@ -5,6 +5,14 @@
   "prompt": "Do arithmetic, handle floating-point quirks, compare values, and combine conditions with and, or and not.",
   "episode": { "number": 4, "of": 15, "series": "Basic Python" },
   "targetMinutes": 13,
+  "thumbnail": {
+    "headline": "numbers &\nlogic",
+    "hook": "why 0.1 + 0.2 isn't 0.3",
+    "snippet": "print(10 // 3)\nprint(10 % 3)\nprint(2 ** 8)\nprint(5 > 3 and 2 < 1)",
+    "question": "why isn't\n0.1 + 0.2 = 0.3?",
+    "bad": "print(0.1 + 0.2)",
+    "result": "0.30000000000000004"
+  },
   "filename": "solution.py",
   "segments": [
     {

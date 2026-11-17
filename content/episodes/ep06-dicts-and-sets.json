@@ -5,6 +5,14 @@
   "prompt": "Look values up by name with a dictionary, and use a set for uniqueness and fast membership.",
   "episode": { "number": 6, "of": 15, "series": "Basic Python" },
   "targetMinutes": 12,
+  "thumbnail": {
+    "headline": "dicts &\nsets",
+    "hook": "look anything up, instantly",
+    "snippet": "user = {\"name\": \"Ada\"}\nprint(user[\"name\"])\nseen = {1, 2, 2, 3}",
+    "question": "why does this\nraise KeyError?",
+    "bad": "user = {\"name\": \"Ada\"}\nprint(user[\"age\"])",
+    "result": "KeyError: 'age'"
+  },
   "filename": "solution.py",
   "segments": [
     {

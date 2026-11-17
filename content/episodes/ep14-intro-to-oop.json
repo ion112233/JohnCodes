@@ -5,6 +5,14 @@
   "prompt": "Define your own type with a class: __init__, attributes on self, methods, and many instances from one blueprint.",
   "episode": { "number": 14, "of": 15, "series": "Basic Python" },
   "targetMinutes": 12,
+  "thumbnail": {
+    "headline": "classes &\nobjects",
+    "hook": "build your own types",
+    "snippet": "class Dog:\n    def __init__(self, name):\n        self.name = name\n    def bark(self):\n        print(\"woof\")",
+    "question": "what is\nself?",
+    "bad": "class Dog:\n    def bark():\n        print(\"woof\")\nDog().bark()",
+    "result": "TypeError: bark() takes 0 positional arguments"
+  },
   "filename": "solution.py",
   "segments": [
     {

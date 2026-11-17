@@ -46,7 +46,18 @@ python3 -m johncodes build content/questions/0001-two-sum.json
 
 # render all of them
 python3 -m johncodes build --all
+
+# YouTube thumbnails (1280x720, 4 layouts) -> output/<id>/thumbnails/
+python3 -m johncodes thumbnail content/episodes/ep07-conditionals.json
+python3 -m johncodes thumbnail content/episodes/*.json --variants headline,curiosity
 ```
+
+Thumbnail layouts: `headline` (big title + tilted editor), `code` (title over a wide
+code window), `curiosity` (a big question + broken code + red result + huge "?"),
+`number` (giant outlined episode number + progress bar). Copy comes from the optional
+`thumbnail` block in the script (`headline`, `hook`, `snippet`, `question`, `bad`,
+`result`, `resultOk`); anything missing falls back to the title / code / first gotcha.
+A/B test two layouts per episode with YouTube's *Test & compare*.
 
 `make build Q=content/questions/0001-two-sum.json` wraps the same thing (and sets
 `PYTHONPATH` for you). Or `pip install -e .` and call `johncodes …` directly.

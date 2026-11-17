@@ -5,6 +5,14 @@
   "prompt": "Store values in named variables, learn the core types, convert between them, and meet None.",
   "episode": { "number": 2, "of": 15, "series": "Basic Python" },
   "targetMinutes": 15,
+  "thumbnail": {
+    "headline": "variables\n& types",
+    "hook": "int, str, float, bool, None",
+    "snippet": "age = 30\nname = \"Ada\"\nprice = 9.99\nok = True",
+    "question": "why can't you\nadd these?",
+    "bad": "age = \"30\"\nprint(age + 1)",
+    "result": "TypeError: can only concatenate str"
+  },
   "filename": "solution.py",
   "segments": [
     {

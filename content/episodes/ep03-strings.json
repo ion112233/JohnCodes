@@ -5,6 +5,14 @@
   "prompt": "Index and slice text, use the common string methods, and format output cleanly with f-strings.",
   "episode": { "number": 3, "of": 15, "series": "Basic Python" },
   "targetMinutes": 17,
+  "thumbnail": {
+    "headline": "strings &\nf-strings",
+    "hook": "slice, index, format",
+    "snippet": "name = \"Ada\"\nprint(f\"hi {name}!\")\nprint(name[::-1])",
+    "question": "why can't you\nchange a letter?",
+    "bad": "s = \"python\"\ns[0] = \"P\"",
+    "result": "TypeError: item assignment not supported"
+  },
   "filename": "solution.py",
   "segments": [
     {

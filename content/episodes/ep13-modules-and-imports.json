@@ -5,6 +5,14 @@
   "prompt": "Pull in code with import, use the standard library, split your own code into files, and use the __main__ guard.",
   "episode": { "number": 13, "of": 15, "series": "Basic Python" },
   "targetMinutes": 8,
+  "thumbnail": {
+    "headline": "modules &\nimports",
+    "hook": "the standard library",
+    "snippet": "import random\nfrom math import sqrt\nprint(random.randint(1, 6))",
+    "question": "what is\n__name__?",
+    "bad": "import randon",
+    "result": "ModuleNotFoundError: No module named 'randon'"
+  },
   "filename": "solution.py",
   "segments": [
     {

@@ -5,6 +5,14 @@
   "prompt": "Package code into named, reusable functions with parameters, return values, defaults and local scope.",
   "episode": { "number": 9, "of": 15, "series": "Basic Python" },
   "targetMinutes": 12,
+  "thumbnail": {
+    "headline": "functions",
+    "hook": "write once, use anywhere",
+    "snippet": "def greet(name):\n    return f\"hi {name}\"\n\nprint(greet(\"Ada\"))",
+    "question": "print vs\nreturn?",
+    "bad": "def add(a, b):\n    a + b\nprint(add(1, 2))",
+    "result": "None   # forgot to return"
+  },
   "filename": "solution.py",
   "segments": [
     {

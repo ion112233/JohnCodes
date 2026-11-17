@@ -100,6 +100,31 @@ def cmd_preview(args) -> int:
     return 0
 
 
+def cmd_thumbnail(args) -> int:
+    """Render the 1280x720 YouTube thumbnails (four layouts) for one script or all."""
+    from .thumbnail import VARIANTS, render_thumbnails
+
+    cfg = Config.load(args.config)
+    paths = discover(args.content) if args.all else [Path(p) for p in args.question]
+    if not paths:
+        print("provide script file(s), or --all")
+        return 2
+    wanted = [v.strip() for v in args.variants.split(",")] if args.variants else None
+    if wanted and set(wanted) - set(VARIANTS):
+        print(f"--variants must be from {', '.join(VARIANTS)}")
+        return 2
+    total = 0
+    for p in paths:
+        q = load_question(p)
+        out = render_thumbnails(cfg, q, Path(args.out) if args.out else None, wanted)
+        total += len(out)
+        print(f"[{q.id}]")
+        for o in out:
+            print(f"  {o}  ({o.stat().st_size / 1e3:.0f} KB)")
+    print(f"\n{total} thumbnail(s)")
+    return 0
+
+
 def cmd_tts(args) -> int:
     from .audio import Narrator
     from scipy.io import wavfile
@@ -153,6 +178,15 @@ def main(argv=None) -> int:
     p.add_argument("--out")
     _add_config_arg(p)
     p.set_defaults(func=cmd_preview)
+
+    th = sub.add_parser("thumbnail", help="render YouTube thumbnails (1280x720) for a script")
+    th.add_argument("question", nargs="*", help="script .json file(s)")
+    th.add_argument("--all", action="store_true", help="every script in --content")
+    th.add_argument("--content", default="content")
+    th.add_argument("--variants", help="comma list of: headline,code,curiosity,number (default all)")
+    th.add_argument("--out", help="output dir (default output/<id>/thumbnails)")
+    _add_config_arg(th)
+    th.set_defaults(func=cmd_thumbnail)
 
     t = sub.add_parser("tts", help="synthesise a line of narration to wav")
     t.add_argument("text")

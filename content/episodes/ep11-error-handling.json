@@ -5,6 +5,14 @@
   "prompt": "Catch errors with try / except so a bad input doesn't crash your program, and know when not to.",
   "episode": { "number": 11, "of": 15, "series": "Basic Python" },
   "targetMinutes": 8,
+  "thumbnail": {
+    "headline": "try /\nexcept",
+    "hook": "never crash again",
+    "snippet": "try:\n    n = int(input())\nexcept ValueError:\n    print(\"numbers only\")",
+    "question": "how do you\nstop a crash?",
+    "bad": "n = int(\"hello\")",
+    "result": "ValueError: invalid literal for int()"
+  },
   "filename": "solution.py",
   "segments": [
     {

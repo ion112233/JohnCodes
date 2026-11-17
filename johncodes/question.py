@@ -39,6 +39,18 @@ class Episode:
 
 
 @dataclass
+class Thumbnail:
+    """Optional copy for the YouTube thumbnail; every field falls back to the script."""
+    headline: Optional[str] = None   # 1-2 short lines, "\n" separated
+    hook: Optional[str] = None       # one curiosity / payoff line
+    snippet: Optional[str] = None    # 3-6 lines of code to show
+    question: Optional[str] = None   # the "curiosity" layout's big question
+    bad: Optional[str] = None        # code shown with a red result strip
+    result: Optional[str] = None     # the error / output line under `bad`
+    result_ok: bool = False          # result is a success (green) not an error
+
+
+@dataclass
 class ReplLine:
     input: str
     output: str = ""
@@ -88,6 +100,7 @@ class Question:
     complexity: Optional[Complexity] = None
     episode: Optional[Episode] = None
     target_minutes: Optional[float] = None
+    thumbnail: Optional[Thumbnail] = None
     filename: str = "solution.py"
     source_path: Optional[Path] = None
 
@@ -203,6 +216,17 @@ def load_question(path: str | Path) -> Question:
                           of=int(_require(ed, "of", path)),
                           series=str(_require(ed, "series", path)))
 
+    thumbnail = None
+    if "thumbnail" in data:
+        td = data["thumbnail"]
+        known = {"headline", "hook", "snippet", "question", "bad", "result", "resultOk"}
+        if not isinstance(td, dict) or set(td) - known:
+            _err(path, f"'thumbnail' must be an object with keys from {sorted(known)}")
+        thumbnail = Thumbnail(
+            **{k: (str(td[k]).strip("\n") or None) for k in
+               ("headline", "hook", "snippet", "question", "bad", "result") if k in td},
+            result_ok=bool(td.get("resultOk", False)))
+
     raw_segments = _require(data, "segments", path)
     if not isinstance(raw_segments, list) or not raw_segments:
         _err(path, "'segments' must be a non-empty array")
@@ -220,6 +244,7 @@ def load_question(path: str | Path) -> Question:
         complexity=complexity,
         episode=episode,
         target_minutes=float(data["targetMinutes"]) if "targetMinutes" in data else None,
+        thumbnail=thumbnail,
         filename=str(data.get("filename", "solution.py")).strip() or "solution.py",
         source_path=path,
     )

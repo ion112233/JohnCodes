@@ -5,6 +5,14 @@
   "prompt": "Repeat work with a for loop over a collection, a while loop until a condition changes, plus break, continue and range.",
   "episode": { "number": 8, "of": 15, "series": "Basic Python" },
   "targetMinutes": 12,
+  "thumbnail": {
+    "headline": "for &\nwhile loops",
+    "hook": "repeat anything",
+    "snippet": "for i in range(3):\n    print(i)\n\nwhile n > 0:\n    n -= 1",
+    "question": "why does this\nloop forever?",
+    "bad": "n = 3\nwhile n > 0:\n    print(n)",
+    "result": "3 3 3 3 3 3 ...  (never stops)"
+  },
   "filename": "solution.py",
   "segments": [
     {

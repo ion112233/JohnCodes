@@ -5,6 +5,14 @@
   "prompt": "Write your first program, leave notes with comments, and read input from the user.",
   "episode": { "number": 1, "of": 15, "series": "Basic Python" },
   "targetMinutes": 12,
+  "thumbnail": {
+    "headline": "your first\nprogram",
+    "hook": "print() and input()",
+    "snippet": "name = input(\"name? \")\nprint(\"hello,\", name)",
+    "question": "do spaces\nmatter?",
+    "bad": "print(\"hi\")\n    print(\"oops\")",
+    "result": "IndentationError: unexpected indent"
+  },
   "filename": "solution.py",
   "segments": [
     {

@@ -5,6 +5,14 @@
   "prompt": "Read a traceback from the bottom up, and recognise the handful of errors you'll actually hit.",
   "episode": { "number": 10, "of": 15, "series": "Basic Python" },
   "targetMinutes": 6,
+  "thumbnail": {
+    "headline": "read the\nerror",
+    "hook": "bottom line first",
+    "snippet": "name = \"Ada\"\nprint(nam)",
+    "question": "what is all\nthis red text?",
+    "bad": "name = \"Ada\"\nprint(nam)",
+    "result": "NameError: name 'nam' is not defined"
+  },
   "filename": "solution.py",
   "segments": [
     {

@@ -5,6 +5,14 @@
   "prompt": "Make your program choose what to do, using if, elif and else with the conditions from episode 4.",
   "episode": { "number": 7, "of": 15, "series": "Basic Python" },
   "targetMinutes": 8,
+  "thumbnail": {
+    "headline": "if, elif\n& else",
+    "hook": "make your code decide",
+    "snippet": "if score >= 90:\n    grade = \"A\"\nelif score >= 80:\n    grade = \"B\"\nelse:\n    grade = \"C\"",
+    "question": "why is this a\nSyntaxError?",
+    "bad": "x = 5\nif x = 5:\n    print(\"five\")",
+    "result": "SyntaxError: invalid syntax"
+  },
   "filename": "solution.py",
   "segments": [
     {
