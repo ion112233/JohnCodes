@@ -93,7 +93,7 @@ def cmd_preview(args) -> int:
                             duration=12.0, lead=0.0, seed=q.id)
 
     img = scene.render(t=scene.duration * frac + 0.001)
-    out = Path(args.out or (cfg.output_path / f"{q.id}-preview.png"))
+    out = Path(args.out or (cfg.output_path / f"{q.id}_preview.png"))
     out.parent.mkdir(parents=True, exist_ok=True)
     img.save(out)
     print(f"wrote {out}  (font: {fonts.mono_family})")
@@ -231,9 +231,9 @@ def main(argv=None) -> int:
     sh.add_argument("--replan", action="store_true", help="ignore shorts/plan.json and re-pick")
     sh.add_argument("--focus", action="store_true",
                     help="hide the Project tree and fit code / console text to the panel")
-    sh.add_argument("--covers-only", action="store_true",
+    sh.add_argument("--covers_only", action="store_true",
                     help="re-make just the one-per-Short thumbnails (no captions)")
-    sh.add_argument("--plan-only", action="store_true", help="print the picks, render nothing")
+    sh.add_argument("--plan_only", action="store_true", help="print the picks, render nothing")
     _add_config_arg(sh)
     sh.set_defaults(func=cmd_shorts)
 

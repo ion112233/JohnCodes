@@ -39,10 +39,10 @@ to `~/.cache/huggingface` and the spaCy cache.
 python3 -m johncodes list
 
 # fast visual check — one PNG, no audio, ~1s
-python3 -m johncodes preview content/questions/0001-two-sum.json --at 0.6
+python3 -m johncodes preview content/questions/0001_two_sum.json --at 0.6
 
-# render one video  ->  output/two-sum/video/two-sum.mp4
-python3 -m johncodes build content/questions/0001-two-sum.json
+# render one video  ->  output/two_sum/video/two_sum.mp4
+python3 -m johncodes build content/questions/0001_two_sum.json
 
 # render all of them
 python3 -m johncodes build --all
@@ -56,7 +56,7 @@ Thumbnail layouts: `headline` (big title + tilted editor), `code` (title over a 
 code window), `curiosity` (a big question + broken code + red result + huge "?"),
 `number` (giant outlined episode number + progress bar). Copy comes from the optional
 `thumbnail` block in the script (`headline`, `hook`, `snippet`, `question`, `bad`,
-`result`, `resultOk`); anything missing falls back to the title / code / first gotcha.
+`result`, `result_ok`); anything missing falls back to the title / code / first gotcha.
 A/B test two layouts per episode with YouTube's *Test & compare*.
 
 ### Shorts (30-60 s, vertical) cut from the finished episodes
@@ -67,7 +67,7 @@ python3 -m johncodes timeline --all
 
 # pick + render 2-4 Shorts per episode  ->  output/<id>/shorts/
 python3 -m johncodes shorts content/episodes/ep07-conditionals.json
-python3 -m johncodes shorts --all --plan-only        # just show the picks
+python3 -m johncodes shorts --all --plan_only        # just show the picks
 ```
 
 `build` writes `video/timeline.json` (every scene's time range + every spoken word's
@@ -80,14 +80,14 @@ middle, word-by-word captions (spoken word highlighted) below, "full lesson" end
 Every file is verified to be strictly inside 30-60 s. `shorts.txt` has the source
 timestamps plus a ready-to-paste title / description / hashtags.
 
-`make build Q=content/questions/0001-two-sum.json` wraps the same thing (and sets
+`make build Q=content/questions/0001_two_sum.json` wraps the same thing (and sets
 `PYTHONPATH` for you). Or `pip install -e .` and call `johncodes …` directly.
 
 ## Adding a question
 
 1. Ask Claude with [`prompts/generate_question.md`](prompts/generate_question.md).
 2. Save the JSON as `content/questions/NNNN-<slug>.json`
-   (validate against [`content/question.schema.json`](content/question.schema.json)).
+   (validate against [`content/question_schema.json`](content/question_schema.json)).
 3. `python3 -m johncodes build content/questions/NNNN-<slug>.json`.
 
 A script is metadata + an ordered **`segments`** list, compiled to scenes.
@@ -95,7 +95,7 @@ Two flavours share the format:
 
 - **interview question** (`content/questions/`) — has `complexity`; auto title +
   takeaway cards. Prompt: [`prompts/generate_question.md`](prompts/generate_question.md).
-- **course episode** (`content/episodes/`) — has `episode` + `targetMinutes`;
+- **course episode** (`content/episodes/`) — has `episode` + `target_minutes`;
   auto episode card, `card_recap` segment closes it. Prompt:
   [`prompts/generate_episode.md`](prompts/generate_episode.md).
 
@@ -114,7 +114,7 @@ Two flavours share the format:
 | `card_recap` | closing bullets + "next episode" teaser |
 
 `build` writes `output/<id>/video/chapters.txt` (YouTube timestamps) and, for episodes,
-reports actual runtime vs `targetMinutes`. `--draft` renders fast at 15fps.
+reports actual runtime vs `target_minutes`. `--draft` renders fast at 15fps.
 
 `python3 -m johncodes preview <script.json> --scene typing|terminal|repl|gotcha|compare|opener|topic|question|recap`
 renders one still frame of any scene for fast iteration.
@@ -125,10 +125,10 @@ All defaults are in [`johncodes/config.py`](johncodes/config.py). Override any
 subset with a JSON file:
 
 ```bash
-python3 -m johncodes build content/questions/0001-two-sum.json --config my.json
+python3 -m johncodes build content/questions/0001_two_sum.json --config my.json
 ```
 
-See [`config.example.json`](config.example.json). Common knobs: `tts_voice`
+See [`config_example.json`](config_example.json). Common knobs: `tts_voice`
 (default is the `am_michael,am_fenrir` blend; any Kokoro voice id or comma-list
 works), `captions` (on/off), `music_path`, `fps`, `crf`.
 
@@ -150,7 +150,7 @@ johncodes/
   cli.py           `python -m johncodes …`
 content/
   questions/*.json
-  question.schema.json
+  question_schema.json
 prompts/generate_question.md
 assets/{fonts,music,sfx}/     (gitignored; drop your own files here)
 output/                       (gitignored)

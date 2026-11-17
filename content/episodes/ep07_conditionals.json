@@ -1,10 +1,10 @@
 {
-  "id": "ep07-conditionals",
+  "id": "ep07_conditionals",
   "title": "Conditionals (if / elif / else)",
   "topic": "Basic Python · Episode 7",
   "prompt": "Make your program choose what to do, using if, elif and else with the conditions from episode 4.",
   "episode": { "number": 7, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 8,
+  "target_minutes": 8,
   "thumbnail": {
     "headline": "if, elif\n& else",
     "hook": "make your code decide",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode seven. Up to now, every program we have written runs straight through, top to bottom, doing exactly the same thing every single time. This episode is where that changes. Conditionals let your program look at a value, and decide what to do next based on it. This is a shorter episode, because you already did the hard part back in episode four, building conditions with comparisons and with and, or, and not. Now we just plug those conditions into an if statement and act on them. We will cover if on its own, if paired with an else, the elif for handling a run of separate cases, how to combine and nest conditions, and a couple of mistakes that are very easy to make and very annoying to find. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "if", "cardSubtitle": "run this code, only sometimes" },
+    { "type": "card_topic", "card_title": "if", "card_subtitle": "run this code, only sometimes" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -39,7 +39,7 @@
       "output": "your age: 21\nyou can vote\nthanks"
     },
 
-    { "type": "card_topic", "cardTitle": "else", "cardSubtitle": "otherwise, do this" },
+    { "type": "card_topic", "card_title": "else", "card_subtitle": "otherwise, do this" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -47,7 +47,7 @@
     },
     { "type": "code", "code": "age = int(input(\"your age: \"))\n\nif age >= 18:\n    print(\"you can vote\")\nelse:\n    print(\"too young, sorry\")\n\nprint(\"thanks\")" },
 
-    { "type": "card_topic", "cardTitle": "elif", "cardSubtitle": "several cases in a row" },
+    { "type": "card_topic", "card_title": "elif", "card_subtitle": "several cases in a row" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -70,7 +70,7 @@
       "answer": "At most one — the first whose condition is true. The rest are skipped."
     },
 
-    { "type": "card_topic", "cardTitle": "Nesting & combining", "cardSubtitle": "conditions inside conditions" },
+    { "type": "card_topic", "card_title": "Nesting & combining", "card_subtitle": "conditions inside conditions" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -78,14 +78,14 @@
     },
     {
       "type": "compare",
-      "leftLabel": "nested",
+      "left_label": "nested",
       "left": "if logged_in:\n    if is_admin:\n        show_panel()",
-      "rightLabel": "combined",
+      "right_label": "combined",
       "right": "if logged_in and is_admin:\n    show_panel()",
       "verdict": "prefer 'and' over an extra level of nesting when you can."
     },
 
-    { "type": "card_topic", "cardTitle": "Easy mistakes", "cardSubtitle": "two that get everyone" },
+    { "type": "card_topic", "card_title": "Easy mistakes", "card_subtitle": "two that get everyone" },
     {
       "type": "narration",
       "text": "Two things to watch for, and you will hit both. The first, straight from episode four, do not use a single equals sign in a condition. If age is eighteen has to be written with a double equals sign. In modern Python, a single equals there is usually a flat out syntax error, which is actually good news, because it stops you immediately rather than quietly doing the wrong thing. The second mistake is subtler and nastier. This code looks like it checks whether the answer is the word yes, or the letter y. But it does not do that at all. Python reads it as two separate things joined by or. Is answer equal to yes. Or, is the string capital Y. And a non empty string, like capital Y sitting there on its own, is always truthy. So the whole condition is always true, and this branch runs no matter what the user typed. The fix is to spell out both comparisons in full. Answer double equals yes, or answer double equals capital Y. Or, cleaner, lowercase the answer first with dot lower, and then just compare it against yes once."
@@ -93,7 +93,7 @@
     {
       "type": "gotcha",
       "code": "answer = input(\"continue? \")\n\nif answer == \"yes\" or \"y\":\n    print(\"always prints!\")",
-      "badLine": 3,
+      "bad_line": 3,
       "error": "no error — but the condition is ALWAYS true.\n\"y\" on its own is a non-empty string, so it is truthy.\nfix:  if answer == \"yes\" or answer == \"y\":"
     },
 

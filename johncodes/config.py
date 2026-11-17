@@ -1,6 +1,6 @@
 """Runtime configuration.
 
-Defaults live here. Override any subset with a JSON file (see ``config.example.json``)
+Defaults live here. Override any subset with a JSON file (see ``config_example.json``)
 passed as ``--config path.json`` on the CLI.
 """
 from __future__ import annotations

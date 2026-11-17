@@ -1,10 +1,10 @@
 {
-  "id": "ep06-dicts-and-sets",
+  "id": "ep06_dicts_and_sets",
   "title": "Dictionaries & sets",
   "topic": "Basic Python · Episode 6",
   "prompt": "Look values up by name with a dictionary, and use a set for uniqueness and fast membership.",
   "episode": { "number": 6, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 12,
+  "target_minutes": 12,
   "thumbnail": {
     "headline": "dicts &\nsets",
     "hook": "look anything up, instantly",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode six. Last episode you learned the list, which holds values in order and lets you get at them by their position. This episode covers the other two collections you really need to know. The dictionary, which lets you look values up by a meaningful name instead of a number, and which is probably the second most used type in the whole language, right after the list. And the set, which holds a collection of unique items, no duplicates allowed, and which is brilliant at answering one specific question very fast, is this thing in here. For each one we will cover how to build it, how to change it, how to loop over it, and the handful of operations that make it worth reaching for. By the end of this episode you will have all three of Python's core collections in your toolkit. Let's get into it."
     },
 
-    { "type": "card_topic", "cardTitle": "Dictionaries", "cardSubtitle": "look things up by name" },
+    { "type": "card_topic", "card_title": "Dictionaries", "card_subtitle": "look things up by name" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -50,7 +50,7 @@
     {
       "type": "gotcha",
       "code": "ages = {\"Ada\": 36}\nprint(ages[\"Grace\"])",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(ages[\"Grace\"])\nKeyError: 'Grace'"
     },
     {
@@ -58,7 +58,7 @@
       "text": "That last line in the shell is worth stopping on. The in check, used on a dictionary, checks the keys, not the values. So Alan in ages is True, because Alan is a key. But forty one in ages would be False, even though forty one is one of the values sitting right there. In always checks the keys of a dictionary. If you genuinely need to know whether a value appears, you check against ages dot values, which we will meet in a moment. This keys-not-values behaviour is not an accident. Looking something up by key is the whole reason dictionaries exist, and Python makes that the fast, default operation. Searching the values is possible, but it is the slow path, because it has to look at every pair."
     },
 
-    { "type": "card_topic", "cardTitle": "Changing a dict", "cardSubtitle": "add, update, remove" },
+    { "type": "card_topic", "card_title": "Changing a dict", "card_subtitle": "add, update, remove" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -83,7 +83,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Looping over a dict", "cardSubtitle": "keys, values, items" },
+    { "type": "card_topic", "card_title": "Looping over a dict", "card_subtitle": "keys, values, items" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -103,7 +103,7 @@
       "answer": "None (or your fallback if you pass one). d[\"x\"] would raise KeyError instead."
     },
 
-    { "type": "card_topic", "cardTitle": "Sets", "cardSubtitle": "a bag of unique things" },
+    { "type": "card_topic", "card_title": "Sets", "card_subtitle": "a bag of unique things" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -119,14 +119,14 @@
       "code": "nums = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]\nunique = set(nums)\nprint(unique)\nprint(len(unique))\nprint(4 in unique)" },
     {
       "type": "compare",
-      "leftLabel": "list — scans every time",
+      "left_label": "list — scans every time",
       "left": "names = [\"ada\", \"alan\", ...]\nif \"grace\" in names:\n    ...",
-      "rightLabel": "set — instant lookup",
+      "right_label": "set — instant lookup",
       "right": "names = {\"ada\", \"alan\", ...}\nif \"grace\" in names:\n    ...",
       "verdict": "same code. for many lookups against a big collection, use a set."
     },
 
-    { "type": "card_topic", "cardTitle": "Set operations", "cardSubtitle": "combining two sets" },
+    { "type": "card_topic", "card_title": "Set operations", "card_subtitle": "combining two sets" },
     {
       "type": "narration",
       "beat": "walkthrough",

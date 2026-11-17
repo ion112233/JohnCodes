@@ -1,10 +1,10 @@
 {
-  "id": "ep11-error-handling",
+  "id": "ep11_error_handling",
   "title": "Error handling (try / except)",
   "topic": "Basic Python · Episode 11",
   "prompt": "Catch errors with try / except so a bad input doesn't crash your program, and know when not to.",
   "episode": { "number": 11, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 8,
+  "target_minutes": 8,
   "thumbnail": {
     "headline": "try /\nexcept",
     "hook": "never crash again",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode eleven. Last episode you learned to read errors after they happen. This episode you learn to catch them as they happen, before they crash your program. Because sometimes an error is not a bug in your code at all. It is just something going wrong that you could reasonably have seen coming. The user types the word banana when you politely asked for their age. A file you wanted to open has been moved or deleted. The internet is down. You do not want your entire program to fall over and dump a scary traceback on some poor user for that. You want to handle it, print a friendly message, and carry on. The tool for this is try and except. We will cover the basic shape, catching specific errors rather than all errors, the standard pattern for validating user input, and, just as importantly, when you should not use any of this. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "try / except", "cardSubtitle": "attempt something risky" },
+    { "type": "card_topic", "card_title": "try / except", "card_subtitle": "attempt something risky" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -39,7 +39,7 @@
       "output": "your age: twelve\nthat wasn't a number\ndone"
     },
 
-    { "type": "card_topic", "cardTitle": "Catch the right thing", "cardSubtitle": "name the exception" },
+    { "type": "card_topic", "card_title": "Catch the right thing", "card_subtitle": "name the exception" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -51,14 +51,14 @@
     },
     {
       "type": "compare",
-      "leftLabel": "hides bugs",
+      "left_label": "hides bugs",
       "left": "try:\n    age = int(raw)\nexcept:\n    print(\"bad input\")",
-      "rightLabel": "handles what it means to",
+      "right_label": "handles what it means to",
       "right": "try:\n    age = int(raw)\nexcept ValueError:\n    print(\"bad input\")",
       "verdict": "name the exception. a bare except silently eats your typos too."
     },
 
-    { "type": "card_topic", "cardTitle": "The input loop", "cardSubtitle": "keep asking until it's valid" },
+    { "type": "card_topic", "card_title": "The input loop", "card_subtitle": "keep asking until it's valid" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -71,7 +71,7 @@
       "output": "your age: abc\nplease type a whole number\nyour age: 4.5\nplease type a whole number\nyour age: 30\ngot it: 30"
     },
 
-    { "type": "card_topic", "cardTitle": "else, finally & when not to", "cardSubtitle": "the rest of the story" },
+    { "type": "card_topic", "card_title": "else, finally & when not to", "card_subtitle": "the rest of the story" },
     {
       "type": "narration",
       "beat": "walkthrough",

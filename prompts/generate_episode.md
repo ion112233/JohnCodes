@@ -1,7 +1,7 @@
 # Prompt — generate a Basic Python crash-course episode
 
 Paste this to Claude with the chapter you want. One JSON object matching
-`content/question.schema.json`, saved to `content/episodes/epNN-<slug>.json`.
+`content/question_schema.json`, saved to `content/episodes/epNN_<slug>.json`.
 
 ---
 
@@ -16,12 +16,12 @@ Produce **exactly one JSON object** — no prose, no code fences.
 
 ```json
 {
-  "id": "epNN-<slug>",
+  "id": "epNN_<slug>",
   "title": "<chapter title from the course outline>",
   "topic": "Basic Python · Episode NN",
   "prompt": "<one line: by the end you can …>",
   "episode": { "number": NN, "of": 15, "series": "Basic Python" },
-  "targetMinutes": <the Est. Time from the outline>,
+  "target_minutes": <the Est. Time from the outline>,
   "thumbnail": {
     "headline": "<2-3 words, lowercase, \\n between lines, e.g. \"lists &\\ntuples\">",
     "hook": "<one curiosity/payoff line, <= 30 chars>",
@@ -36,7 +36,7 @@ Produce **exactly one JSON object** — no prose, no code fences.
 
 ## Runtime
 
-`targetMinutes` is a hard constraint — `build` warns past ±8%. The voice runs at
+`target_minutes` is a hard constraint — `build` warns past ±8%. The voice runs at
 a fixed calm pace, so **runtime is set purely by how much narration you write**.
 Rule of thumb: **~165 words per target minute** — a 12-minute episode ≈ 2,000
 words, a 17-minute episode ≈ 2,800. Under-writing is the usual failure by a wide
@@ -48,7 +48,7 @@ Draft-build (`--draft`, ~2–3 min) and check the runtime line before the real r
 1. `narration` `beat: hook` — 60–90 words, over the auto episode card. What this
    episode covers and why it matters.
 2. For each sub-topic in the chapter's "Covers" list:
-   - `card_topic` `{ cardTitle, cardSubtitle }` — the section divider (also
+   - `card_topic` `{ card_title, card_subtitle }` — the section divider (also
      becomes a YouTube chapter marker).
    - `narration` `beat: walkthrough` immediately followed by a `code` segment —
      the narration plays *while the code types*, so match their lengths.
@@ -68,10 +68,10 @@ Draft-build (`--draft`, ~2–3 min) and check the runtime line before the real r
 - `repl` `{ lines: [{ input, output }] }` — interactive `>>>` session. Great for
   showing a single idea fast (types, immediate result). Empty `output` = no
   output line (e.g. an assignment, or a `None` value at the prompt).
-- `gotcha` `{ code, badLine, error }` — the broken code in the editor with a red
-  squiggle on `badLine`, the traceback in the Run panel, exit code 1. Follow it
+- `gotcha` `{ code, bad_line, error }` — the broken code in the editor with a red
+  squiggle on `bad_line`, the traceback in the Run panel, exit code 1. Follow it
   with narration and usually a corrected `code` segment.
-- `compare` `{ left, leftLabel, right, rightLabel, verdict }` — two snippets side
+- `compare` `{ left, left_label, right, right_label, verdict }` — two snippets side
   by side (left = wrong/before, right = right/after) + a one-line verdict.
 - `card_question` `{ question, answer }` — quick check. The question is read
   ("Quick check. <question>"), sits on screen ~10 s, then the answer appears and

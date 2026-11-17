@@ -4,10 +4,10 @@ A script is one JSON file: metadata plus an ordered ``segments`` list compiled
 into scenes. Two flavours share the format:
 
 * interview question  — has ``complexity``; auto title + takeaway cards
-* course episode      — has ``episode`` + ``targetMinutes``; auto episode card,
+* course episode      — has ``episode`` + ``target_minutes``; auto episode card,
                         explicit ``card_recap`` segment closes it
 
-See ``content/question.schema.json`` and ``prompts/``.
+See ``content/question_schema.json`` and ``prompts/``.
 """
 from __future__ import annotations
 
@@ -163,16 +163,16 @@ def _parse_segment(raw: dict, path: Path, i: int) -> Segment:
     elif st == "gotcha":
         seg.code = str(_require(raw, "code", path)).rstrip("\n")
         seg.error = str(_require(raw, "error", path)).rstrip("\n")
-        seg.bad_line = int(raw["badLine"]) if "badLine" in raw else None
+        seg.bad_line = int(raw["bad_line"]) if "bad_line" in raw else None
     elif st == "compare":
-        seg.left_label = str(raw.get("leftLabel", "")).strip() or None
+        seg.left_label = str(raw.get("left_label", "")).strip() or None
         seg.left_code = str(_require(raw, "left", path)).rstrip("\n")
-        seg.right_label = str(raw.get("rightLabel", "")).strip() or None
+        seg.right_label = str(raw.get("right_label", "")).strip() or None
         seg.right_code = str(_require(raw, "right", path)).rstrip("\n")
         seg.verdict = str(raw.get("verdict", "")).strip() or None
     elif st == "card_topic":
-        seg.card_title = str(_require(raw, "cardTitle", path)).strip()
-        seg.card_subtitle = str(raw.get("cardSubtitle", "")).strip() or None
+        seg.card_title = str(_require(raw, "card_title", path)).strip()
+        seg.card_subtitle = str(raw.get("card_subtitle", "")).strip() or None
     elif st == "card_question":
         seg.question = str(_require(raw, "question", path)).strip()
         seg.answer = str(raw.get("answer", "")).strip() or None
@@ -193,8 +193,8 @@ def load_question(path: str | Path) -> Question:
         _err(path, f"invalid JSON — {e}")
 
     qid = str(_require(data, "id", path))
-    if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", qid):
-        _err(path, f"'id' must be kebab-case (got {qid!r})")
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_]*", qid):
+        _err(path, f"'id' must be snake_case (got {qid!r})")
 
     difficulty = str(data.get("difficulty", "Easy"))
     if difficulty not in _DIFFICULTIES:
@@ -219,13 +219,13 @@ def load_question(path: str | Path) -> Question:
     thumbnail = None
     if "thumbnail" in data:
         td = data["thumbnail"]
-        known = {"headline", "hook", "snippet", "question", "bad", "result", "resultOk"}
+        known = {"headline", "hook", "snippet", "question", "bad", "result", "result_ok"}
         if not isinstance(td, dict) or set(td) - known:
             _err(path, f"'thumbnail' must be an object with keys from {sorted(known)}")
         thumbnail = Thumbnail(
             **{k: (str(td[k]).strip("\n") or None) for k in
                ("headline", "hook", "snippet", "question", "bad", "result") if k in td},
-            result_ok=bool(td.get("resultOk", False)))
+            result_ok=bool(td.get("result_ok", False)))
 
     raw_segments = _require(data, "segments", path)
     if not isinstance(raw_segments, list) or not raw_segments:
@@ -243,7 +243,7 @@ def load_question(path: str | Path) -> Question:
         difficulty=difficulty,
         complexity=complexity,
         episode=episode,
-        target_minutes=float(data["targetMinutes"]) if "targetMinutes" in data else None,
+        target_minutes=float(data["target_minutes"]) if "target_minutes" in data else None,
         thumbnail=thumbnail,
         filename=str(data.get("filename", "solution.py")).strip() or "solution.py",
         source_path=path,

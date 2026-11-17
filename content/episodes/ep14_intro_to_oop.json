@@ -1,10 +1,10 @@
 {
-  "id": "ep14-intro-to-oop",
+  "id": "ep14_intro_to_oop",
   "title": "Intro to OOP (classes & objects)",
   "topic": "Basic Python · Episode 14",
   "prompt": "Define your own type with a class: __init__, attributes on self, methods, and many instances from one blueprint.",
   "episode": { "number": 14, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 12,
+  "target_minutes": 12,
   "thumbnail": {
     "headline": "classes &\nobjects",
     "hook": "build your own types",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode fourteen. This is the last big concept in the course. Object oriented programming, usually shortened to OOP. It sounds heavy and academic, but the core idea is genuinely simple. So far, you have been using types that Python gives you. Strings, lists, dictionaries. A class lets you define your own type, bundling some data together with the functions that operate on that data, in one named unit. We will cover what a class actually is, how to define one, the special init method that sets each object up, how an object stores its data on something called self, how to give a class methods, and how you create many separate objects from a single class definition. If you have ever felt like your program is a loose pile of related variables and functions that clearly belong together but are just scattered around, a class is the tool that groups them. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "Classes & objects", "cardSubtitle": "a blueprint, and things built from it" },
+    { "type": "card_topic", "card_title": "Classes & objects", "card_subtitle": "a blueprint, and things built from it" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -33,7 +33,7 @@
       "text": "And here is something that might reframe the whole course for you. You have been using classes and objects this entire time without knowing it. The string is a class. Every single string you have ever made is an object of that class. That is precisely why they all have the same set of methods, upper, lower, strip, split, and so on. That shared behaviour comes from the string class. The list is a class, and every list is an object of it, which is why every list has append and sort. So OOP is not some exotic new thing. It is the mechanism that has been quietly powering everything you have done. Now you are going to build your own."
     },
 
-    { "type": "card_topic", "cardTitle": "Defining a class", "cardSubtitle": "class and __init__" },
+    { "type": "card_topic", "card_title": "Defining a class", "card_subtitle": "class and __init__" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -55,7 +55,7 @@
       "text": "A few things people stumble on with init. It is spelled with two underscores before and two after, and Python calls it for you, you never write account dot init yourself. The name self is a convention, not a keyword, you could technically call it something else, but every Python programmer everywhere calls it self, so you should too, or your code will look wrong to everyone. And the parameters of init, owner and balance here, are separate from the attributes, self dot owner and self dot balance. It is common to give them the same name, as we did, but that assignment line, self dot owner equals owner, is really saying, take the value that was passed in and pin it onto this object permanently."
     },
 
-    { "type": "card_topic", "cardTitle": "Attributes", "cardSubtitle": "data that lives on the object" },
+    { "type": "card_topic", "card_title": "Attributes", "card_subtitle": "data that lives on the object" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -72,7 +72,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Methods", "cardSubtitle": "things the object can do" },
+    { "type": "card_topic", "card_title": "Methods", "card_subtitle": "things the object can do" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -99,7 +99,7 @@
       "answer": "The particular object the method was called on — how it reaches its own attributes."
     },
 
-    { "type": "card_topic", "cardTitle": "Many objects", "cardSubtitle": "one class, independent instances" },
+    { "type": "card_topic", "card_title": "Many objects", "card_subtitle": "one class, independent instances" },
     {
       "type": "narration",
       "beat": "walkthrough",

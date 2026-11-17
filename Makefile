@@ -4,9 +4,9 @@ export PYTHONPATH := $(CURDIR)
 .PHONY: help build build-all list preview clean
 
 help:
-	@echo "make build Q=content/questions/0001-two-sum.json   # render one Short"
+	@echo "make build Q=content/questions/0001_two_sum.json   # render one Short"
 	@echo "make build-all                                     # render every question"
-	@echo "make preview Q=content/questions/0001-two-sum.json  # one still PNG (fast)"
+	@echo "make preview Q=content/questions/0001_two_sum.json  # one still PNG (fast)"
 	@echo "make list                                           # list questions"
 	@echo "make clean                                          # wipe output/"
 

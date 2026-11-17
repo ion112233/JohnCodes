@@ -1,10 +1,10 @@
 {
-  "id": "ep01-print-and-input",
+  "id": "ep01_print_and_input",
   "title": "Print, syntax basics & getting input",
   "topic": "Basic Python · Episode 1",
   "prompt": "Write your first program, leave notes with comments, and read input from the user.",
   "episode": { "number": 1, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 12,
+  "target_minutes": 12,
   "thumbnail": {
     "headline": "your first\nprogram",
     "hook": "print() and input()",
@@ -21,7 +21,7 @@
       "text": "Welcome to Basic Python. This is a crash course, fifteen short episodes, that takes you from your very first line of code all the way to writing your own classes. You do not need to have programmed before, and you do not need to install anything to follow along, you can just watch and let it sink in, then try it yourself afterwards. In this first episode we cover the three things that every single Python program is built on. Number one, showing output, with the print function. Number two, leaving notes for yourself and for other people, with comments. And number three, reading input, so that your program can actually respond to the person using it, instead of just doing the same thing every time. We will also hit a couple of the classic beginner mistakes on purpose, so that when you see them yourself, you already know what they mean. Let's start typing."
     },
 
-    { "type": "card_topic", "cardTitle": "print", "cardSubtitle": "showing things on the screen" },
+    { "type": "card_topic", "card_title": "print", "card_subtitle": "showing things on the screen" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -65,7 +65,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Comments", "cardSubtitle": "notes that Python ignores" },
+    { "type": "card_topic", "card_title": "Comments", "card_subtitle": "notes that Python ignores" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -87,7 +87,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Indentation", "cardSubtitle": "whitespace is part of the grammar" },
+    { "type": "card_topic", "card_title": "Indentation", "card_subtitle": "whitespace is part of the grammar" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -100,7 +100,7 @@
     {
       "type": "gotcha",
       "code": "print(\"start\")\n    print(\"oops\")\nprint(\"end\")",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "  File \"solution.py\", line 2\n    print(\"oops\")\nIndentationError: unexpected indent"
     },
     {
@@ -109,14 +109,14 @@
     },
     {
       "type": "compare",
-      "leftLabel": "IndentationError",
+      "left_label": "IndentationError",
       "left": "if True:\nprint(\"hi\")",
-      "rightLabel": "Works",
+      "right_label": "Works",
       "right": "if True:\n    print(\"hi\")",
       "verdict": "A colon opens a block. The next lines are indented four spaces to say they belong to it."
     },
 
-    { "type": "card_topic", "cardTitle": "Syntax rules", "cardSubtitle": "the punctuation Python needs" },
+    { "type": "card_topic", "card_title": "Syntax rules", "card_subtitle": "the punctuation Python needs" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -124,9 +124,9 @@
     },
     {
       "type": "compare",
-      "leftLabel": "SyntaxError",
+      "left_label": "SyntaxError",
       "left": "if x > 3\n    print(\"big\")",
-      "rightLabel": "Works",
+      "right_label": "Works",
       "right": "if x > 3:\n    print(\"big\")",
       "verdict": "The colon at the end of the if line is not optional."
     },
@@ -136,7 +136,7 @@
       "answer": "None. It shows text on screen, it does not return it."
     },
 
-    { "type": "card_topic", "cardTitle": "input()", "cardSubtitle": "reading from the person running the program" },
+    { "type": "card_topic", "card_title": "input()", "card_subtitle": "reading from the person running the program" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -162,7 +162,7 @@
     {
       "type": "gotcha",
       "code": "age = input(\"Your age? \")\nprint(age + 1)",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "Your age? 20\nTraceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(age + 1)\nTypeError: can only concatenate str (not \"int\") to str"
     },
     {

@@ -1,10 +1,10 @@
 {
-  "id": "ep13-modules-and-imports",
+  "id": "ep13_modules_and_imports",
   "title": "Modules & imports",
   "topic": "Basic Python · Episode 13",
   "prompt": "Pull in code with import, use the standard library, split your own code into files, and use the __main__ guard.",
   "episode": { "number": 13, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 8,
+  "target_minutes": 8,
   "thumbnail": {
     "headline": "modules &\nimports",
     "hook": "the standard library",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode thirteen. Here is some good news. You do not have to write everything yourself. Python comes with a huge collection of ready made, tested code, called the standard library, covering dates and times, randomness, maths, working with files and folders, reading common data formats, even talking to the internet. And separately, as your own programs grow past a single file, you will want to split your code across several files too. Both of those things use the same tool, the import statement. This episode covers importing from the standard library, the two different import styles and when to use each, making and using your own module, and finally that mysterious line, if name equals main, that you have almost certainly seen at the bottom of Python files and wondered about. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "import", "cardSubtitle": "pull in code from elsewhere" },
+    { "type": "card_topic", "card_title": "import", "card_subtitle": "pull in code from elsewhere" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -44,7 +44,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "from ... import", "cardSubtitle": "the other style" },
+    { "type": "card_topic", "card_title": "from ... import", "card_subtitle": "the other style" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -52,14 +52,14 @@
     },
     {
       "type": "compare",
-      "leftLabel": "clear where it's from",
+      "left_label": "clear where it's from",
       "left": "import math\n\nr = math.sqrt(x)\narea = math.pi * r * r",
-      "rightLabel": "short, for heavy use",
+      "right_label": "short, for heavy use",
       "right": "from math import sqrt, pi\n\nr = sqrt(x)\narea = pi * r * r",
       "verdict": "default to 'import module'. use 'from' for a few names you type a lot."
     },
 
-    { "type": "card_topic", "cardTitle": "Your own modules", "cardSubtitle": "split code across files" },
+    { "type": "card_topic", "card_title": "Your own modules", "card_subtitle": "split code across files" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -67,7 +67,7 @@
     },
     { "type": "code", "code": "# ---- helpers.py ----\ndef greet(name):\n    return \"hello, \" + name\n\n# ---- solution.py ----\nimport helpers\n\nmsg = helpers.greet(\"Ada\")\nprint(msg)" },
 
-    { "type": "card_topic", "cardTitle": "if __name__ == \"__main__\"", "cardSubtitle": "what that line does" },
+    { "type": "card_topic", "card_title": "if __name__ == \"__main__\"", "card_subtitle": "what that line does" },
     {
       "type": "narration",
       "beat": "walkthrough",

@@ -1,10 +1,10 @@
 {
-  "id": "ep04-numbers-and-logic",
+  "id": "ep04_numbers_and_logic",
   "title": "Numbers, operators & boolean logic",
   "topic": "Basic Python · Episode 4",
   "prompt": "Do arithmetic, handle floating-point quirks, compare values, and combine conditions with and, or and not.",
   "episode": { "number": 4, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 13,
+  "target_minutes": 13,
   "thumbnail": {
     "headline": "numbers &\nlogic",
     "hook": "why 0.1 + 0.2 isn't 0.3",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode four. This episode is about numbers, and about logic, and the two are more connected than they look. We will start with arithmetic, the ordinary maths operators, plus a couple you have probably not seen before, and the shortcut way to update a variable. Then we will look at floating point numbers, and the genuinely surprising way they sometimes behave, and the round function that helps you deal with it. Then comparison operators, which are how you ask Python a precise yes or no question about two values. And finally the boolean operators, and, or, and not, which let you combine those questions into a real condition. Everything in this episode feeds directly into the next one, on if statements, so think of this as laying the track. Let's get into it."
     },
 
-    { "type": "card_topic", "cardTitle": "Arithmetic", "cardSubtitle": "the maths operators" },
+    { "type": "card_topic", "card_title": "Arithmetic", "card_subtitle": "the maths operators" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -63,7 +63,7 @@
       "answer": "7 // 2 is 3 (the whole part). 7 % 2 is 1 (the remainder)."
     },
 
-    { "type": "card_topic", "cardTitle": "Floats", "cardSubtitle": "why 0.1 + 0.2 isn't 0.3" },
+    { "type": "card_topic", "card_title": "Floats", "card_subtitle": "why 0.1 + 0.2 isn't 0.3" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -89,7 +89,7 @@
       "text": "One quirk of round itself, worth a quick mention so it does not surprise you. When a number is exactly halfway between two whole numbers, like two point five, Python does not always round up. It rounds to the nearest even number. So two point five rounds to two, and three point five rounds to four. It is called banker's rounding, and it exists to avoid a slight upward bias when you round a large batch of numbers. You will not run into it often, just do not panic when two point five becomes two."
     },
 
-    { "type": "card_topic", "cardTitle": "Comparisons", "cardSubtitle": "asking a yes or no question" },
+    { "type": "card_topic", "card_title": "Comparisons", "card_subtitle": "asking a yes or no question" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -115,7 +115,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Boolean logic", "cardSubtitle": "and, or, not" },
+    { "type": "card_topic", "card_title": "Boolean logic", "card_subtitle": "and, or, not" },
     {
       "type": "narration",
       "beat": "walkthrough",

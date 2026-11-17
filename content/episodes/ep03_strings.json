@@ -1,10 +1,10 @@
 {
-  "id": "ep03-strings",
+  "id": "ep03_strings",
   "title": "Strings, string methods & f-strings",
   "topic": "Basic Python · Episode 3",
   "prompt": "Index and slice text, use the common string methods, and format output cleanly with f-strings.",
   "episode": { "number": 3, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 17,
+  "target_minutes": 17,
   "thumbnail": {
     "headline": "strings &\nf-strings",
     "hook": "slice, index, format",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode three. This one is all about strings, which is just the technical word for text. You will use strings more than any other type in the language, because almost every program has to deal with words at some point. Names, messages, the contents of a file, whatever the user typed at a prompt. So we are going to go deep. We will build strings by joining pieces together, and repeating them. We will reach inside a string to pull out single characters, or whole chunks, using indexing and slicing. We will meet the most useful string methods, the little built in tools for cleaning up and transforming text, and there are a lot of good ones. We will cover f-strings, which are Python's clean, modern way of dropping values into a piece of text, along with a bit of formatting. And we will finish with escape characters and multi-line strings. This is one of the longer episodes in the course, but strings really are worth the time, they come up in everything. Let's get started."
     },
 
-    { "type": "card_topic", "cardTitle": "Building strings", "cardSubtitle": "joining pieces of text together" },
+    { "type": "card_topic", "card_title": "Building strings", "card_subtitle": "joining pieces of text together" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -64,7 +64,7 @@
       "text": "Those last two lines are a preview of the next episode. Strings can be compared with the less than and equals operators, just like numbers. They compare alphabetically, so apple comes before banana. And comparison is case sensitive. Capital A d a and lowercase a d a are not equal, because a capital A and a lowercase a are genuinely different characters to the computer. That is exactly why lowercasing both sides before you compare is such a common move."
     },
 
-    { "type": "card_topic", "cardTitle": "Indexing", "cardSubtitle": "pulling out one character" },
+    { "type": "card_topic", "card_title": "Indexing", "card_subtitle": "pulling out one character" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -88,7 +88,7 @@
     {
       "type": "gotcha",
       "code": "word = \"Python\"\nprint(word[10])",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(word[10])\nIndexError: string index out of range"
     },
     {
@@ -97,7 +97,7 @@
       "answer": "Index 0 is 'c'. Index -1 is 'e', the last character."
     },
 
-    { "type": "card_topic", "cardTitle": "Slicing", "cardSubtitle": "pulling out a whole chunk" },
+    { "type": "card_topic", "card_title": "Slicing", "card_subtitle": "pulling out a whole chunk" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -119,7 +119,7 @@
       "text": "And unlike indexing, slicing is very forgiving. If your stop number runs off the end of the string, past where it actually ends, Python does not raise an error. It just gives you everything up to the end and stops. If your start is already past the end, you get an empty string back, no complaint. So slicing is the safe way to say 'give me the first ten characters, or however many there are if it is shorter'. That robustness is a real reason to reach for a slice instead of a loop when you just need a chunk of a string."
     },
 
-    { "type": "card_topic", "cardTitle": "String methods", "cardSubtitle": "the built-in text toolbox" },
+    { "type": "card_topic", "card_title": "String methods", "card_subtitle": "the built-in text toolbox" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -150,7 +150,7 @@
       "answer": "Still \"hi\". Methods return a new string; they never change the original."
     },
 
-    { "type": "card_topic", "cardTitle": "f-strings", "cardSubtitle": "dropping values into text, cleanly" },
+    { "type": "card_topic", "card_title": "f-strings", "card_subtitle": "dropping values into text, cleanly" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -166,9 +166,9 @@
       "code": "first = \"Ada\"\nlast = \"Lovelace\"\nname = first + \" \" + last\nprint(name)\nprint(name.upper())\nprint(name.replace(\"a\", \"@\"))\nprint(name.split(\" \"))\n\nscore = 95\nprint(f\"{name} scored {score}%\")\nprint(f\"average: {score / 3:.2f}\")" },
     {
       "type": "compare",
-      "leftLabel": "the old way",
+      "left_label": "the old way",
       "left": "print(name + \" scored \"\n      + str(score) + \"%\")",
-      "rightLabel": "an f-string",
+      "right_label": "an f-string",
       "right": "print(f\"{name} scored {score}%\")",
       "verdict": "same output. one of these you can read at a glance."
     },
@@ -178,7 +178,7 @@
       "answer": "Put :.2f after the value, like {price:.2f}."
     },
 
-    { "type": "card_topic", "cardTitle": "Escapes & multi-line", "cardSubtitle": "special characters inside strings" },
+    { "type": "card_topic", "card_title": "Escapes & multi-line", "card_subtitle": "special characters inside strings" },
     {
       "type": "narration",
       "beat": "walkthrough",

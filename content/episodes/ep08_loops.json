@@ -1,10 +1,10 @@
 {
-  "id": "ep08-loops",
+  "id": "ep08_loops",
   "title": "Loops (for / while)",
   "topic": "Basic Python · Episode 8",
   "prompt": "Repeat work with a for loop over a collection, a while loop until a condition changes, plus break, continue and range.",
   "episode": { "number": 8, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 12,
+  "target_minutes": 12,
   "thumbnail": {
     "headline": "for &\nwhile loops",
     "hook": "repeat anything",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode eight. Last episode your program learned to make a decision. This episode it learns to repeat. Loops are how you do the same work over and over without copying and pasting the code, whether that is going through every item in a list, counting from one to a hundred, or waiting for the user to finally type something valid. We will cover the for loop, which walks through a collection one item at a time. The range function, which is how you count. The while loop, which keeps going until a condition changes. And break and continue, which give you fine control over a loop from inside its own body. Loops plus conditionals together are the whole of what programmers call control flow, so once you have this episode under your belt, you can genuinely sit down and write programs that do things. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "The for loop", "cardSubtitle": "do something for each item" },
+    { "type": "card_topic", "card_title": "The for loop", "card_subtitle": "do something for each item" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -61,7 +61,7 @@
       "text": "And that counting pattern I promised you back in episode six. Here it is for real. You start with an empty dictionary called counts. Then, for each word in a list of words, you do, counts, square bracket, word, equals, counts dot get, word, zero, plus one. On the first time you see a word, get returns the zero fallback, you add one, and store one. Every time after that, get returns the current count, you add one, and store it back. When the loop finishes, counts maps every word to how many times it appeared. A loop, plus a dictionary, plus the get method with a fallback. That is tallying anything."
     },
 
-    { "type": "card_topic", "cardTitle": "range", "cardSubtitle": "looping a set number of times" },
+    { "type": "card_topic", "card_title": "range", "card_subtitle": "looping a set number of times" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -81,7 +81,7 @@
       "output": "tick 0\ntick 1\ntick 2\ntick 3\ntick 4\n\n3\n2\n1\ngo!"
     },
 
-    { "type": "card_topic", "cardTitle": "The while loop", "cardSubtitle": "repeat until something changes" },
+    { "type": "card_topic", "card_title": "The while loop", "card_subtitle": "repeat until something changes" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -100,7 +100,7 @@
     {
       "type": "gotcha",
       "code": "count = 3\nwhile count > 0:\n    print(\"stuck\")\n    # forgot: count -= 1",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "no error — the program just never stops.\ncount is always 3, so count > 0 is always true.\npress Ctrl+C to kill it.  fix: change count inside the loop."
     },
     {
@@ -108,7 +108,7 @@
       "text": "So, when do you use which. If you are going through the items of a collection, or doing something a fixed, countable number of times, use a for loop. It is shorter, and it structurally cannot run away from you, it stops when the items run out. Use a while loop only when you genuinely do not know how many rounds you will need. The most common honest use of while is, keep asking the user for input until they give you something valid, which we will build properly in episode eleven."
     },
 
-    { "type": "card_topic", "cardTitle": "break & continue", "cardSubtitle": "controlling a loop from inside" },
+    { "type": "card_topic", "card_title": "break & continue", "card_subtitle": "controlling a loop from inside" },
     {
       "type": "narration",
       "beat": "walkthrough",

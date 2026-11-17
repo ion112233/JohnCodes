@@ -1,10 +1,10 @@
 {
-  "id": "ep12-file-io",
+  "id": "ep12_file_io",
   "title": "File I/O",
   "topic": "Basic Python · Episode 12",
   "prompt": "Read and write text files with open(), the with statement, and the read / write modes.",
   "episode": { "number": 12, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 8,
+  "target_minutes": 8,
   "thumbnail": {
     "headline": "file i/o",
     "hook": "make data stick around",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode twelve. Everything our programs have done so far vanishes the instant they stop running. Every variable, every list, every dictionary, whatever the user carefully typed in, all of it, gone the moment the program exits. This episode is about making things stick around, by reading from and writing to files on the disk. We will cover opening a file, reading it either all at once or line by line, writing to a new file, the important difference between overwriting a file and adding to it, and the with statement, which is the correct way to do all of this. It is a short, very practical episode. Let's go."
     },
 
-    { "type": "card_topic", "cardTitle": "Reading a file", "cardSubtitle": "open, read, close" },
+    { "type": "card_topic", "card_title": "Reading a file", "card_subtitle": "open, read, close" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -34,7 +34,7 @@
     },
     { "type": "code", "code": "f = open(\"names.txt\", \"r\")\ntext = f.read()\nprint(text)\nf.close()" },
 
-    { "type": "card_topic", "cardTitle": "The with statement", "cardSubtitle": "open it the right way" },
+    { "type": "card_topic", "card_title": "The with statement", "card_subtitle": "open it the right way" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -52,7 +52,7 @@
       "output": "- Ada\n- Alan\n- Grace"
     },
 
-    { "type": "card_topic", "cardTitle": "Writing a file", "cardSubtitle": "modes w and a" },
+    { "type": "card_topic", "card_title": "Writing a file", "card_subtitle": "modes w and a" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -77,11 +77,11 @@
     {
       "type": "gotcha",
       "code": "# you have a log file with 500 lines\nwith open(\"log.txt\", \"w\") as f:\n    f.write(\"new entry\\n\")",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "no error — but log.txt now contains ONE line.\nmode \"w\" empties the file the instant it opens.\nto add to it and keep the rest, use mode \"a\"."
     },
 
-    { "type": "card_topic", "cardTitle": "A few practical notes", "cardSubtitle": "paths, lists, and missing files" },
+    { "type": "card_topic", "card_title": "A few practical notes", "card_subtitle": "paths, lists, and missing files" },
     {
       "type": "narration",
       "beat": "walkthrough",

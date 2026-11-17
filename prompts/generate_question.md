@@ -12,12 +12,12 @@ You are writing one short-form video script for **JohnCodes**, a channel of
 2. the **segments** you write, played in order
 3. auto **takeaway card** (from `complexity` + the `takeaway` narration)
 
-Produce **exactly one JSON object** matching `content/question.schema.json`.
+Produce **exactly one JSON object** matching `content/question_schema.json`.
 No prose, no code fences — just the JSON.
 
 ## Top-level fields
 
-- `id`: kebab-case, matches the title (e.g. `valid-anagram`).
+- `id`: snake_case, matches the title (e.g. `valid-anagram`).
 - `title`: canonical problem name, ≤ 40 chars.
 - `difficulty`: `Easy` | `Medium` | `Hard`.
 - `topic`: e.g. `Arrays & Hashing`, `Two Pointers`, `Sliding Window`,
@@ -57,8 +57,8 @@ Follow the beat pattern: **hook → walkthrough + code → terminal → (optiona
   (e.g. `python -c 'from solution import two_sum; print(two_sum([2, 7, 11, 15], 9))'`)
   and `output` short (1–4 lines).
 
-- `{ "type": "card_topic", "cardTitle": "...", "cardSubtitle": "..." }`
-  A full-screen section divider. `cardTitle` ≤ 40, `cardSubtitle` ≤ 80 (optional).
+- `{ "type": "card_topic", "card_title": "...", "card_subtitle": "..." }`
+  A full-screen section divider. `card_title` ≤ 40, `card_subtitle` ≤ 80 (optional).
 
 - `{ "type": "card_question", "question": "...", "answer": "..." }`
   A full-screen "quick check": the question shows, then the answer fades in.

@@ -5,7 +5,7 @@
   "required": ["id", "title", "topic", "prompt", "segments"],
   "additionalProperties": false,
   "properties": {
-    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]*$" },
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_]*$" },
     "title": { "type": "string", "minLength": 1, "maxLength": 48 },
     "topic": { "type": "string", "minLength": 1, "maxLength": 40 },
     "prompt": {
@@ -38,7 +38,7 @@
         "series": { "type": "string" }
       }
     },
-    "targetMinutes": {
+    "target_minutes": {
       "type": "number",
       "description": "episodes: expected runtime; build warns if actual is off by >8%"
     },
@@ -54,7 +54,7 @@
         "question": { "type": "string", "description": "big question for the curiosity layout, \\n for line breaks" },
         "bad": { "type": "string", "description": "short code shown with a result strip under it" },
         "result": { "type": "string", "maxLength": 56, "description": "the error / output line under `bad`" },
-        "resultOk": { "type": "boolean", "default": false, "description": "result is a success (green) instead of an error (red)" }
+        "result_ok": { "type": "boolean", "default": false, "description": "result is a success (green) instead of an error (red)" }
       }
     },
 
@@ -150,7 +150,7 @@
             "properties": {
               "type": true,
               "code": { "type": "string", "description": "the broken code shown in the editor" },
-              "badLine": { "type": "integer", "description": "1-based line to mark with a red squiggle" },
+              "bad_line": { "type": "integer", "description": "1-based line to mark with a red squiggle" },
               "error": { "type": "string", "description": "the traceback / error text shown in the Run panel" }
             }
           }
@@ -163,9 +163,9 @@
             "properties": {
               "type": true,
               "left": { "type": "string" },
-              "leftLabel": { "type": "string", "maxLength": 28 },
+              "left_label": { "type": "string", "maxLength": 28 },
               "right": { "type": "string" },
-              "rightLabel": { "type": "string", "maxLength": 28 },
+              "right_label": { "type": "string", "maxLength": 28 },
               "verdict": { "type": "string", "maxLength": 120 }
             }
           }
@@ -174,11 +174,11 @@
           "if": { "properties": { "type": { "const": "card_topic" } } },
           "then": {
             "additionalProperties": false,
-            "required": ["type", "cardTitle"],
+            "required": ["type", "card_title"],
             "properties": {
               "type": true,
-              "cardTitle": { "type": "string", "maxLength": 40 },
-              "cardSubtitle": { "type": "string", "maxLength": 80 }
+              "card_title": { "type": "string", "maxLength": 40 },
+              "card_subtitle": { "type": "string", "maxLength": 80 }
             }
           }
         },

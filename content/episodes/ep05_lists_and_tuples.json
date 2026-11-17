@@ -1,10 +1,10 @@
 {
-  "id": "ep05-lists-and-tuples",
+  "id": "ep05_lists_and_tuples",
   "title": "Lists & tuples",
   "topic": "Basic Python · Episode 5",
   "prompt": "Store many values in a list, use its methods, understand the aliasing trap, and meet the tuple.",
   "episode": { "number": 5, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 16,
+  "target_minutes": 16,
   "thumbnail": {
     "headline": "lists &\ntuples",
     "hook": "the aliasing trap",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode five. So far, every variable we have made holds exactly one value. One name, one score, one number. But real programs deal with collections of things. A shopping cart full of items. A list of test scores. Every line in a file. The results of a database query. This episode introduces the list, which is Python's workhorse for holding many values in a definite order, and it is honestly one of the most useful tools in the entire language. We will cover how to make a list, how to reach into it, the methods for adding, removing, and reordering items, and then a trap around how lists are shared that catches almost every single beginner. After that we will meet the tuple, which is the list's locked down cousin, and finish with a genuinely elegant trick called unpacking. Let's get into it."
     },
 
-    { "type": "card_topic", "cardTitle": "Lists", "cardSubtitle": "many values, in order" },
+    { "type": "card_topic", "card_title": "Lists", "card_subtitle": "many values, in order" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -52,7 +52,7 @@
       "text": "One more thing before we move on to changing lists. You can also assign to a position, to replace an item in place. Cart, square bracket, one, equals, cheese, throws out whatever was at index one and puts cheese there instead. Lists can hold other lists too, which is how you represent a grid or a table, a list of rows, where each row is itself a list. You get at an item with two sets of square brackets, one for the row, one for the column within it. We will not lean on nested lists much in this course, but it is worth knowing they exist, so a list of lists does not throw you when you see it."
     },
 
-    { "type": "card_topic", "cardTitle": "List methods", "cardSubtitle": "adding, removing, reordering" },
+    { "type": "card_topic", "card_title": "List methods", "card_subtitle": "adding, removing, reordering" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -83,7 +83,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Mutability", "cardSubtitle": "the aliasing trap" },
+    { "type": "card_topic", "card_title": "Mutability", "card_subtitle": "the aliasing trap" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -115,7 +115,7 @@
       "answer": "The 5 too. b and a are one list — make a copy with a.copy() or a[:]."
     },
 
-    { "type": "card_topic", "cardTitle": "Tuples", "cardSubtitle": "a list that can't be changed" },
+    { "type": "card_topic", "card_title": "Tuples", "card_subtitle": "a list that can't be changed" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -126,14 +126,14 @@
       "code": "cart = [\"milk\", \"eggs\", \"bread\"]\nprint(cart)\nprint(cart[0])\nprint(len(cart))\ncart.append(\"butter\")\ncart.remove(\"eggs\")\nprint(cart)\ncart.sort()\nprint(cart)\n\npoint = (3, 4)\nprint(point[0])" },
     {
       "type": "compare",
-      "leftLabel": "list — can grow",
+      "left_label": "list — can grow",
       "left": "items = [\"a\", \"b\"]\nitems.append(\"c\")",
-      "rightLabel": "tuple — locked",
+      "right_label": "tuple — locked",
       "right": "point = (3, 4)\npoint[0] = 9",
       "verdict": "a list for a collection that changes; a tuple for a fixed record."
     },
 
-    { "type": "card_topic", "cardTitle": "Unpacking", "cardSubtitle": "many variables in one line" },
+    { "type": "card_topic", "card_title": "Unpacking", "card_subtitle": "many variables in one line" },
     {
       "type": "narration",
       "beat": "walkthrough",

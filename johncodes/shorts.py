@@ -77,7 +77,7 @@ class ShortPlan:
 
     @property
     def slug(self) -> str:
-        return re.sub(r"[^a-z0-9]+", "-", self.hook.lower()).strip("-")[:42] or "short"
+        return re.sub(r"[^a-z0-9]+", "_", self.hook.lower()).strip("_")[:42] or "short"
 
 
 @dataclass
@@ -629,14 +629,14 @@ def make_shorts(cfg: Config, q: Question, *, count: int | None = None, replan: b
         for old in thumbs.glob("*.png"):
             old.unlink()
         for k, p in enumerate(plans, 1):
-            png = render_cover(cfg, q, tl, video, p, thumbs / f"short-{k}-{p.slug}.png", fonts, focus)
+            png = render_cover(cfg, q, tl, video, p, thumbs / f"short_{k}_{p.slug}.png", fonts, focus)
             print(f"    ✓ {png.name}")
         return []
-    for old in out_dir.glob("short-*.mp4"):
+    for old in out_dir.glob("short_*.mp4"):
         old.unlink()
     paths, files = [], []
     for k, p in enumerate(plans, 1):
-        name = f"short-{k}-{p.slug}"
+        name = f"short_{k}_{p.slug}"
         mp4 = out_dir / f"{name}.mp4"
         got = render_short(cfg, q, tl, video, p, mp4, fonts, focus)
         render_cover(cfg, q, tl, video, p, out_dir / "thumbnails" / f"{name}.png", fonts, focus)

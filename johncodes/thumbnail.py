@@ -12,7 +12,7 @@ duration stamp.
     4 number     giant outlined episode number + progress bar
 
 Copy comes from the optional ``thumbnail`` block of the script (see
-``content/question.schema.json``); anything missing falls back to the script.
+``content/question_schema.json``); anything missing falls back to the script.
 Drawn at 2x and downscaled with LANCZOS for clean edges.
 """
 from __future__ import annotations
@@ -368,5 +368,5 @@ def render_thumbnails(cfg: Config, q: Question, out_dir: Path | None = None,
     for name in (variants or variants_for(q)):
         img = _LAYOUTS[name](fonts, q, copy).resize((W0, H0), Image.LANCZOS)
         n = VARIANTS.index(name) + 1
-        paths.append(_save(img, out_dir / f"{q.id}-thumb-{n}-{name}.png"))
+        paths.append(_save(img, out_dir / f"{q.id}_thumb_{n}_{name}.png"))
     return paths

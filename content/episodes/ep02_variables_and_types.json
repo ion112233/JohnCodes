@@ -1,10 +1,10 @@
 {
-  "id": "ep02-variables-and-types",
+  "id": "ep02_variables_and_types",
   "title": "Variables, data types & None",
   "topic": "Basic Python · Episode 2",
   "prompt": "Store values in named variables, learn the core types, convert between them, and meet None.",
   "episode": { "number": 2, "of": 15, "series": "Basic Python" },
-  "targetMinutes": 15,
+  "target_minutes": 15,
   "thumbnail": {
     "headline": "variables\n& types",
     "hook": "int, str, float, bool, None",
@@ -21,7 +21,7 @@
       "text": "Welcome back to Basic Python, episode two. In the last episode our programs could show things and read things, but they had nowhere to keep anything. Every value we made was used once and then thrown away. This time we fix that. We are going to cover variables, which are how you store a value and give it a name. The naming rules, so that Python actually accepts your names. The naming conventions, so that other people, and future you, can read them. The core data types, the basic kinds of value Python works with. How to convert a value from one type to another. And finally that None value we kept bumping into, together with a Python idea called truthiness. It sounds abstract, but you will use it in almost every program you write. Let's get into it."
     },
 
-    { "type": "card_topic", "cardTitle": "Variables", "cardSubtitle": "a name that points at a value" },
+    { "type": "card_topic", "card_title": "Variables", "card_subtitle": "a name that points at a value" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -61,7 +61,7 @@
       ]
     },
 
-    { "type": "card_topic", "cardTitle": "Naming", "cardSubtitle": "what Python allows, and what humans need" },
+    { "type": "card_topic", "card_title": "Naming", "card_subtitle": "what Python allows, and what humans need" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -74,7 +74,7 @@
     {
       "type": "gotcha",
       "code": "2fast = 10\nprint(2fast)",
-      "badLine": 1,
+      "bad_line": 1,
       "error": "  File \"solution.py\", line 1\n    2fast = 10\n     ^\nSyntaxError: invalid decimal literal"
     },
     {
@@ -83,14 +83,14 @@
     },
     {
       "type": "compare",
-      "leftLabel": "hard to follow",
+      "left_label": "hard to follow",
       "left": "x = 1500\ny = x * 12\nz = y * 0.8",
-      "rightLabel": "reads itself",
+      "right_label": "reads itself",
       "right": "monthly = 1500\nyearly = monthly * 12\ntake_home = yearly * 0.8",
       "verdict": "names are documentation. spend the two seconds now."
     },
 
-    { "type": "card_topic", "cardTitle": "Data types", "cardSubtitle": "the basic kinds of value" },
+    { "type": "card_topic", "card_title": "Data types", "card_subtitle": "the basic kinds of value" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -125,7 +125,7 @@
       "answer": "No. 3 is an int, 3.0 is a float."
     },
 
-    { "type": "card_topic", "cardTitle": "Type conversion", "cardSubtitle": "turning one type into another" },
+    { "type": "card_topic", "card_title": "Type conversion", "card_subtitle": "turning one type into another" },
     {
       "type": "narration",
       "beat": "walkthrough",
@@ -142,7 +142,7 @@
     {
       "type": "gotcha",
       "code": "raw = \"hello\"\nscore = int(raw)",
-      "badLine": 2,
+      "bad_line": 2,
       "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    score = int(raw)\nValueError: invalid literal for int() with base 10: 'hello'"
     },
     {
@@ -155,7 +155,7 @@
       "output": "Ada scored 0\nAda scored 250\nnew score? 75\ntotal: 325"
     },
 
-    { "type": "card_topic", "cardTitle": "None & truthiness", "cardSubtitle": "the 'no value' value, and what counts as true" },
+    { "type": "card_topic", "card_title": "None & truthiness", "card_subtitle": "the 'no value' value, and what counts as true" },
     {
       "type": "narration",
       "beat": "walkthrough",
