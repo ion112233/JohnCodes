@@ -148,6 +148,8 @@ def _score(tl: dict, sents, i, ws, we):
             if sc["kind"] == "question" and ov < (sc["end"] - sc["start"]) - 1.5:
                 w = 0.5            # half a quick-check is worse than none
             score += w
+            if sc["kind"] in ("gotcha", "question") and w >= 1.5:
+                score += min(ov, 20.0) * 0.12      # reward showing the whole reveal, not its last seconds
             if w >= 1.5:
                 tags.append(sc["kind"])
     first = sents[i]
