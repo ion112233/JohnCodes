@@ -1,0 +1,41 @@
+{
+  "id": "two_sum",
+  "slug": "two-sum",
+  "rank": 1,
+  "prompt": "The most liked problem on LeetCode, solved in Python with a dictionary.",
+  "search_query": "two sum",
+  "complexity": {"time": "O(n)", "space": "O(n)"},
+  "expected": ["[0,1]", "[1,2]", "[0,1]"],
+  "segments": [
+    {"type": "narration", "beat": "hook",
+     "text": "Two Sum. The most liked problem on all of LeetCode, and the first one almost everybody solves. Let's solve it together, in Python, step by step."},
+
+    {"type": "narration", "text": "First, let's find it. On LeetCode, open the problem list and search for two sum. It's problem number one, difficulty easy. Click it."},
+    {"type": "search", "chapter": "Find the problem"},
+
+    {"type": "narration", "text": "LeetCode gives us a starting template. Copy it, and paste it into the editor. We get a class called Solution, with a method called twoSum, that receives a list called nums, and a number called target."},
+    {"type": "paste"},
+
+    {"type": "narration", "text": "Now let's read the problem. We get a list of integers, and a target. We need to return the indices of the two numbers that add up to the target. There is exactly one solution, and we can't use the same element twice."},
+    {"type": "read", "show": "top", "chapter": "Understand the problem"},
+
+    {"type": "narration", "text": "Look at example one. The list is two, seven, eleven, fifteen, and the target is nine. Two plus seven is nine, so the answer is the indices zero and one."},
+    {"type": "read", "show": "ex1"},
+
+    {"type": "narration", "text": "The simple idea is to check every pair with two loops. That works, but it is slow, because for every number we scan the rest of the list again."},
+    {"type": "read", "show": "constraints"},
+
+    {"type": "narration", "text": "Here is the faster way. We walk through the list once, and remember every number we have already seen, in a dictionary. For each new number, we ask one question: is the number I need already in the dictionary? The number I need is the target, minus the current number."},
+    {"type": "read", "show": "ex1"},
+
+    {"type": "narration", "text": "Let's write it. Create an empty dictionary called seen. It will map each number to its index. Then loop with enumerate, so we get both the index and the number. Work out what we need, the target minus the number. If we already saw it, we are done: return the stored index, and the current index. Otherwise, store this number with its index, and move on."},
+    {"type": "code", "chapter": "Write the solution",
+     "body": "seen = {}\nfor i, n in enumerate(nums):\n    need = target - n\n    if need in seen:\n        return [seen[need], i]\n    seen[n] = i"},
+
+    {"type": "narration", "text": "Press run. Accepted. The output matches the expected answer in every case."},
+    {"type": "run", "chapter": "Run and test"},
+
+    {"type": "narration", "beat": "takeaway",
+     "text": "One pass through the list, and every dictionary lookup is instant. That is order n time, and order n extra space. Remember this pattern: when you need to find a partner for each item, store what you have already seen in a dictionary."}
+  ]
+}

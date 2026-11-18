@@ -177,6 +177,38 @@ def cmd_tts(args) -> int:
     return 0
 
 
+def cmd_leetcode(args) -> int:
+    """Render LeetCode-layout videos: ``leetcode content/leetcode_easy/01_two_sum.json``."""
+    from .audio import Narrator
+    from .lc_pipeline import build
+
+    cfg = Config.load(args.config)
+    if args.draft:
+        cfg.fps, cfg.crf, cfg.x264_preset = 15, 30, "ultrafast"
+    paths = (sorted(p for p in Path(args.content).glob("[0-9]*.json")) if args.all
+             else [Path(p) for p in args.script])
+    if not paths:
+        print("provide script file(s), or --all")
+        return 2
+    narrator = Narrator(cfg)
+    for p in paths:
+        build(p, cfg, narrator=narrator, keep_intermediates=args.keep,
+              timeline_only=args.timeline_only)
+    return 0
+
+
+def cmd_lc_preview(args) -> int:
+    """Still frame of a LeetCode-layout scene (no audio): searches, paste, type, run."""
+    from .fonts import FontBook
+    from .lc_pipeline import preview
+
+    cfg = Config.load(args.config)
+    out = preview(Path(args.script), cfg, scene=args.scene, at=args.at,
+                  out=Path(args.out) if args.out else None)
+    print(f"wrote {out}")
+    return 0
+
+
 def cmd_list(args) -> int:
     paths = discover(args.content)
     if not paths:
@@ -252,6 +284,24 @@ def main(argv=None) -> int:
     t.add_argument("--voice")
     _add_config_arg(t)
     t.set_defaults(func=cmd_tts)
+
+    lc = sub.add_parser("leetcode", help="render LeetCode-layout videos")
+    lc.add_argument("script", nargs="*", help="script .json file(s)")
+    lc.add_argument("--all", action="store_true")
+    lc.add_argument("--content", default="content/leetcode_easy")
+    lc.add_argument("--keep", action="store_true")
+    lc.add_argument("--draft", action="store_true")
+    lc.add_argument("--timeline_only", action="store_true")
+    _add_config_arg(lc)
+    lc.set_defaults(func=cmd_leetcode)
+
+    lp = sub.add_parser("lc_preview", help="one still frame of a LeetCode-layout scene")
+    lp.add_argument("script")
+    lp.add_argument("--scene", default="type", choices=["search", "paste", "read", "type", "run"])
+    lp.add_argument("--at", type=float, default=0.6)
+    lp.add_argument("--out")
+    _add_config_arg(lp)
+    lp.set_defaults(func=cmd_lc_preview)
 
     ls = sub.add_parser("list", help="list discovered questions")
     ls.add_argument("--content", default="content")

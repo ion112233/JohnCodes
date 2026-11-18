@@ -115,7 +115,7 @@ class TitleCard(Scene):
         y = (H - block_h) / 2 - 20 + dy
 
         kicker = self.fonts.ui(38, bold=True)
-        ktext = "PYTHON   ·   INTERVIEW"
+        ktext = getattr(self.q, "kicker", None) or "PYTHON   ·   INTERVIEW"
         d.text(((W - d.textlength(ktext, font=kicker)) / 2, y), ktext, font=kicker, fill=theme.ACCENT)
         y += kh + gap1
         for ln in title_lines:

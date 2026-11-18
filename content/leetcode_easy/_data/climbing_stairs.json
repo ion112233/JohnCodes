@@ -1,0 +1,151 @@
+{
+ "questionFrontendId": "70",
+ "title": "Climbing Stairs",
+ "titleSlug": "climbing-stairs",
+ "difficulty": "Easy",
+ "content": "<p>You are climbing a staircase. It takes <code>n</code> steps to reach the top.</p>\n\n<p>Each time you can either climb <code>1</code> or <code>2</code> steps. In how many distinct ways can you climb to the top?</p>\n\n<p>&nbsp;</p>\n<p><strong class=\"example\">Example 1:</strong></p>\n\n<pre>\n<strong>Input:</strong> n = 2\n<strong>Output:</strong> 2\n<strong>Explanation:</strong> There are two ways to climb to the top.\n1. 1 step + 1 step\n2. 2 steps\n</pre>\n\n<p><strong class=\"example\">Example 2:</strong></p>\n\n<pre>\n<strong>Input:</strong> n = 3\n<strong>Output:</strong> 3\n<strong>Explanation:</strong> There are three ways to climb to the top.\n1. 1 step + 1 step + 1 step\n2. 1 step + 2 steps\n3. 2 steps + 1 step\n</pre>\n\n<p>&nbsp;</p>\n<p><strong>Constraints:</strong></p>\n\n<ul>\n\t<li><code>1 &lt;= n &lt;= 45</code></li>\n</ul>\n",
+ "likes": 25115,
+ "exampleTestcases": "2\n3",
+ "topicTags": [
+  {
+   "name": "Math"
+  },
+  {
+   "name": "Dynamic Programming"
+  },
+  {
+   "name": "Memoization"
+  }
+ ],
+ "hints": [
+  "To reach nth step, what could have been your previous steps? (Think about the step sizes)"
+ ],
+ "codeSnippets": [
+  {
+   "langSlug": "cpp",
+   "code": "class Solution {\npublic:\n    int climbStairs(int n) {\n        \n    }\n};"
+  },
+  {
+   "langSlug": "java",
+   "code": "class Solution {\n    public int climbStairs(int n) {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "python3",
+   "code": "class Solution:\n    def climbStairs(self, n: int) -> int:\n        "
+  },
+  {
+   "langSlug": "python",
+   "code": "class Solution(object):\n    def climbStairs(self, n):\n        \"\"\"\n        :type n: int\n        :rtype: int\n        \"\"\"\n        "
+  },
+  {
+   "langSlug": "javascript",
+   "code": "/**\n * @param {number} n\n * @return {number}\n */\nvar climbStairs = function(n) {\n    \n};"
+  },
+  {
+   "langSlug": "typescript",
+   "code": "function climbStairs(n: number): number {\n    \n};"
+  },
+  {
+   "langSlug": "csharp",
+   "code": "public class Solution {\n    public int ClimbStairs(int n) {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "c",
+   "code": "int climbStairs(int n) {\n    \n}"
+  },
+  {
+   "langSlug": "golang",
+   "code": "func climbStairs(n int) int {\n    \n}"
+  },
+  {
+   "langSlug": "kotlin",
+   "code": "class Solution {\n    fun climbStairs(n: Int): Int {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "swift",
+   "code": "class Solution {\n    func climbStairs(_ n: Int) -> Int {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "rust",
+   "code": "impl Solution {\n    pub fn climb_stairs(n: i32) -> i32 {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "ruby",
+   "code": "# @param {Integer} n\n# @return {Integer}\ndef climb_stairs(n)\n    \nend"
+  },
+  {
+   "langSlug": "php",
+   "code": "class Solution {\n\n    /**\n     * @param Integer $n\n     * @return Integer\n     */\n    function climbStairs($n) {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "dart",
+   "code": "class Solution {\n  int climbStairs(int n) {\n    \n  }\n}"
+  },
+  {
+   "langSlug": "scala",
+   "code": "object Solution {\n    def climbStairs(n: Int): Int = {\n        \n    }\n}"
+  },
+  {
+   "langSlug": "elixir",
+   "code": "defmodule Solution do\n  @spec climb_stairs(n :: integer) :: integer\n  def climb_stairs(n) do\n    \n  end\nend"
+  },
+  {
+   "langSlug": "erlang",
+   "code": "-spec climb_stairs(N :: integer()) -> integer().\nclimb_stairs(N) ->\n  ."
+  },
+  {
+   "langSlug": "racket",
+   "code": "(define/contract (climb-stairs n)\n  (-> exact-integer? exact-integer?)\n  )"
+  }
+ ],
+ "search_results": [
+  {
+   "frontendQuestionId": "70",
+   "title": "Climbing Stairs",
+   "titleSlug": "climbing-stairs",
+   "acRate": 54.46550776824519,
+   "paidOnly": false,
+   "difficulty": "Easy"
+  },
+  {
+   "frontendQuestionId": "3693",
+   "title": "Climbing Stairs II",
+   "titleSlug": "climbing-stairs-ii",
+   "acRate": 74.89546675168296,
+   "paidOnly": false,
+   "difficulty": "Medium"
+  },
+  {
+   "frontendQuestionId": "746",
+   "title": "Min Cost Climbing Stairs",
+   "titleSlug": "min-cost-climbing-stairs",
+   "acRate": 68.91486904074141,
+   "paidOnly": false,
+   "difficulty": "Easy"
+  },
+  {
+   "frontendQuestionId": "3797",
+   "title": "Count Routes to Climb a Rectangular Grid",
+   "titleSlug": "count-routes-to-climb-a-rectangular-grid",
+   "acRate": 23.406315562967347,
+   "paidOnly": false,
+   "difficulty": "Hard"
+  },
+  {
+   "frontendQuestionId": "4094",
+   "title": "Count Frequency Staircase Subarrays I",
+   "titleSlug": "count-frequency-staircase-subarrays-i",
+   "acRate": 59.51855399608513,
+   "paidOnly": false,
+   "difficulty": "Medium"
+  },
+  {
+   "frontendQuestionId": "4095",
+   "title": "Count Frequency Staircase Subarrays II",
+   "titleSlug": "count-frequency-staircase-subarrays-ii",
+   "acRate": 19.199704376286757,
+   "paidOnly": false,
+   "difficulty": "Hard"
+  }
+ ]
+}
