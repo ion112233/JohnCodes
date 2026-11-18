@@ -634,7 +634,7 @@ def make_shorts(cfg: Config, q: Question, *, count: int | None = None, replan: b
             png = render_cover(cfg, q, tl, video, p, thumbs / f"short_{k}_{p.slug}.png", fonts, focus)
             print(f"    ✓ {png.name}")
         return []
-    for old in out_dir.glob("short_*.mp4"):
+    for old in list(out_dir.glob("short_*.mp4")) + list((out_dir / "thumbnails").glob("short_*.png")):
         old.unlink()
     paths, files = [], []
     for k, p in enumerate(plans, 1):
