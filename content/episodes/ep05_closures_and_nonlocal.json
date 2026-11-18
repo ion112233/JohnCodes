@@ -1,0 +1,237 @@
+{
+  "id": "ep05_closures_and_nonlocal",
+  "title": "Closures & nonlocal",
+  "topic": "Advanced Python · Episode 5",
+  "prompt": "Understand closures, keep private state with nonlocal, and avoid the loop variable trap.",
+  "episode": {
+    "number": 5,
+    "of": 22,
+    "series": "Advanced Python"
+  },
+  "target_minutes": 11,
+  "thumbnail": {
+    "headline": "closures &\nnonlocal",
+    "hook": "functions that remember",
+    "snippet": "def counter():\n    n = 0\n    def step():\n        nonlocal n\n        n += 1\n    return step",
+    "question": "why is every\nanswer 2?",
+    "bad": "fs = [lambda: i for i in range(3)]\nprint([f() for f in fs])",
+    "result": "[2, 2, 2]   # late binding"
+  },
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Advanced Python, episode five. Here is a question that sounds simple. When a function finishes and its local variables are supposed to disappear, how can a function that was defined inside it still use them later? The answer is a closure, one of the most useful and most misunderstood ideas in Python. In this episode you will learn what a closure is, why it matters, how to build functions that remember state between calls, and how the nonlocal and global keywords let an inner function change a variable that lives outside it. We will finish with a famous trap involving closures in a loop. Closures are also the foundation for decorators, which are coming up soon."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Functions inside functions",
+      "card_subtitle": "defining a function in a function"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "In Python, you can define a function inside another function. The inner function can read the variables of the outer one, which is called its enclosing scope. Here, make greeter takes a greeting, and inside it defines a small function called greet, which uses that greeting. Then comes the interesting move. Make greeter returns the inner function itself, without calling it, so no brackets. Now we call make greeter with the word Hello, and get back a function, which we store in a variable called hello. We do the same thing with Hey. Each of those is a separate function, and each one remembers its own greeting."
+    },
+    {
+      "type": "code",
+      "code": "def make_greeter(greeting):\n    def greet(name):\n        return greeting + \", \" + name\n    return greet\n\nhello = make_greeter(\"Hello\")\nhey = make_greeter(\"Hey\")\n\nprint(hello(\"Ada\"))\nprint(hey(\"Ada\"))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Hello, Ada\nHey, Ada"
+    },
+    {
+      "type": "narration",
+      "text": "Stop and think about how strange that is. By the time we call hello of Ada, the call to make greeter has long since finished. Normally, when a function returns, its local variables are gone. And yet the inner function still knows the greeting. That surprising behaviour is exactly what a closure is."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "What a closure is",
+      "card_subtitle": "a function that remembers"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A closure is a function bundled together with the variables from the scope where it was created, the ones it uses. When Python sees that the inner function refers to a variable from the enclosing function, it does not let that variable vanish when the outer function returns. Instead it keeps the variable alive, tucked inside the inner function. Those remembered variables are called free variables. You can actually look at them. Every function has an attribute that lists the names it captured, and another that holds the values, in objects called cells. Here, hello has one free variable, greeting, and its stored value is the string Hello."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "hello.__code__.co_freevars",
+          "output": "('greeting',)"
+        },
+        {
+          "input": "hello.__closure__[0].cell_contents",
+          "output": "'Hello'"
+        },
+        {
+          "input": "hey.__closure__[0].cell_contents",
+          "output": "'Hey'"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "You will almost never need to dig into those details in real code, but seeing them makes the idea concrete. A closure is not magic. It is just an ordinary function that carries a little backpack of the values it needs. And each time you call the outer function, you get a fresh function with a fresh backpack, which is why hello and hey do not interfere with each other."
+    },
+    {
+      "type": "card_question",
+      "question": "What does a closure remember, and when does it remember it?",
+      "answer": "The variables from the enclosing scope that it uses, captured when the inner function was created."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Why closures matter",
+      "card_subtitle": "state without a class"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Before the full list, here is the simplest practical closure, a function factory. The function multiplier takes a number, and returns a small lambda that multiplies whatever it is given by that number. Calling multiplier with two gives you a function that doubles, and calling it with three gives you one that triples. You configure the behaviour once, when you build the function, and then you call the result as many times as you like, without ever passing that number again. It is a clean way to turn a general operation into many specific ones."
+    },
+    {
+      "type": "code",
+      "code": "def multiplier(n):\n    return lambda x: x * n\n\ndouble = multiplier(2)\ntriple = multiplier(3)\nprint(double(5), triple(5))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "10 15"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "So what are closures actually good for? First, function factories, as we just saw, where you configure a function once and reuse it many times. A function that multiplies by a fixed number, a validator with a fixed limit, a formatter with a fixed prefix. Second, callbacks, where you hand a function to a library, and it needs to remember some context. Third, and most important for this course, decorators, which wrap a function and remember the original one. And fourth, lightweight private state. A closure can hold a value that nothing outside can touch directly, without writing a whole class. Let's try the most natural example, a counter that remembers how many times it has been called."
+    },
+    {
+      "type": "code",
+      "code": "def make_counter():\n    count = 0\n    def step():\n        count += 1\n        return count\n    return step\n\nc = make_counter()\nprint(c())"
+    },
+    {
+      "type": "narration",
+      "text": "Run that, and Python complains. This is the most common closure error there is, and it is worth understanding properly, because the fix introduces a brand new keyword."
+    },
+    {
+      "type": "gotcha",
+      "code": "def make_counter():\n    count = 0\n    def step():\n        count += 1\n        return count\n    return step\n\nc = make_counter()\nprint(c())",
+      "bad_line": 4,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 9, in <module>\n    print(c())\n  File \"solution.py\", line 4, in step\n    count += 1\nUnboundLocalError: cannot access local variable 'count' where it is not associated with a value"
+    },
+    {
+      "type": "narration",
+      "text": "Here is what went wrong. Reading a variable from the enclosing scope is fine. But the line count plus equals one is an assignment, and in Python, any assignment inside a function makes that name local to the function, for the whole function. So inside step, count is now a brand new local variable, which has not been given a value yet, and reading it to add one to it fails. Python never looks outward, because you told it, by assigning, that count belongs here."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "nonlocal",
+      "card_subtitle": "assigning to an outer variable"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The fix is the nonlocal keyword. Writing nonlocal count at the top of the inner function tells Python, this name does not belong to me, it belongs to the nearest enclosing function, so assignments should change that one. With that single line, step can read the outer count, add one to it, and store the new value back. Now each call to the counter remembers where it left off, one, two, three. And because every call to make counter creates its own count, two counters are completely independent. Counting on the first leaves the second untouched."
+    },
+    {
+      "type": "code",
+      "code": "def make_counter():\n    count = 0\n    def step():\n        nonlocal count\n        count += 1\n        return count\n    return step\n\na = make_counter()\nb = make_counter()\nprint(a(), a(), a())\nprint(b())"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "1 2 3\n1"
+    },
+    {
+      "type": "narration",
+      "text": "Notice that you only need nonlocal when you assign to the outer variable. If you only read it, no keyword is needed. And what about changing a mutable object, like appending to an outer list? Appending is not an assignment, it is a method call on the object, so that works without nonlocal. The keyword matters only when you rebind the name itself to a new value."
+    },
+    {
+      "type": "card_question",
+      "question": "When do you need the nonlocal keyword inside an inner function?",
+      "answer": "When you assign to a variable from the enclosing function, so the name is rebound there instead of becoming a new local."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "global vs nonlocal",
+      "card_subtitle": "two scopes, two keywords"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Python has a sibling keyword called global, and it is easy to confuse the two. Nonlocal refers to a variable in an enclosing function. Global refers to a variable at the top level of the module, outside every function. In this example, a module level variable called total is changed by an add function. Without the global line, the assignment inside add would create a local variable, and fail in the same way as before. With it, the function updates the shared module level value, so adding five and then three leaves a total of eight."
+    },
+    {
+      "type": "code",
+      "code": "total = 0\n\ndef add(n):\n    global total\n    total += n\n\nadd(5)\nadd(3)\nprint(total)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "8"
+    },
+    {
+      "type": "narration",
+      "text": "Now an honest piece of advice. It works, but global variables make code hard to reason about, because any function anywhere can change them. They are hard to test, and hard to trace when a value goes wrong. A closure with nonlocal keeps the state private, inside the function that owns it. And once the state and behaviour grow beyond a couple of variables, a class is usually the cleaner tool. So reach for nonlocal when you want a tiny bit of hidden state, reach for a class when you want a lot, and treat global as a last resort."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "The loop trap",
+      "card_subtitle": "late binding in closures"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One more closure surprise, and it is a famous one. Suppose you build a list of small functions in a loop, each one meant to return its own loop number. Zero, one and two. It looks perfectly sensible. But when you call them, every function returns two, the last value. Why? Because a closure remembers the variable, not the value at that moment. All three functions share the same variable i, from the same enclosing scope. By the time you call any of them, the loop has finished, and i is two. This behaviour is called late binding."
+    },
+    {
+      "type": "code",
+      "code": "funcs = []\nfor i in range(3):\n    funcs.append(lambda: i)\n\nprint([f() for f in funcs])"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[2, 2, 2]"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The standard fix is to capture the current value at the moment each function is created, by passing it in as a default argument. A default is evaluated when the function is defined, so each lambda takes its own copy of i at that moment. Writing lambda i equals i colon i means the parameter i starts out with whatever the loop value was. Now the three functions return zero, one and two, as we wanted. A second option is to use a small factory function, like the ones earlier in this episode, which gives every function its own enclosing scope. Either way, the lesson is the same. When a closure is created inside a loop, think carefully about which value it will see."
+    },
+    {
+      "type": "narration",
+      "text": "Notice how this connects to episode one. The default argument trick works because defaults are evaluated at definition time, the same rule that created the mutable default trap. Both come from one fact, a function definition runs once, and what it captured at that moment is what it keeps. If you understand that single idea, you can predict the behaviour of both."
+    },
+    {
+      "type": "compare",
+      "left": "funcs = []\nfor i in range(3):\n    funcs.append(lambda: i)\n# [2, 2, 2]",
+      "right": "funcs = []\nfor i in range(3):\n    funcs.append(lambda i=i: i)\n# [0, 1, 2]",
+      "left_label": "LATE BINDING",
+      "right_label": "DEFAULT ARGUMENT",
+      "verdict": "a default is evaluated when the lambda is created"
+    },
+    {
+      "type": "card_question",
+      "question": "Why do closures created in a loop all see the last value of the loop variable?",
+      "answer": "They share one variable, not a copy of its value, so they all see whatever it holds when they are finally called."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "A closure is an inner function that remembers variables from the scope where it was created. Use nonlocal to change one, global only when you must, and watch out for the loop variable trap."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "an inner function can use variables from its enclosing function, even after that function returns",
+        "a closure carries those captured variables with it, so each call to the factory gets its own",
+        "assigning inside a function makes the name local, so use nonlocal to rebind an outer variable",
+        "global is for module level variables, but closures or classes are cleaner than global state",
+        "closures capture variables, not values, so fix loop closures with a default argument"
+      ],
+      "next": "EP 6 — Iterators & generators"
+    }
+  ]
+}

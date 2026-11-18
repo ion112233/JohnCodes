@@ -238,13 +238,13 @@ def _v_headline(fonts, q, c) -> Image.Image:
     img = _background([(1010, 540, 360, theme.ACCENT, 95), (140, 60, 300, YELLOW, 24)])
     d = ImageDraw.Draw(img)
     _badge(d, fonts, q, 64, 50)
-    f, size = _fit_block(fonts, c.headline, 650, 300, 170, 96)
+    f, size = _fit_block(fonts, c.headline, 600, 300, 170, 96)
     y = _draw_lines(d, c.headline, f, size, S(64), S(150))
     hf = _heavy(fonts, S(40), 650)
     for ln in _wrap(d, c.hook, hf, 620)[:2]:
         d.text((S(64), y + S(26)), ln, font=hf, fill=SOFT)
         y += S(50)
-    _paste_card(img, _window(fonts, c.snippet, w=S(500), fs=S(32), max_h=S(360)), 745, 285, -3.5)
+    _paste_card(img, _window(fonts, c.snippet, w=S(500), fs=S(32), max_h=S(330)), 770, 345, -3.5)
     _progress_dots(d, q, 72, 684)
     return img
 
@@ -322,7 +322,7 @@ def _v_number(fonts, q, c) -> Image.Image:
     d.text((S(64), S(60)), series, font=_heavy(fonts, S(34), 800), fill=SKY, anchor="lm")
     d.rectangle([S(64), S(86), S(64) + S(110), S(86) + S(6)], fill=YELLOW)
 
-    f, size = _fit_block(fonts, c.headline, 555, 300, 150, 90)
+    f, size = _fit_block(fonts, c.headline, 500, 300, 150, 90)
     block = int(size * 1.04 * len(c.headline))
     hook_f = _heavy(fonts, S(40), 650)
     top = S(560) - block

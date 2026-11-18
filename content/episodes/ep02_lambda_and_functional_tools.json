@@ -1,0 +1,237 @@
+{
+  "id": "ep02_lambda_and_functional_tools",
+  "title": "Lambda functions & functional tools",
+  "topic": "Advanced Python · Episode 2",
+  "prompt": "Use lambda, map, filter, reduce and the key argument to sort and transform data cleanly.",
+  "episode": {
+    "number": 2,
+    "of": 22,
+    "series": "Advanced Python"
+  },
+  "target_minutes": 10,
+  "thumbnail": {
+    "headline": "lambda &\nfunctional tools",
+    "hook": "sort anything, any way",
+    "snippet": "words = [\"pear\", \"fig\", \"kiwi\"]\nprint(sorted(words, key=len))\nsq = lambda x: x * x",
+    "question": "why is this\nkey a TypeError?",
+    "bad": "words = [\"pear\", \"fig\"]\nprint(sorted(words, key=len()))",
+    "result": "TypeError: len() takes exactly one argument"
+  },
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Advanced Python, episode two. In this episode we look at a style of programming where functions are treated as ordinary values, handed to other functions, and combined like building blocks. You will meet the lambda, a tiny function written in a single line with no name. You will use it with map, filter and reduce to transform data without writing a loop. Then we turn to something you will use almost every day, sorting with the key argument, and finish with two helpers from the operator module that make that even cleaner. It is a short episode, but the habits you build here show up in nearly every Python project."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Lambda expressions",
+      "card_subtitle": "a function with no name"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "A lambda is a small anonymous function. You write the word lambda, then its parameters, then a colon, and then a single expression, which is the value it gives back. There is no def, no name and no return keyword, because the expression is returned automatically. So lambda x colon x times x is a function that squares its input. You can store it in a variable and call it exactly like any other function, and that gives square of five equal to twenty five. A lambda with two parameters just lists both, separated by a comma. And because a lambda is just an expression, you can even call it on the spot by wrapping it in brackets, which is rarely useful but shows that there is no magic involved."
+    },
+    {
+      "type": "code",
+      "code": "square = lambda x: x * x\nadd = lambda a, b: a + b\n\nprint(square(5))\nprint(add(2, 3))\nprint((lambda x: x + 1)(9))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "25\n5\n10"
+    },
+    {
+      "type": "narration",
+      "text": "Here is the honest advice about lambdas. A lambda can contain only one expression. No statements, so no assignments, no loops, no raise. If you find yourself needing more, write a normal function with a def. And when you are going to store the function in a variable with a name anyway, as we just did, a def is the better choice, because it has a proper name in error messages and in tracebacks. The real home of the lambda is the place where a function is needed for just a moment, passed as an argument to something else, and never needed again. That is exactly what the next few sections are about."
+    },
+    {
+      "type": "card_question",
+      "question": "A lambda can contain how many expressions, and can it contain statements like assignment?",
+      "answer": "Exactly one expression, and no statements. For anything longer, write a normal function with def."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "map & filter",
+      "card_subtitle": "transform and select without a loop"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Python has two classic tools for working through a collection with a function. Map takes a function and an iterable, and applies the function to every item, producing the results. Filter also takes a function and an iterable, but it keeps only the items for which the function returns something truthy. Here we start with the numbers one to six. Mapping a lambda that squares each number gives one, four, nine, sixteen, twenty five and thirty six. Filtering with a lambda that checks whether a number is even keeps only two, four and six. Notice that both calls are wrapped in the list function, and that is not an accident."
+    },
+    {
+      "type": "code",
+      "code": "nums = [1, 2, 3, 4, 5, 6]\nsquares = list(map(lambda n: n * n, nums))\nevens = list(filter(lambda n: n % 2 == 0, nums))\n\nprint(squares)\nprint(evens)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[1, 4, 9, 16, 25, 36]\n[2, 4, 6]"
+    },
+    {
+      "type": "narration",
+      "text": "That list call matters because in Python three, map and filter are lazy. They do not do any work up front. They hand back an iterator, an object that produces one result at a time, only when something asks for the next one. That is efficient for huge data, but it surprises people who print a map object and see a strange description instead of the values. Let's look at exactly that."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "nums = [1, 2, 3]",
+          "output": ""
+        },
+        {
+          "input": "map(str, nums)",
+          "output": "<map object at 0x7f3a2c1d>"
+        },
+        {
+          "input": "list(map(str, nums))",
+          "output": "['1', '2', '3']"
+        },
+        {
+          "input": "list(filter(None, [0, 1, \"\", \"hi\"]))",
+          "output": "[1, 'hi']"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "The last line shows a handy trick. Passing none instead of a function to filter keeps every truthy item, which is a one line way to drop empty values. A final word of balance. Map and filter are perfectly good, but many Python programmers prefer comprehensions for the same jobs, because they read a little more naturally. We cover those in the very next episode. You should still recognise map and filter at a glance, because you will meet them in other people's code all the time."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "reduce",
+      "card_subtitle": "folding a list into one value"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The third classic is reduce, and it lives in the functools module, so you import it first. Reduce takes a function with two parameters and an iterable, and it boils the whole sequence down to a single value. It works like a running total. It calls your function on the first two items, takes the result, and calls it again with that result and the third item, and keeps going until one value remains. With a lambda that adds two numbers, reducing one, two, three, four computes one plus two, which is three, plus three, which is six, plus four, giving ten. Passing a third argument supplies a starting value, which is also what you get back for an empty list. Starting from one, a multiplying lambda gives the product, twenty four."
+    },
+    {
+      "type": "code",
+      "code": "from functools import reduce\n\nnums = [1, 2, 3, 4]\ntotal = reduce(lambda a, b: a + b, nums)\nproduct = reduce(lambda a, b: a * b, nums, 1)\n\nprint(total, product)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "10 24"
+    },
+    {
+      "type": "narration",
+      "text": "Reduce is the most powerful of the three and also the easiest to overuse. For adding, there is already sum. For the biggest value there is max. For checking conditions there are all and any. Reach for reduce when you have a genuinely custom way of combining items, such as merging a list of dictionaries into one. If a built in already says what you mean, use it, because a reader understands the built in instantly."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Sorting with key=",
+      "card_subtitle": "the most useful argument in Python"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Sorting is where lambdas earn their keep. The sorted function returns a new sorted list from any iterable, and the list method sort does the same job in place. Both accept a key argument, which is a function. Python calls it once on each item, and then sorts the items by whatever the function returned, comparing those results instead of the items themselves. Sorting words with key equals len orders them by length. With a lambda that takes the last letter, they are ordered by their final character. And reverse equals true flips the order. Two details are worth knowing. The sort is stable, so items that tie keep their original relative order. And the key function is a function that you pass, not a call, so there are no brackets after the name len."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"pear\", \"fig\", \"banana\", \"kiwi\"]\n\nprint(sorted(words))\nprint(sorted(words, key=len))\nprint(sorted(words, key=lambda w: w[-1]))\nprint(sorted(words, key=len, reverse=True))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "['banana', 'fig', 'kiwi', 'pear']\n['fig', 'pear', 'kiwi', 'banana']\n['banana', 'fig', 'kiwi', 'pear']\n['banana', 'pear', 'kiwi', 'fig']"
+    },
+    {
+      "type": "gotcha",
+      "code": "words = [\"pear\", \"fig\", \"banana\"]\nprint(sorted(words, key=len()))",
+      "bad_line": 2,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 2, in <module>\n    print(sorted(words, key=len()))\nTypeError: len() takes exactly one argument (0 given)"
+    },
+    {
+      "type": "narration",
+      "text": "There is the classic mistake. Writing len with brackets calls it right there, with no argument, before sorted even starts. You want to hand over the function itself, so leave the brackets off. Now for real data. Records are usually tuples or dictionaries, and the key tells Python which part to sort by. Sorting these people by the second item of each tuple orders them by age. The same key works with min and max, so max with that key finds the oldest person. And if you want to sort by two things, return a tuple from the key. Python compares tuples one element at a time, so a key of negative age and then name sorts oldest first, with ties broken alphabetically."
+    },
+    {
+      "type": "code",
+      "code": "people = [(\"Ada\", 36), (\"Alan\", 41), (\"Grace\", 30)]\n\nby_age = sorted(people, key=lambda p: p[1])\nprint(by_age)\nprint(max(people, key=lambda p: p[1]))\n\noldest_first = sorted(people, key=lambda p: (-p[1], p[0]))\nprint(oldest_first)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[('Grace', 30), ('Ada', 36), ('Alan', 41)]\n('Alan', 41)\n[('Alan', 41), ('Ada', 36), ('Grace', 30)]"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One more sorting detail trips up almost everyone once. The sorted function returns a new list and leaves the original alone. The list method sort changes the list in place, and because of that it returns none. So if you write result equals nums dot sort, then result is none, not the sorted list, and the numbers list itself is the thing that changed. It is a very common bug, and the rule is easy to remember. If a method changes something in place, Python returns none, to remind you that nothing new was made."
+    },
+    {
+      "type": "code",
+      "code": "nums = [3, 1, 2]\nresult = nums.sort()\n\nprint(result)\nprint(nums)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "None\n[1, 2, 3]"
+    },
+    {
+      "type": "card_question",
+      "question": "Is the key function written as key equals len, or key equals len with brackets?",
+      "answer": "Without brackets. You pass the function itself, and Python calls it once for every item."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "itemgetter & attrgetter",
+      "card_subtitle": "faster, clearer keys"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The operator module offers two helpers that replace the most common lambdas. Item getter builds a function that fetches an item by index or by key. So item getter of one is the same as a lambda that returns the item at position one, and it also works with a dictionary key. Attr getter does the same for attributes, fetching a named attribute off an object. They read more cleanly than the equivalent lambda, they are slightly faster, and a reader sees immediately that you are just picking a field. Here we sort the tuples by age with item getter, and we sort a small list of objects by their age attribute with attr getter, printing just the names."
+    },
+    {
+      "type": "code",
+      "code": "from operator import itemgetter, attrgetter\n\npeople = [(\"Ada\", 36), (\"Alan\", 41), (\"Grace\", 30)]\nprint(sorted(people, key=itemgetter(1)))\n\nclass Person:\n    def __init__(self, name, age):\n        self.name, self.age = name, age\n\nps = [Person(\"Ada\", 36), Person(\"Grace\", 30)]\nprint([p.name for p in sorted(ps, key=attrgetter(\"age\"))])"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[('Grace', 30), ('Ada', 36), ('Alan', 41)]\n['Grace', 'Ada']"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "And here is the same idea applied to a list of dictionaries, which is exactly what you get when you read rows from a file or a web service. Each row is a dictionary, and item getter of the string age pulls out that field for sorting. The result is the people ordered from youngest to oldest, and we print just their names. This pattern, sort a list of records by one field, is one of the most common jobs in everyday Python, and with the key argument it is always a single line."
+    },
+    {
+      "type": "code",
+      "code": "from operator import itemgetter, attrgetter\n\npeople = [(\"Ada\", 36), (\"Alan\", 41), (\"Grace\", 30)]\nprint(sorted(people, key=itemgetter(1)))\n\nclass Person:\n    def __init__(self, name, age):\n        self.name, self.age = name, age\n\nps = [Person(\"Ada\", 36), Person(\"Grace\", 30)]\nprint([p.name for p in sorted(ps, key=attrgetter(\"age\"))])\n\nrows = [{\"name\": \"Ada\", \"age\": 36}, {\"name\": \"Bo\", \"age\": 25}]\nby_age = sorted(rows, key=itemgetter(\"age\"))\nprint([r[\"name\"] for r in by_age])"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[('Grace', 30), ('Ada', 36), ('Alan', 41)]\n['Grace', 'Ada']\n['Bo', 'Ada']"
+    },
+    {
+      "type": "narration",
+      "text": "Both can take several arguments, and then they return a tuple, which gives you multi key sorting in one short expression. Item getter of one comma zero sorts by age and breaks ties by position zero. With a list of dictionaries, item getter of the string age sorts the dictionaries by that field. These two are small tools, but you will reach for them far more often than you expect."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Functions are values, so you can pass them around. A lambda gives you a tiny one on the spot, map, filter and reduce process collections with it, and the key argument lets you sort anything however you like."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a lambda is one expression with no name, best used inline and not stored in a variable",
+        "map transforms, filter selects, and both are lazy, so wrap them in list to see the values",
+        "reduce folds a sequence into one value, but prefer sum, max, any and all when they fit",
+        "sorted and sort take key, a function you pass without brackets, and sorting is stable",
+        "itemgetter and attrgetter are the clean, fast way to say sort by this field"
+      ],
+      "next": "EP 3 — Comprehensions"
+    }
+  ]
+}

@@ -1,0 +1,286 @@
+{
+  "id": "ep01_args_kwargs_and_unpacking",
+  "title": "Args, kwargs & unpacking",
+  "topic": "Advanced Python · Episode 1",
+  "prompt": "Write functions that take any arguments, unpack collections into calls, and dodge the mutable default trap.",
+  "episode": {
+    "number": 1,
+    "of": 22,
+    "series": "Advanced Python"
+  },
+  "target_minutes": 13,
+  "thumbnail": {
+    "headline": "args, kwargs\n& unpacking",
+    "hook": "functions that take anything",
+    "snippet": "def f(a, *args, **kw):\n    print(a, args, kw)\n\nf(1, 2, 3, x=4)",
+    "question": "why does this\nlist remember?",
+    "bad": "def add(x, items=[]):\n    items.append(x)\n    return items\nprint(add(1), add(2))",
+    "result": "[1, 2] [1, 2]   # shared list!"
+  },
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome to Advanced Python, episode one. In Basic Python you learned to define functions with parameters and default values. This episode goes much deeper into how arguments actually flow into a function, and it covers the tools that every real Python library is built on. You will learn how to write functions that accept any number of arguments, how to pass values by name, how to unpack a list or a dictionary straight into a call, how to split a sequence apart with a star in an assignment, and one famous gotcha with mutable default values that has caught out developers with ten years of experience. By the end, function signatures in other people's code will stop looking like magic. Let's get started."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Defaults & keywords",
+      "card_subtitle": "calling a function by name"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Let's begin with a quick refresher, because everything in this episode builds on it. A parameter can have a default value, written with an equals sign in the definition. If the caller leaves that argument out, the default is used. Here greet has a required parameter, name, and two optional ones, greeting and end. Calling greet with just Ada gives the plain default greeting. Passing a second value overrides the greeting, because arguments are matched to parameters by position, left to right."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "But you are not forced to count positions. You can also pass an argument by name, which is called a keyword argument. Writing end equals a question mark skips straight to the third parameter and leaves the greeting alone. Keyword arguments can even come in any order, so the last call here lists end before name, and Python happily matches each one by its name. There is just one rule, and Python enforces it strictly. Positional arguments must come first, and keyword arguments after them. Writing a keyword argument and then a positional one is a syntax error."
+    },
+    {
+      "type": "code",
+      "code": "def greet(name, greeting=\"Hello\", end=\"!\"):\n    return greeting + \", \" + name + end\n\nprint(greet(\"Ada\"))\nprint(greet(\"Ada\", \"Hi\"))\nprint(greet(\"Ada\", end=\"?\"))\nprint(greet(end=\".\", name=\"Ada\"))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "Hello, Ada!\nHi, Ada!\nHello, Ada?\nHello, Ada."
+    },
+    {
+      "type": "gotcha",
+      "code": "def greet(name, greeting=\"Hello\"):\n    return greeting + \", \" + name\n\nprint(greet(greeting=\"Hi\", \"Ada\"))",
+      "bad_line": 4,
+      "error": "  File \"solution.py\", line 4\n    print(greet(greeting=\"Hi\", \"Ada\"))\n                                    ^\nSyntaxError: positional argument follows keyword argument"
+    },
+    {
+      "type": "narration",
+      "text": "Here is that rule being broken. We pass greeting by name first, and then try to pass Ada by position afterwards. Python refuses before running a single line, with a syntax error that says, positional argument follows keyword argument. The reasoning is simple. Once you start naming arguments, Python can no longer be sure which position a bare value was meant for, so it insists that all the positional ones come first. If you ever see that message, just move the named arguments to the end of the call."
+    },
+    {
+      "type": "narration",
+      "text": "Why does this matter? Because keyword arguments make calls readable. A call like connect with the word timeout equals thirty tells the next person exactly what that thirty means. A call with a bare thirty tells them nothing. Good Python code leans on keyword arguments whenever a value is not completely obvious from context, and the rest of this episode shows how to build functions that make that easy."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "*args",
+      "card_subtitle": "any number of positional arguments"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Sometimes you do not know in advance how many arguments a function will receive. Think of print, which happily takes one value or twenty. To write a function like that, put a single star in front of a parameter name. By convention that name is args, short for arguments, but the star is the part that does the work. Python collects every extra positional argument into one tuple and hands it to you under that name. In this example, total takes star numbers. Calling it with one, two and three gives numbers the value of a tuple holding those three values, and we can pass that straight to sum. Called with nothing at all, numbers is simply an empty tuple, so the total is zero. No error, no special case."
+    },
+    {
+      "type": "code",
+      "code": "def total(*numbers):\n    print(numbers, type(numbers))\n    return sum(numbers)\n\nprint(total(1, 2, 3))\nprint(total())"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "(1, 2, 3) <class 'tuple'>\n6\n() <class 'tuple'>\n0"
+    },
+    {
+      "type": "narration",
+      "text": "Notice the type. It is a plain tuple, not a list, so it is read only. If you want to change it, you build a new one or convert it with the list function. You can also mix required parameters with a star parameter. Anything listed before the star is filled first, by position, and whatever is left over lands in the tuple. So a function called log that takes a level and then star messages could be called with an error level and any number of messages. There is one more subtle consequence. Any parameter that comes after the star can no longer be filled by position, because the star has swallowed all the positions. Those parameters become keyword only, and you must pass them by name."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "def log(level, *messages, sep=\" \"):\n...     print(level + \":\", sep.join(messages))",
+          "output": ""
+        },
+        {
+          "input": "log(\"warn\", \"disk\", \"almost\", \"full\")",
+          "output": "warn: disk almost full"
+        },
+        {
+          "input": "log(\"info\", \"ok\")",
+          "output": "info: ok"
+        },
+        {
+          "input": "log(\"debug\", \"a\", \"b\", sep=\"-\")",
+          "output": "debug: a-b"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "There is a neat trick that follows from this. What if you want keyword only parameters, but you do not want a star args tuple at all? You can write a lone star, with nothing after it, as a separator in the definition. It collects nothing. It simply means, every parameter after this point must be passed by name. Library authors use this all the time for options that would be confusing as bare values. A connect function with a host and then a lone star and a timeout forces callers to write timeout equals thirty. Passing a bare thirty is rejected with a type error, which stops the single most common bug with options, mixing up two similar looking numbers."
+    },
+    {
+      "type": "gotcha",
+      "code": "def connect(host, *, timeout=10):\n    return host, timeout\n\nprint(connect(\"db\", 30))",
+      "bad_line": 4,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 4, in <module>\n    print(connect(\"db\", 30))\nTypeError: connect() takes 1 positional argument but 2 were given"
+    },
+    {
+      "type": "card_question",
+      "question": "What type does Python give a function parameter written with a single star?",
+      "answer": "A tuple, holding every extra positional argument. It is empty if there are none."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "**kwargs",
+      "card_subtitle": "any number of keyword arguments"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The same idea works for keyword arguments, using two stars. A parameter written with a double star collects every keyword argument that did not match a named parameter, and gives them to you as a dictionary, with the argument names as keys. By convention it is called K W args, short for keyword arguments. In this function, show takes double star options, and then loops over the dictionary with its items method. Calling it with color equals red and size equals three gives a two entry dictionary, and we print each pair. This is extremely handy when a function should accept a flexible set of settings without you listing every possible one in advance."
+    },
+    {
+      "type": "code",
+      "code": "def show(**options):\n    for key, value in options.items():\n        print(key, \"=\", value)\n\nshow(color=\"red\", size=3)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "color = red\nsize = 3"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now we can put every kind of parameter in one signature, and there is a fixed order Python requires. First the normal positional parameters, then optional ones with defaults, then star args, then keyword only parameters, and finally double star K W args. This function has a, a default b, star args, a keyword only c, and double star kwargs. Calling it with just one prints the defaults and empty containers. Calling it with one, nine, eight, seven, and then c equals zero and d equals four sends nine to b, the eight and seven into the tuple, zero to c, and the leftover d equals four into the dictionary. Reading that order out loud a few times is the best way to remember it."
+    },
+    {
+      "type": "code",
+      "code": "def f(a, b=2, *args, c=3, **kwargs):\n    print(a, b, args, c, kwargs)\n\nf(1)\nf(1, 9, 8, 7, c=0, d=4)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "1 2 () 3 {}\n1 9 (8, 7) 0 {'d': 4}"
+    },
+    {
+      "type": "narration",
+      "text": "The most common real world use of double star K W args is passing things along. Imagine you write a function that wraps another one, perhaps to add a log message first. You do not want to repeat all the other function's parameters, and you do not want to break when they change. So you accept star args and double star K W args, and simply forward them on. That is exactly how decorators work, which we will meet later in this course."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Unpacking into calls",
+      "card_subtitle": "stars on the calling side"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "So far the stars appeared in definitions. They also work on the calling side, and there they do the reverse. Put one star in front of a list or tuple when you call a function, and Python spreads its items out as separate positional arguments. Put two stars in front of a dictionary, and it spreads the pairs out as keyword arguments. Say area wants a width and a height. If you have a tuple of two numbers called size, area of star size works as if you had typed the two numbers yourself. And with a dictionary whose keys match the parameter names, area of double star dims does the same, by name. This is the natural way to call a function when your data is already sitting in a collection."
+    },
+    {
+      "type": "code",
+      "code": "def area(width, height):\n    return width * height\n\nsize = (3, 4)\nprint(area(*size))\n\ndims = {\"width\": 5, \"height\": 2}\nprint(area(**dims))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "12\n10"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The same stars also build new collections. Inside a list, a star unpacks another list in place, so a star a, a star b and an extra four make a single flat list. Inside a dictionary, a double star merges another dictionary's pairs, and when two dictionaries share a key, the later one wins. That makes it a clean way to apply overrides on top of defaults. Here the settings start with a debug flag turned off and a port, then we spread a user's choices over the top, so the port is replaced and the debug flag survives."
+    },
+    {
+      "type": "code",
+      "code": "a = [1, 2]\nb = [3]\nprint([*a, *b, 4])\n\ndefaults = {\"debug\": False, \"port\": 80}\ncustom = {\"port\": 8080}\nprint({**defaults, **custom})"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[1, 2, 3, 4]\n{'debug': False, 'port': 8080}"
+    },
+    {
+      "type": "card_question",
+      "question": "What does area of double star dims do, when dims is a dictionary?",
+      "answer": "It passes each key and value as a keyword argument, so the keys must match the parameter names."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Starred assignment",
+      "card_subtitle": "splitting a sequence apart"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "One more place stars appear is on the left of an assignment. You already know that you can unpack a sequence into variables, like a comma b equals a pair. But that requires the number of names to match the number of items exactly. A starred name relaxes that. Put a star on one of the names and it soaks up whatever is left over, always as a list. So first, comma star rest, equals a list of five numbers, gives first the number one, and rest the other four. Put the star on the front instead, and it takes everything except the last item. Or put it in the middle, with a name on each side, to grab the first and the last and collect everything between them."
+    },
+    {
+      "type": "code",
+      "code": "nums = [1, 2, 3, 4, 5]\nfirst, *rest = nums\n*init, last = nums\nhead, *mid, tail = nums\n\nprint(first, rest)\nprint(init, last)\nprint(head, mid, tail)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "1 [2, 3, 4, 5]\n[1, 2, 3, 4] 5\n1 [2, 3, 4] 5"
+    },
+    {
+      "type": "narration",
+      "text": "There are two rules. You can use only one starred name in a single assignment, because two would be ambiguous. And the starred name always receives a list, even when it ends up empty. It is a lovely way to peel the head off a list, to separate a header row from data rows, or to pull the first word out of a split line. In every case it replaces fiddly indexing and slicing with a single readable line that says exactly what you mean."
+    },
+    {
+      "type": "card_question",
+      "question": "In first, star rest, equals one, two, three, what type is rest?",
+      "answer": "A list, here holding two and three. It would be an empty list if there was nothing left over."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "The mutable default gotcha",
+      "card_subtitle": "one of Python's famous traps"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now for the famous trap. Imagine a function that adds an item to a list, with a default of an empty list so callers can omit it. It looks completely reasonable. Call it with the letter a and you get a list holding a. Call it again with the letter b, expecting a fresh list, and you get a list holding a and b. The second call remembered the first. What on earth happened?"
+    },
+    {
+      "type": "code",
+      "code": "def add_item(item, items=[]):\n    items.append(item)\n    return items\n\nprint(add_item(\"a\"))\nprint(add_item(\"b\"))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "['a']\n['a', 'b']"
+    },
+    {
+      "type": "narration",
+      "text": "Here is the reason. Default values are evaluated once, at the moment the def line runs, not every time you call the function. So that empty list is created a single time, stored on the function, and handed out again on every call that omits the argument. When your code appends to it, it changes that one shared list. With numbers, strings or tuples this never bites, because they cannot be changed in place. It only happens with mutable defaults, lists, dictionaries and sets."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The standard fix is to use None as the default, and create the real list inside the function. If the caller gave us nothing, the value is None, so we build a brand new empty list, fresh on every call. Now every call that omits the argument gets its own list, and the two outputs are independent, a on its own, then b on its own. You will see this none check pattern constantly in real code, and now you know exactly why it is there."
+    },
+    {
+      "type": "compare",
+      "left": "def add_item(item, items=[]):\n    items.append(item)\n    return items",
+      "right": "def add_item(item, items=None):\n    if items is None:\n        items = []\n    items.append(item)\n    return items",
+      "left_label": "SHARED LIST",
+      "right_label": "FRESH LIST",
+      "verdict": "use none as the default, and build the list inside"
+    },
+    {
+      "type": "card_question",
+      "question": "When does Python evaluate a default argument value?",
+      "answer": "Once, when the function is defined, not on every call. That is why mutable defaults are shared."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "You now know how arguments really flow into a function. Defaults and keywords for clarity, star args and double star K W args to accept anything, stars on the calling side to spread collections out, and the none pattern to dodge the mutable default trap."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "keyword arguments make calls readable and can come in any order, after the positional ones",
+        "star args collects extra positionals into a tuple, double star kwargs collects keywords into a dict",
+        "signature order: positional, defaults, star args, keyword only, double star kwargs",
+        "star and double star on a call spread a list or dict into arguments, and build merged collections",
+        "first, star rest splits a sequence, and never use a mutable default, use none instead"
+      ],
+      "next": "EP 2 — Lambda functions & functional tools"
+    }
+  ]
+}

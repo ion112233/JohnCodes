@@ -1,0 +1,216 @@
+{
+  "id": "ep04_recursion",
+  "title": "Recursion",
+  "topic": "Advanced Python · Episode 4",
+  "prompt": "Understand base cases, the call stack and the recursion limit, and know when recursion beats a loop.",
+  "episode": {
+    "number": 4,
+    "of": 22,
+    "series": "Advanced Python"
+  },
+  "target_minutes": 9,
+  "thumbnail": {
+    "headline": "recursion",
+    "hook": "a function that calls itself",
+    "snippet": "def fact(n):\n    if n <= 1:\n        return 1\n    return n * fact(n - 1)",
+    "question": "why does this\nnever stop?",
+    "bad": "def down(n):\n    print(n)\n    down(n - 1)\ndown(3)",
+    "result": "RecursionError: maximum recursion depth"
+  },
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Advanced Python, episode four. Recursion is the idea of a function that solves a problem by calling itself on a smaller version of that same problem. It has a reputation for being mind bending, but it rests on just two ideas, and once they click, it stops being mysterious. In this episode you will learn those two ideas, the base case and the recursive case. You will watch the call stack grow and shrink, so you can see exactly what Python is doing. You will meet the famous recursion error and how to avoid it, and you will learn when recursion is the natural choice, and when a plain loop is better."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Base case & recursive case",
+      "card_subtitle": "the two halves of recursion"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The classic first example is the factorial. The factorial of five means five times four times three times two times one. Notice the pattern hiding in there. Five factorial is just five times four factorial, and four factorial is four times three factorial, and so on. The problem keeps shrinking into a smaller copy of itself. A recursive function has two parts. The recursive case is where the function calls itself with a smaller input, here n times factorial of n minus one. The base case is the simplest input, where the answer is known directly and no more calls are needed. For factorial, that is one, whose factorial is simply one. Without the base case, the function would call itself forever."
+    },
+    {
+      "type": "code",
+      "code": "def factorial(n):\n    if n <= 1:\n        return 1\n    return n * factorial(n - 1)\n\nprint(factorial(5))\nprint(factorial(1))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "120\n1"
+    },
+    {
+      "type": "narration",
+      "text": "Here is the way to think about it, and it is the key to the whole topic. Do not try to follow every call in your head. Instead, trust the function. Assume that factorial of n minus one already works and gives you the right answer for the smaller problem. Then ask only one question, how do I use that answer to solve the current problem? Here, you multiply it by n. Then make sure the smallest case is handled by the base case. If both of those are correct, the function is correct, however deep it goes."
+    },
+    {
+      "type": "card_question",
+      "question": "What are the two parts every recursive function needs?",
+      "answer": "A base case that returns directly, and a recursive case that calls itself on a smaller input."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "The call stack",
+      "card_subtitle": "what Python does behind the scenes"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "So what actually happens when a function calls itself? Each call gets its own fresh set of local variables, and Python keeps the unfinished calls on a stack, a pile where the most recent call sits on top. When a call needs the answer from a deeper call, it pauses and waits. Only when the deepest call returns does the pile start to unwind, one call at a time, each resuming where it paused. This little program prints a line when each call starts and another when it finishes, indenting by the depth. Watch the order. The calls go in, two, one, zero, and then they come back out in the reverse order, one, then two."
+    },
+    {
+      "type": "code",
+      "code": "def depth(n):\n    print(\" \" * n + \"enter\", n)\n    if n == 0:\n        return 0\n    result = depth(n - 1) + 1\n    print(\" \" * n + \"exit\", n)\n    return result\n\ndepth(2)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "  enter 2\n enter 1\nenter 0\n exit 1\n  exit 2"
+    },
+    {
+      "type": "narration",
+      "text": "That last in, first out behaviour is exactly why it is called a stack. And it has a practical consequence. The stack is not unlimited. To protect your computer from a runaway function, Python limits the depth of the stack, by default to about one thousand calls. You can read the limit with the function get recursion limit in the sys module, and you can raise it, but raising it is rarely the right answer. If you need more depth than that, it is usually a sign to switch to a loop."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "import sys",
+          "output": ""
+        },
+        {
+          "input": "sys.getrecursionlimit()",
+          "output": "1000"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "There it is, a limit of one thousand. That number includes every call currently waiting, not the total number of calls ever made, so a function can recurse many times overall, as long as it never goes more than about a thousand levels deep at once."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "The missing base case",
+      "card_subtitle": "the famous RecursionError"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now let's break it on purpose, because you will do this by accident sooner or later. Here is a countdown that prints a number and then calls itself with one less. Notice what is missing. There is no base case, nothing that says stop. So it counts three, two, one, zero, minus one, and keeps on going, every call adding another frame to the stack, until Python reaches its limit and stops the whole program with an error. The message is, maximum recursion depth exceeded. That is Python rescuing you from an infinite loop that would otherwise eat all your memory."
+    },
+    {
+      "type": "gotcha",
+      "code": "def countdown(n):\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)",
+      "bad_line": 3,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 5, in <module>\n    countdown(3)\n  File \"solution.py\", line 3, in countdown\n    countdown(n - 1)\n  [Previous line repeated 996 more times]\nRecursionError: maximum recursion depth exceeded"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The fix is always the same. Ask, what is the simplest input, and what should happen there? For a countdown, it is when we reach zero, so we print a final message and return without calling again. And a second thing to check, make sure each recursive call really moves toward the base case. Calling countdown of n minus one gets closer to zero, but calling it with n, or n plus one, would never arrive, and would fail in exactly the same way."
+    },
+    {
+      "type": "code",
+      "code": "def countdown(n):\n    if n == 0:\n        print(\"liftoff\")\n        return\n    print(n)\n    countdown(n - 1)\n\ncountdown(3)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "3\n2\n1\nliftoff"
+    },
+    {
+      "type": "card_question",
+      "question": "Which error does Python raise when a recursive function never reaches its base case?",
+      "answer": "A RecursionError, saying the maximum recursion depth was exceeded, after about one thousand nested calls."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Recursion on data",
+      "card_subtitle": "where it really shines"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "So when is recursion actually better than a loop? When the data itself is nested or branching, in a shape that is naturally a smaller copy of itself. Think of folders inside folders, or a list that can contain other lists to any depth. A loop struggles here, because you do not know how many levels there are. Recursion handles it effortlessly. This function flattens a list that contains other lists. It loops over the items, and for each one, if it is a list, it calls itself on that sublist and adds the result, and otherwise it adds the item. The base case is hidden in the structure, a list with no sublists simply never recurses."
+    },
+    {
+      "type": "code",
+      "code": "def flatten(items):\n    flat = []\n    for item in items:\n        if isinstance(item, list):\n            flat.extend(flatten(item))\n        else:\n            flat.append(item)\n    return flat\n\nprint(flatten([1, [2, [3, 4]], 5]))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[1, 2, 3, 4, 5]"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Another family where recursion is natural is divide and conquer. Binary search checks the middle of a sorted list, and then searches only the left half or only the right half, which is the same problem on half the data. Each call either finds the target, or calls itself on a smaller range, and the base case is an empty range, meaning not found. Compare that with the famous Fibonacci function, where each number is the sum of the previous two. It is beautiful to write recursively, but there is a catch. It recomputes the same values over and over, and the number of calls roughly doubles with each step up, so even asking for the thirtieth number takes well over a million calls."
+    },
+    {
+      "type": "code",
+      "code": "def find(a, t, lo, hi):\n    if lo > hi:\n        return -1\n    mid = (lo + hi) // 2\n    if a[mid] == t:\n        return mid\n    if a[mid] < t:\n        return find(a, t, mid + 1, hi)\n    return find(a, t, lo, mid - 1)\n\nnums = [1, 3, 5, 7, 9, 11]\nprint(find(nums, 7, 0, len(nums) - 1))\nprint(find(nums, 4, 0, len(nums) - 1))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "3\n-1"
+    },
+    {
+      "type": "code",
+      "code": "def fib(n):\n    if n < 2:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nprint([fib(i) for i in range(8)])"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[0, 1, 1, 2, 3, 5, 8, 13]"
+    },
+    {
+      "type": "narration",
+      "text": "There is a fix for that Fibonacci slowness called memoisation, remembering results you have already computed, and Python has a one line way to do it that we will meet in the decorators episode. For now, remember the lesson. A recursive solution can be correct and still be wasteful, so always ask how many times the same work gets repeated."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Recursion vs iteration",
+      "card_subtitle": "choosing the right tool"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Anything you can write with recursion, you can write with a loop, and the reverse is also true. So how do you choose? Here are the honest guidelines. Use recursion when the problem is naturally nested or branching, such as trees, folders, nested data, parsing, and divide and conquer. The recursive version is often shorter and clearer. Use a loop when the problem is a simple repetition, like summing a list or counting down. The loop is faster, uses constant memory, and cannot hit the depth limit. And remember, Python does not optimise recursion the way some languages do. Every call costs a stack frame, so very deep recursion is a bad idea."
+    },
+    {
+      "type": "compare",
+      "left": "def total(nums):\n    if not nums:\n        return 0\n    return nums[0] + total(nums[1:])",
+      "right": "def total(nums):\n    result = 0\n    for n in nums:\n        result += n\n    return result",
+      "left_label": "RECURSION",
+      "right_label": "LOOP",
+      "verdict": "same answer, but the loop is faster and cannot overflow"
+    },
+    {
+      "type": "card_question",
+      "question": "Name one kind of problem where recursion is a more natural fit than a loop.",
+      "answer": "Nested or branching data, such as folders inside folders, trees, or lists inside lists, and divide and conquer problems."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Recursion is a function solving a problem by calling itself on a smaller piece. Always write the base case first, make sure every call moves toward it, and choose recursion for nested data, and loops for simple repetition."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "every recursive function needs a base case that stops, and a recursive case that shrinks the problem",
+        "calls pile up on the call stack and unwind in reverse order, last in, first out",
+        "no base case, or no progress toward it, ends in a RecursionError at about one thousand calls",
+        "recursion shines on nested or branching data, and divide and conquer like binary search",
+        "use a loop for simple repetition, it is faster and has no depth limit"
+      ],
+      "next": "EP 5 — Closures & nonlocal"
+    }
+  ]
+}

@@ -1,0 +1,262 @@
+{
+  "id": "ep03_comprehensions",
+  "title": "Comprehensions",
+  "topic": "Advanced Python · Episode 3",
+  "prompt": "Build lists, dicts, sets and generators in one line, and use enumerate, zip and the walrus operator.",
+  "episode": {
+    "number": 3,
+    "of": 22,
+    "series": "Advanced Python"
+  },
+  "target_minutes": 12,
+  "thumbnail": {
+    "headline": "comprehensions",
+    "hook": "one line, whole list",
+    "snippet": "squares = [n * n for n in range(5)]\nwords = {w: len(w) for w in ws}\ntotal = sum(n for n in nums)",
+    "question": "why did my\nkey disappear?",
+    "bad": "d = {\"pear\": 4, \"kiwi\": 4}\nprint({v: k for k, v in d.items()})",
+    "result": "{4: 'kiwi'}   # pear is gone"
+  },
+  "filename": "solution.py",
+  "segments": [
+    {
+      "type": "narration",
+      "beat": "hook",
+      "text": "Welcome back to Advanced Python, episode three. If there is one feature that makes Python code look like Python, it is the comprehension. A comprehension builds a whole list, dictionary or set in a single readable line, instead of an empty container, a loop and a bunch of appends. This episode covers all four kinds, list, dictionary, set and generator comprehensions, and it adds three companions that show up beside them everywhere, enumerate, zip, and the walrus operator. By the end you will be able to read dense, idiomatic Python without slowing down, and write it too, including knowing the point where a comprehension stops being clear and a plain loop is the better tool."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "List comprehensions",
+      "card_subtitle": "a loop in one line"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You already know how to build a list with a loop. Start with an empty list, loop over some numbers, and append the square of each one. That works, but it takes three lines to say something simple. A list comprehension says it in one. Inside square brackets you write the expression you want for each item, then the word for, a name for the current item, the word in, and the thing you are looping over. Read it almost like English. A list of n times n, for n in range of five. The output is exactly the same list, zero, one, four, nine, sixteen, built without any appends or any temporary variable hanging around afterwards."
+    },
+    {
+      "type": "code",
+      "code": "squares = []\nfor n in range(5):\n    squares.append(n * n)\n\nsquares2 = [n * n for n in range(5)]\n\nprint(squares)\nprint(squares2)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[0, 1, 4, 9, 16]\n[0, 1, 4, 9, 16]"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "You can add a condition at the end with the word if, and it filters the items. Only the items for which the condition is true make it into the new list. So n times n for n in range of ten, if n is even, gives the squares of the even numbers only. And there is a second form, with the if and else placed at the front, before the for. That one does not filter, it chooses between two values for every item. For each number, the word even or the word odd, depending on a test. It is easy to mix them up, so remember, a trailing if filters items out, and an if else at the front picks a value for every item."
+    },
+    {
+      "type": "code",
+      "code": "even_squares = [n * n for n in range(10) if n % 2 == 0]\nlabels = [\"even\" if n % 2 == 0 else \"odd\" for n in range(4)]\n\nprint(even_squares)\nprint(labels)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[0, 4, 16, 36, 64]\n['even', 'odd', 'even', 'odd']"
+    },
+    {
+      "type": "narration",
+      "text": "You can even nest two loops in one comprehension. The loops read in the same order you would write them as separate statements, outer one first. So a pair of x and y, for x in range of three, for y in range of two, produces every combination, six pairs in all. Use this sparingly. One loop with an optional condition is the sweet spot. Two loops can still be readable. Three, or anything that needs a second glance, belongs back in a normal loop with proper names and comments. The goal of a comprehension is to make code easier to read, and the moment it makes it harder, you have gone too far."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "[(x, y) for x in range(3) for y in range(2)]",
+          "output": "[(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]"
+        },
+        {
+          "input": "[n for row in [[1, 2], [3], [4, 5]] for n in row]",
+          "output": "[1, 2, 3, 4, 5]"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "That second line is the most useful nested comprehension of all, flattening a list of lists. Read it in order, for each row in the outer list, for each number in that row, keep the number. If you can read the loops from left to right like that, you can read any comprehension. If you cannot, that is the signal to use a loop instead."
+    },
+    {
+      "type": "card_question",
+      "question": "In a list comprehension, what does a trailing if do, and what does an if else at the front do?",
+      "answer": "A trailing if filters items out. An if else at the front picks one of two values for every item."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Dict & set comprehensions",
+      "card_subtitle": "same idea, curly brackets"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The same syntax works for dictionaries and sets, just with curly brackets. For a dictionary comprehension, the expression at the front is a key, a colon, and a value. So a dictionary of w to len of w, for w in a list of words, builds a dictionary that maps each word to its length. It is the idiomatic way to build a lookup table from a sequence. You can also flip a dictionary, swapping keys and values, by looping over its items. For a set comprehension, the expression is just a single value, and the result is a set, so duplicates disappear automatically. Taking the lengths of the same words as a set gives each distinct length once."
+    },
+    {
+      "type": "code",
+      "code": "words = [\"pear\", \"fig\", \"banana\", \"kiwi\"]\n\nlengths = {w: len(w) for w in words}\nflipped = {v: k for k, v in lengths.items()}\ndistinct = {len(w) for w in words}\n\nprint(lengths)\nprint(flipped)\nprint(distinct)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "{'pear': 4, 'fig': 3, 'banana': 6, 'kiwi': 4}\n{4: 'kiwi', 3: 'fig', 6: 'banana'}\n{3, 4, 6}"
+    },
+    {
+      "type": "narration",
+      "text": "Look closely at the flipped dictionary. Both pear and kiwi have length four, but a dictionary can hold only one value per key, so the later one wins, and pear quietly disappears. Comprehensions do exactly what a loop would do, including overwriting. One more trap here, which catches many people. Empty curly brackets make an empty dictionary, not an empty set. To get an empty set, you must call the set function. Writing curly brackets with a single value inside, or a for clause, is what makes it a set."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "Generator expressions",
+      "card_subtitle": "lazy, one item at a time"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Now replace the square brackets of a list comprehension with round brackets, and something important changes. You no longer get a list. You get a generator expression, an object that does not compute anything up front. It produces each value only when you ask for the next one. In this example, the list comprehension builds a million squares and keeps every one of them in memory. The generator expression builds none of them, and just remembers the recipe. You can see the difference in the size of the two objects, and when you pass the generator straight to sum, it adds the numbers one at a time while holding only one in memory."
+    },
+    {
+      "type": "code",
+      "code": "import sys\n\nbig_list = [n * n for n in range(1000000)]\nbig_gen = (n * n for n in range(1000000))\n\nprint(sys.getsizeof(big_list) > 1000000)\nprint(sys.getsizeof(big_gen) < 200)\nprint(sum(n * n for n in range(1000)))"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "True\nTrue\n332833500"
+    },
+    {
+      "type": "narration",
+      "text": "Notice that when a generator expression is the only argument to a function call, you can drop the extra pair of brackets, as in sum of n times n for n in range of a thousand. Generators have one catch. They are single use. Once you have walked through one, it is exhausted, and looping over it again gives you nothing. If you need the values more than once, build a list instead. The rule of thumb is simple. If you are going to loop over the result just once, for example to sum it, check any of it, or feed it into another function, a generator is lighter. We will go much deeper into generators in a later episode."
+    },
+    {
+      "type": "repl",
+      "lines": [
+        {
+          "input": "g = (n for n in range(3))",
+          "output": ""
+        },
+        {
+          "input": "list(g)",
+          "output": "[0, 1, 2]"
+        },
+        {
+          "input": "list(g)",
+          "output": "[]"
+        }
+      ]
+    },
+    {
+      "type": "narration",
+      "text": "Here is that catch in action. The first time we turn the generator into a list, we get all three numbers. The second time, we get an empty list, with no error and no warning. The generator is used up. It is a quiet bug, because nothing crashes, the data is just gone. So whenever you see a loop or a function receive a generator twice, ask yourself whether it should have been a list."
+    },
+    {
+      "type": "narration",
+      "text": "There is one more reason to love the generator form. Functions like any and all stop as soon as they know the answer. Asking whether any number in a huge range is divisible by seven, using a generator, stops at seven. A list version would have built the whole list first, only to look at its first few items."
+    },
+    {
+      "type": "card_question",
+      "question": "What is the difference between square brackets and round brackets around a comprehension?",
+      "answer": "Square brackets build a full list in memory. Round brackets make a lazy generator that produces one value at a time."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "enumerate & zip",
+      "card_subtitle": "looping with partners"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "Two built in functions are the natural partners of comprehensions and loops. The first is enumerate. When you loop over a list and also need the position of each item, do not manage a counter by hand. Enumerate gives you pairs of an index and the item, and you unpack them right in the for line. You can pass a second argument to choose where counting starts, so starting at one gives human friendly numbering. The second is zip, which walks through two or more sequences in step, giving you a tuple holding the matching items from each. It stops as soon as the shortest one runs out. Zip is how you pair up names with scores, or build a dictionary from two parallel lists."
+    },
+    {
+      "type": "code",
+      "code": "names = [\"Ada\", \"Alan\", \"Grace\"]\nscores = [90, 85, 95]\n\nfor i, name in enumerate(names, start=1):\n    print(i, name)\n\npairs = list(zip(names, scores))\nprint(pairs)\nprint(dict(zip(names, scores)))\nprint([f\"{n}:{s}\" for n, s in zip(names, scores)])"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "1 Ada\n2 Alan\n3 Grace\n[('Ada', 90), ('Alan', 85), ('Grace', 95)]\n{'Ada': 90, 'Alan': 85, 'Grace': 95}\n['Ada:90', 'Alan:85', 'Grace:95']"
+    },
+    {
+      "type": "gotcha",
+      "code": "names = [\"Ada\", \"Alan\", \"Grace\"]\nscores = [90, 85]\nprint(list(zip(names, scores, strict=True)))",
+      "bad_line": 3,
+      "error": "Traceback (most recent call last):\n  File \"solution.py\", line 3, in <module>\n    print(list(zip(names, scores, strict=True)))\nValueError: zip() argument 2 is shorter than argument 1"
+    },
+    {
+      "type": "narration",
+      "text": "That last line shows the whole idea in one place, a comprehension looping over a zip, unpacking each pair into two names. Remember that zip quietly stops at the shortest input. If you pass a list of three names and a list of two scores, you get two pairs and the third name is silently dropped. If that would be a bug for you, the strict option makes zip raise an error when the lengths differ. And if you ever want to undo a zip, calling zip with a star in front of the list of pairs splits it back apart, because that star is the same unpacking you met in episode one."
+    },
+    {
+      "type": "card_topic",
+      "card_title": "The walrus operator",
+      "card_subtitle": "assign inside an expression"
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The last tool in this episode is the walrus operator, written as a colon and an equals sign, because it looks like a walrus on its side. In Python an assignment is normally a statement, and you cannot use it inside an expression. The walrus changes that. It assigns a value to a name and, in the same breath, gives you that value. The classic use is avoiding a repeated calculation. Say you want the squares of some numbers, but only those that are bigger than twenty. Without the walrus, you either compute the square twice, once in the test and once for the result, or you give up on the comprehension. With it, you compute the square once, name it s, test it, and reuse it."
+    },
+    {
+      "type": "code",
+      "code": "nums = [3, 4, 5, 6]\n\nbig = [s for n in nums if (s := n * n) > 20]\nprint(big)\n\ntext = \"hello world\"\nif (n := len(text)) > 5:\n    print(\"long text:\", n)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "[25, 36]\nlong text: 11"
+    },
+    {
+      "type": "narration",
+      "text": "The second example shows the other great use, in an if statement. You measure the length once, give it a name, test it, and then use that same name inside the body, with no separate line for the assignment. The brackets around the walrus expression are required in most places, so do not leave them out. Use the walrus when it removes a repeated call or an awkward extra line, and leave it alone when it just makes a line harder to read. It is a precise tool, not a replacement for normal assignment."
+    },
+    {
+      "type": "narration",
+      "beat": "walkthrough",
+      "text": "The walrus is also at home in a while loop, where it can read a value and test it in a single line. Here we pull numbers out of an iterator one by one, and the loop condition assigns each one to n and checks whether it is zero. As soon as a zero arrives the loop ends, so only the numbers before it are printed. Before the walrus, this pattern needed either a duplicated line before the loop and again at the bottom of it, or an infinite loop with a break buried inside. The walrus lets the loop read exactly like the rule it implements."
+    },
+    {
+      "type": "code",
+      "code": "data = [3, 1, 4, 0, 5]\nit = iter(data)\n\nwhile (n := next(it)) != 0:\n    print(\"got\", n)"
+    },
+    {
+      "type": "terminal",
+      "command": "python solution.py",
+      "output": "got 3\ngot 1\ngot 4"
+    },
+    {
+      "type": "compare",
+      "left": "result = []\nfor n in range(10):\n    if n % 2 == 0:\n        result.append(n * n)",
+      "right": "result = [n * n for n in range(10)\n          if n % 2 == 0]",
+      "left_label": "LOOP",
+      "right_label": "COMPREHENSION",
+      "verdict": "same result, one clear statement of intent"
+    },
+    {
+      "type": "narration",
+      "text": "Now a word on judgement, because comprehensions are easy to abuse. A good comprehension fits comfortably on one or two lines and has one clear idea. If you need to explain it with a comment, if it nests more than two levels, or if it does something with side effects, like printing or appending somewhere else, then a regular loop is kinder to the next person who reads your code, and that person is very often you in six months. Clear code beats clever code every single time."
+    },
+    {
+      "type": "card_question",
+      "question": "What does the walrus operator colon equals do that a normal assignment cannot?",
+      "answer": "It assigns a value to a name inside an expression, and gives that value back, so you can test and reuse it."
+    },
+    {
+      "type": "narration",
+      "beat": "takeaway",
+      "text": "Comprehensions turn loops that build a collection into a single readable line, for lists, dictionaries, sets and lazy generators. Enumerate and zip give you positions and pairs, and the walrus operator saves a repeated calculation."
+    },
+    {
+      "type": "card_recap",
+      "points": [
+        "a list comprehension is expression, for, item, in, source, with an optional trailing if to filter",
+        "curly brackets build dict and set comprehensions, and round brackets build a lazy generator",
+        "a generator is single use and light on memory, so feed it straight into sum, any or all",
+        "enumerate gives index and item, zip walks several sequences in step and stops at the shortest",
+        "the walrus operator assigns inside an expression, so you can compute once and reuse the value"
+      ],
+      "next": "EP 4 — Recursion"
+    }
+  ]
+}
